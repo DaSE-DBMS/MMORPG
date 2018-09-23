@@ -16,5 +16,5 @@ namespace Gamekit3D
                 controller.RespawnFinished();
             }
         }
-    } 
+    }
 }

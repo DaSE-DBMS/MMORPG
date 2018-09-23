@@ -11,7 +11,7 @@ namespace Gamekit3D
         public TextMeshProUGUI textMeshProUGUI;
 
         protected Coroutine m_DeactivationCoroutine;
-    
+
         protected readonly int m_HashActivePara = Animator.StringToHash ("Active");
 
         IEnumerator SetAnimatorParameterWithDelay (float delay)

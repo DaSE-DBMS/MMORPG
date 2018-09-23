@@ -4,7 +4,7 @@ A. Cinemachine
 
 Unity Companion Cinemachine Code License 1.0
 
-Copyright © 2017 Unity Technologies ApS
+Copyright ?2017 Unity Technologies ApS
 
 
 
@@ -22,7 +22,7 @@ C. Emoji One
 
 Premium License Agreement Version 1.6
 
-Copyright © EmojiOne Inc. 2018
+Copyright ?EmojiOne Inc. 2018
 
 
 
@@ -30,7 +30,7 @@ D. Roboto Font
 
  Apache License Version 2.0
 
-Copyright © Google 2012
+Copyright ?Google 2012
 
 
 

@@ -43,7 +43,7 @@ namespace Gamekit3D
                 m_KeyIconAnimators[i] = healthIcon.GetComponent<Animator>();
             }
 
-            
+
         }
 
         public void ChangeKeyUI(InventoryController controller)

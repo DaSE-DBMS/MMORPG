@@ -41,7 +41,7 @@ public class TextSwitcherMixerBehaviour : PlayableBehaviour
             float inputWeight = playable.GetInputWeight(i);
             ScriptPlayable<TextSwitcherBehaviour> inputPlayable = (ScriptPlayable<TextSwitcherBehaviour>)playable.GetInput(i);
             TextSwitcherBehaviour input = inputPlayable.GetBehaviour ();
-            
+
             blendedColor += input.color * inputWeight;
             blendedFontSize += input.fontSize * inputWeight;
             totalWeight += inputWeight;

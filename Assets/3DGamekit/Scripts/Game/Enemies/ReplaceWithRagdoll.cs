@@ -11,7 +11,7 @@ namespace Gamekit3D
         public void Replace()
         {
             GameObject ragdollInstance = Instantiate(ragdollPrefab, transform.position, transform.rotation);
-            //need to disable it, otherwise when we copy over the hierarchy objects position/rotation, the ragdoll will try each time to 
+            //need to disable it, otherwise when we copy over the hierarchy objects position/rotation, the ragdoll will try each time to
             //"correct" the attached joint, leading to a deformed/glitched instance
             ragdollInstance.SetActive(false);
 

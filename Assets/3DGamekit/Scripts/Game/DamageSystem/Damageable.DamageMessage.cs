@@ -14,5 +14,5 @@ namespace Gamekit3D
 
             public bool stopCamera;
         }
-    } 
+    }
 }

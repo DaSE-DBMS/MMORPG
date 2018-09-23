@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Gamekit3D.GameCommands
 {
-    // This class need to be subclassed to implement behaviour based on receiving game command 
+    // This class need to be subclassed to implement behaviour based on receiving game command
     // (see class in SwitchMaterial.cs or PlaySound.cs for sample)
     [SelectionBase]
     [RequireComponent(typeof(GameCommandReceiver))]

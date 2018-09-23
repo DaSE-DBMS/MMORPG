@@ -13,7 +13,7 @@ namespace Gamekit3D
 
             m_MonoBehaviour.FindTarget();
 
-            if (m_MonoBehaviour.controller.navmeshAgent.pathStatus == NavMeshPathStatus.PathPartial 
+            if (m_MonoBehaviour.controller.navmeshAgent.pathStatus == NavMeshPathStatus.PathPartial
                 || m_MonoBehaviour.controller.navmeshAgent.pathStatus == NavMeshPathStatus.PathInvalid)
             {
                 m_MonoBehaviour.StopPursuit();
@@ -36,7 +36,7 @@ namespace Gamekit3D
                 }
                 else if (m_MonoBehaviour.followerData.assignedSlot != -1)
                 {
-                    Vector3 targetPoint = m_MonoBehaviour.target.transform.position + 
+                    Vector3 targetPoint = m_MonoBehaviour.target.transform.position +
                         m_MonoBehaviour.followerData.distributor.GetDirection(m_MonoBehaviour.followerData
                             .assignedSlot) * m_MonoBehaviour.attackDistance * 0.9f;
 

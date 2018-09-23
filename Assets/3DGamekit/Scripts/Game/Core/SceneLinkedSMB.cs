@@ -3,11 +3,11 @@ using UnityEngine.Animations;
 
 namespace Gamekit3D
 {
-    public class SceneLinkedSMB<TMonoBehaviour> : SealedSMB 
+    public class SceneLinkedSMB<TMonoBehaviour> : SealedSMB
         where TMonoBehaviour : MonoBehaviour
     {
         protected TMonoBehaviour m_MonoBehaviour;
-    
+
         bool m_FirstFrameHappened;
         bool m_LastFrameHappened;
 
@@ -39,7 +39,7 @@ namespace Gamekit3D
         {
             if(!animator.gameObject.activeSelf)
                 return;
-        
+
             if (animator.IsInTransition(layerIndex) && animator.GetNextAnimatorStateInfo(layerIndex).fullPathHash == stateInfo.fullPathHash)
             {
                 OnSLTransitionToStateUpdate(animator, stateInfo, layerIndex);
@@ -51,11 +51,11 @@ namespace Gamekit3D
                 OnSLStateNoTransitionUpdate(animator, stateInfo, layerIndex);
                 OnSLStateNoTransitionUpdate(animator, stateInfo, layerIndex, controller);
             }
-        
+
             if (animator.IsInTransition(layerIndex) && !m_LastFrameHappened && m_FirstFrameHappened)
             {
                 m_LastFrameHappened = true;
-            
+
                 OnSLStatePreExit(animator, stateInfo, layerIndex);
                 OnSLStatePreExit(animator, stateInfo, layerIndex, controller);
             }
@@ -92,7 +92,7 @@ namespace Gamekit3D
         /// Called before Updates when execution of the state first starts (on transition to the state).
         /// </summary>
         public virtual void OnSLStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) { }
-    
+
         /// <summary>
         /// Called after OnSLStateEnter every frame during transition to the state.
         /// </summary>

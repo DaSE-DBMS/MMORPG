@@ -24,5 +24,5 @@ namespace Gamekit3D
             EditorGUILayout.HelpBox((target as InspectorHelpMessage).message, MessageType.Info);
         }
     }
-#endif 
+#endif
 }

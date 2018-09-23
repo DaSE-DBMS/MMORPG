@@ -13,5 +13,5 @@ namespace Gamekit3D
         {
             transform.LookAt(target);
         }
-    } 
+    }
 }

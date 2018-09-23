@@ -14,5 +14,5 @@ namespace Gamekit3D
             transform.position = toFollow.position;
             transform.rotation = toFollow.rotation;
         }
-    } 
+    }
 }

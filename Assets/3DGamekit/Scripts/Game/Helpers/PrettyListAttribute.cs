@@ -35,5 +35,5 @@ namespace Gamekit3D
             EditorGUI.EndProperty();
         }
     }
-#endif 
+#endif
 }

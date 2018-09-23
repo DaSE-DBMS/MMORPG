@@ -18,5 +18,5 @@ namespace Gamekit3D
         {
             void OnReceiveMessage(MessageType type, object sender, object msg);
         }
-    } 
+    }
 }

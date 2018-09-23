@@ -41,7 +41,7 @@ namespace Gamekit3D.GameCommands
             var start = si.transform.position;
             var end = si.interactiveObject.transform.position;
             var dir = (end - start).normalized;
-            
+
             if (Application.isPlaying)
                 Handles.color = Color.Lerp(Color.white, Color.green, si.Temperature);
             var steps = Mathf.FloorToInt((end - start).magnitude);

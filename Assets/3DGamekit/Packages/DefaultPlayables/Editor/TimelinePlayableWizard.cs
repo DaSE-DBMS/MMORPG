@@ -133,7 +133,7 @@ public class TimelinePlayableWizard : EditorWindow
                 return 1;
 
             UsableType other = (UsableType)obj;
-            
+
             if(other == null)
                 throw new ArgumentException("This object is not a UsableType.");
 
@@ -217,7 +217,7 @@ public class TimelinePlayableWizard : EditorWindow
         public PropertyInfo propertyInfo;
 
         int m_TypeIndex;
-        
+
         public string NameWithCaptial
         {
             get { return name.First().ToString().ToUpper() + name.Substring(1); }
@@ -237,7 +237,7 @@ public class TimelinePlayableWizard : EditorWindow
         {
             get { return name + "Prop"; }
         }
-        
+
         public UsableProperty (PropertyInfo propertyInfo)
         {
             this.propertyInfo = propertyInfo;
@@ -295,9 +295,9 @@ public class TimelinePlayableWizard : EditorWindow
                 defaultValue = "";
                 return;
             }
-            
+
             object defaultValueObj = propertyInfo.GetValue (defaultValuesComponent, null);
-            
+
             switch (type)
             {
                 case "float":
@@ -460,7 +460,7 @@ public class TimelinePlayableWizard : EditorWindow
     bool m_CreateButtonPressed;
     Vector2 m_ScrollViewPos;
     CreationError m_CreationError;
-    
+
     readonly GUIContent m_ShowHelpBoxesContent = new GUIContent("Show Help", "Do you want to see the help boxes as part of this wizard?");
     readonly GUIContent m_PlayableNameContent = new GUIContent("Playable Name", "This is the name that will represent the playable.  E.G. TransformTween.  It will be the basis for the class names so it is best not to use the postfixes: 'Clip', 'Behaviour', 'MixerBehaviour' or 'Drawer'.");
     readonly GUIContent m_StandardBlendPlayableContent = new GUIContent("Standard Blend Playable", "Often when creating a playable it's intended purpose is just to briefly override the properties of a component for the playable's duration and then blend back to the defaults.  For example a playable that changes the color of a Light but changes it back.  To make a playable with this functionality, check this box.");
@@ -506,7 +506,7 @@ public class TimelinePlayableWizard : EditorWindow
     static UsableType[] s_BehaviourVariableTypes;
     static Type[] s_BlendableTypes =
     {
-        typeof(float), typeof(int), typeof(double), typeof(Vector2), typeof(Vector3), typeof(Color), 
+        typeof(float), typeof(int), typeof(double), typeof(Vector2), typeof(Vector3), typeof(Color),
     };
     static Type[] s_AssignableTypes =
     {
@@ -517,16 +517,16 @@ public class TimelinePlayableWizard : EditorWindow
     static void CreateWindow ()
     {
         TimelinePlayableWizard wizard = GetWindow<TimelinePlayableWizard>(true, "Timeline Playable Wizard", true);
-        
+
         Vector2 position = Vector2.zero;
         SceneView sceneView = SceneView.lastActiveSceneView;
         if (sceneView != null)
             position = new Vector2(sceneView.position.x, sceneView.position.y);
         wizard.position = new Rect(position.x + k_ScreenSizeWindowBuffer, position.y + k_ScreenSizeWindowBuffer, k_WindowWidth, Mathf.Min(Screen.currentResolution.height - k_ScreenSizeWindowBuffer, k_MaxWindowHeight));
-        
+
         wizard.showHelpBoxes = EditorPrefs.GetBool (k_ShowHelpBoxesKey);
         wizard.Show();
-        
+
         Init ();
     }
 
@@ -660,11 +660,11 @@ public class TimelinePlayableWizard : EditorWindow
             trackBinding = s_TrackBindingTypes[m_TrackBindingTypeIndex];
         }
         EditorGUILayout.EndVertical ();
-        
+
         bool exposedVariablesNamesValid = true;
         bool scriptVariablesNamesValid = true;
         bool allUniqueVariableNames = true;
-        
+
         EditorGUILayout.Space();
         EditorGUILayout.Space();
 
@@ -730,7 +730,7 @@ public class TimelinePlayableWizard : EditorWindow
 
         EditorGUILayout.Space();
         EditorGUILayout.Space();
-        
+
         if (playableNameNotEmpty && playableNameFormatted && allUniqueVariableNames && exposedVariablesNamesValid && scriptVariablesNamesValid && !playableNameTooLong)
         {
             if (GUILayout.Button("Create", GUILayout.Width(60f)))
@@ -743,7 +743,7 @@ public class TimelinePlayableWizard : EditorWindow
                 }
 
                 m_CreationError = CreateScripts();
-                
+
                 if(m_CreationError == CreationError.NoError)
                     Close ();
             }
@@ -751,7 +751,7 @@ public class TimelinePlayableWizard : EditorWindow
 
         EditorGUILayout.Space();
         EditorGUILayout.Space();
-        
+
         if (m_CreateButtonPressed)
         {
             switch (m_CreationError)
@@ -1040,9 +1040,9 @@ public class TimelinePlayableWizard : EditorWindow
         EditorGUILayout.LabelField (m_CDClipTimingContent);
         EditorGUI.indentLevel++;
         clipDefaultDurationSeconds = EditorGUILayout.FloatField(m_CDDurationContent, clipDefaultDurationSeconds);
-        
+
         EditorGUILayout.Space ();
-        
+
         clipDefaultEaseInSeconds = EditorGUILayout.FloatField(m_CDEaseInContent, clipDefaultEaseInSeconds);
         clipDefaultEaseOutSeconds = EditorGUILayout.FloatField (m_CDEaseOutContent, clipDefaultEaseOutSeconds);
 
@@ -1053,14 +1053,14 @@ public class TimelinePlayableWizard : EditorWindow
         }
 
         EditorGUILayout.Space();
-        
+
         clipDefaultClipInSeconds = EditorGUILayout.FloatField(m_CDClipInContent, clipDefaultClipInSeconds);
-        
+
         EditorGUILayout.Space();
-        
+
         clipDefaultSpeedMultiplier = EditorGUILayout.FloatField(m_CDSpeedMultiplierContent, clipDefaultSpeedMultiplier);
         EditorGUI.indentLevel--;
-        
+
         EditorGUILayout.EndVertical();
     }*/
 
@@ -1175,11 +1175,11 @@ public class TimelinePlayableWizard : EditorWindow
 
     string TrackAssetScript ()
     {
-        return 
+        return
             "using UnityEngine;\n" +
             "using UnityEngine.Playables;\n" +
             "using UnityEngine.Timeline;\n" +
-            AdditionalNamespacesToString() + 
+            AdditionalNamespacesToString() +
             "\n" +
             "[TrackColor(" + trackColor.r + "f, " + trackColor.g + "f, " + trackColor.b + "f)]\n" +
             "[TrackClipType(typeof(" + playableName + k_TimelineClipAssetSuffix + "))]\n" +
@@ -1195,7 +1195,7 @@ public class TimelinePlayableWizard : EditorWindow
 
     string PlayableAsset ()
     {
-        return 
+        return
             "using System;\n" +
             "using UnityEngine;\n" +
             "using UnityEngine.Playables;\n" +
@@ -1224,7 +1224,7 @@ public class TimelinePlayableWizard : EditorWindow
 
     string PlayableBehaviour ()
     {
-        return 
+        return
             "using System;\n" +
             "using UnityEngine;\n" +
             "using UnityEngine.Playables;\n" +
@@ -1246,7 +1246,7 @@ public class TimelinePlayableWizard : EditorWindow
 
     string PlayableBehaviourMixer ()
     {
-        return 
+        return
             "using System;\n" +
             "using UnityEngine;\n" +
             "using UnityEngine.Playables;\n" +
@@ -1276,7 +1276,7 @@ public class TimelinePlayableWizard : EditorWindow
 
     string PlayableDrawer ()
     {
-        return 
+        return
             "using UnityEditor;\n" +
             "using UnityEngine;\n" +
             "\n" +
@@ -1292,7 +1292,7 @@ public class TimelinePlayableWizard : EditorWindow
             k_Tab + "public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)\n" +
             k_Tab + "{\n" +
             ScriptVariablesAsSerializedPropAssignmentToString () +
-            "\n" + 
+            "\n" +
             k_Tab + k_Tab + "Rect singleFieldRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);\n" +
             ScriptVariablesAsSerializedPropGUIToString () +
             k_Tab + "}\n" +
@@ -1596,7 +1596,7 @@ public class TimelinePlayableWizard : EditorWindow
             k_Tab + "}\n" +
             "}\n";
     }
-    
+
     string StandardBlendPlayableDrawer ()
     {
         return
@@ -1623,7 +1623,7 @@ public class TimelinePlayableWizard : EditorWindow
             k_Tab + "}\n" +
             "}\n";
     }
-    
+
     string StandardBlendScriptPlayablePropertiesToString ()
     {
         string returnVal = "";

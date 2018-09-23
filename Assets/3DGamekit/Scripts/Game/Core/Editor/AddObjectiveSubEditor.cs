@@ -60,5 +60,5 @@ namespace Gamekit3D
             Repaint();
         }
 
-    } 
+    }
 }

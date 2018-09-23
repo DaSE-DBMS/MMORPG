@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
+VisualStudioVersion = 15.0.28010.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{B8072D92-3F1F-4F1B-AC63-D1F6B738AED0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorldBuildingRuntime", "WorldBuildingRuntime.csproj", "{62883CD6-F42D-B0D5-804D-1B0DCAA886F5}"
@@ -14,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{99258B14-271B-89A7-CDA1-06EFF3D31B0A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackageManagerCheck", "PackageManagerCheck.csproj", "{C60D0A08-1263-08D6-FF83-E41FF2ED72D1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backend", "Backend\Backend.csproj", "{ECA8202B-4632-476A-A0EC-31B5E0B2F2DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,8 +53,15 @@ Global
 		{C60D0A08-1263-08D6-FF83-E41FF2ED72D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C60D0A08-1263-08D6-FF83-E41FF2ED72D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C60D0A08-1263-08D6-FF83-E41FF2ED72D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECA8202B-4632-476A-A0EC-31B5E0B2F2DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECA8202B-4632-476A-A0EC-31B5E0B2F2DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECA8202B-4632-476A-A0EC-31B5E0B2F2DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECA8202B-4632-476A-A0EC-31B5E0B2F2DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CCB1321E-4E57-4F66-85C8-5E388446C4AC}
 	EndGlobalSection
 EndGlobal

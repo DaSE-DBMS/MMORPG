@@ -1,6 +1,7 @@
 using UnityEngine;
 using Gamekit3D.Message;
 using System.Collections;
+using Frontend.Network;
 
 namespace Gamekit3D
 {
@@ -12,7 +13,7 @@ namespace Gamekit3D
         public static PlayerController instance { get { return s_Instance; } }
 
         public bool respawning { get { return m_Respawning; } }
-
+        public bool isMine = false;
         public float maxForwardSpeed = 8f;        // How fast Ellen can run.
         public float gravity = 20f;               // How fast Ellen accelerates downwards when airborne.
         public float jumpSpeed = 10f;             // How fast Ellen takes off when jumping.
@@ -22,7 +23,7 @@ namespace Gamekit3D
         public bool canAttack;                    // Whether or not Ellen can swing her staff.
 
         public CameraSettings cameraSettings;            // Reference used to determine the camera's direction.
-        public MeleeWeapon meleeWeapon;                  // Reference used to (de)activate the staff when attacking. 
+        public MeleeWeapon meleeWeapon;                  // Reference used to (de)activate the staff when attacking.
         public RandomAudioPlayer footstepPlayer;         // Random Audio Players used for various situations.
         public RandomAudioPlayer hurtAudioPlayer;
         public RandomAudioPlayer landingPlayer;
@@ -30,6 +31,7 @@ namespace Gamekit3D
         public RandomAudioPlayer emoteDeathPlayer;
         public RandomAudioPlayer emoteAttackPlayer;
         public RandomAudioPlayer emoteJumpPlayer;
+        private bool m_audioInit = false;
 
         protected AnimatorStateInfo m_CurrentStateInfo;    // Information about the base layer of the animator cached.
         protected AnimatorStateInfo m_NextStateInfo;
@@ -53,7 +55,7 @@ namespace Gamekit3D
         protected bool m_InAttack;                     // Whether Ellen is currently in the middle of a melee attack.
         protected bool m_InCombo;                      // Whether Ellen is currently in the middle of her melee combo.
         protected Damageable m_Damageable;             // Reference used to set invulnerablity and health based on respawning.
-        protected Renderer[] m_Renderers;              // References used to make sure Renderers are reset properly. 
+        protected Renderer[] m_Renderers;              // References used to make sure Renderers are reset properly.
         protected Checkpoint m_CurrentCheckpoint;      // Reference used to reset Ellen to the correct position on respawn.
         protected bool m_Respawning;                   // Whether Ellen is currently respawning.
         protected float m_IdleTimer;                   // Used to count up to Ellen considering a random idle.
@@ -99,6 +101,16 @@ namespace Gamekit3D
         // Tags
         readonly int m_HashBlockInput = Animator.StringToHash("BlockInput");
 
+        bool m_jumping = false;
+        bool m_attacking = false;
+        bool m_moving = false;
+        Vector2 m_movement = new Vector2();
+        //Vector3 m_position = new Vector3();
+        //Quaternion m_rotation = new Quaternion();
+
+        int m_moveStep = 0;
+        NetworkEntity m_entity;
+
         protected bool IsMoveInput
         {
             get { return !Mathf.Approximately(m_Input.MoveInput.sqrMagnitude, 0f); }
@@ -138,19 +150,70 @@ namespace Gamekit3D
             }
         }
 
-        // Called automatically by Unity when the script first exists in the scene.
-        void Awake()
+        public void InitLocalPlayer()
         {
-            m_Input = GetComponent<PlayerInput>();
-            m_Animator = GetComponent<Animator>();
-            m_CharCtrl = GetComponent<CharacterController>();
+            isMine = true;
 
-            meleeWeapon.SetOwner(gameObject);
+            cameraSettings = FindObjectOfType<CameraSettings>();
+
+            if (cameraSettings != null)
+            {
+                cameraSettings.follow = transform;
+                cameraSettings.lookAt = transform.Find("HeadTarget");
+            }
+            m_Input = GetComponent<PlayerInput>();
 
             s_Instance = this;
         }
 
-        // Called automatically by Unity after Awake whenever the script is enabled. 
+        void AudioInit()
+        {
+            Transform audioSource = transform.Find("AudioSources");
+            if (audioSource == null)
+            {
+                return;
+            }
+
+            Transform footStepSource = audioSource.Find("FootstepSource");
+            if (footStepSource != null)
+                footstepPlayer = footStepSource.GetComponent<RandomAudioPlayer>();
+
+            Transform hurtSource = audioSource.Find("HurtSource");
+            if (hurtSource != null)
+                hurtAudioPlayer = hurtSource.GetComponent<RandomAudioPlayer>();
+
+            Transform landingSource = audioSource.Find("LandingSource");
+            if (landingSource != null)
+                landingPlayer = landingSource.GetComponent<RandomAudioPlayer>();
+
+            Transform emoteLanding = audioSource.Find("EmoteLanding");
+            if (emoteLanding != null)
+                emoteLandingPlayer = emoteLanding.GetComponent<RandomAudioPlayer>();
+
+            Transform emoteDeath = audioSource.Find("EmoteDeath");
+            if (emoteDeath != null)
+                emoteDeathPlayer = emoteDeath.GetComponent<RandomAudioPlayer>();
+
+            Transform emoteAttack = audioSource.Find("EmoteAttack");
+            if (emoteAttack != null)
+                emoteAttackPlayer = emoteAttack.GetComponent<RandomAudioPlayer>();
+
+            Transform emoteJump = audioSource.Find("EmoteJump");
+            if (emoteJump != null)
+                emoteJumpPlayer = emoteJump.GetComponent<RandomAudioPlayer>();
+        }
+
+        // Called automatically by Unity when the script first exists in the scene.
+        void Awake()
+        {
+            AudioInit();
+            m_Animator = GetComponent<Animator>();
+            m_CharCtrl = GetComponent<CharacterController>();
+            m_entity = GetComponent<NetworkEntity>();
+            meleeWeapon.SetOwner(gameObject);
+        }
+
+        // Called automatically by Unity after Awake whenever the script is enabled.
         void OnEnable()
         {
             SceneLinkedSMB<PlayerController>.Initialise(m_Animator, this);
@@ -179,25 +242,60 @@ namespace Gamekit3D
         // Called automatically by Unity once every Physics step.
         void FixedUpdate()
         {
-            CacheAnimatorState();
+            if (isMine)
+            {
+                m_attacking = m_Input.Attack;
+                m_moving = IsMoveInput;
+                m_jumping = m_Input.JumpInput;
+                m_movement.Set(m_Input.MoveInput.x, m_Input.MoveInput.y);
+                UpdateInputBlocking();
+            }
 
-            UpdateInputBlocking();
+            CacheAnimatorState();
 
             EquipMeleeWeapon(IsWeaponEquiped());
 
             m_Animator.SetFloat(m_HashStateTime, Mathf.Repeat(m_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime, 1f));
             m_Animator.ResetTrigger(m_HashMeleeAttack);
 
-            if (m_Input.Attack && canAttack)
+            if (m_attacking && canAttack)
+            {
                 m_Animator.SetTrigger(m_HashMeleeAttack);
+                if (isMine)
+                {
+                    SendAttackingAction();
+                }
+            }
 
             CalculateForwardMovement();
             CalculateVerticalMovement();
 
             SetTargetRotation();
 
-            if (IsOrientationUpdated() && IsMoveInput)
+            if (IsOrientationUpdated() && m_moving)
                 UpdateOrientation();
+
+
+            if (!isMine)
+            {
+
+                /*
+                m_CharCtrl.Move(newPosition - transform.position);
+                m_CharCtrl.transform.rotation.Set(newRotation.x, newRotation.y, newRotation.z, newRotation.w);
+                m_IsGrounded = m_CharCtrl.isGrounded;
+
+                // If Ellen is not on the ground then send the vertical speed to the animator.
+                // This is so the vertical speed is kept when landing so the correct landing animation is played.
+                if (!m_IsGrounded)
+                    m_Animator.SetFloat(m_HashAirborneVerticalSpeed, m_VerticalSpeed);
+
+                // Send whether or not Ellen is on the ground to the animator.
+                m_Animator.SetBool(m_HashGrounded, m_IsGrounded);
+                */
+                //m_moving = false;
+                m_jumping = false;
+                m_attacking = false;
+            }
 
             PlayAudio();
 
@@ -252,7 +350,7 @@ namespace Gamekit3D
         void CalculateForwardMovement()
         {
             // Cache the move input and cap it's magnitude at 1.
-            Vector2 moveInput = m_Input.MoveInput;
+            Vector2 moveInput = m_movement;
             if (moveInput.sqrMagnitude > 1f)
                 moveInput.Normalize();
 
@@ -260,7 +358,7 @@ namespace Gamekit3D
             m_DesiredForwardSpeed = moveInput.magnitude * maxForwardSpeed;
 
             // Determine change to speed based on whether there is currently any move input.
-            float acceleration = IsMoveInput ? k_GroundAcceleration : k_GroundDeceleration;
+            float acceleration = m_moving ? k_GroundAcceleration : k_GroundDeceleration;
 
             // Adjust the forward speed towards the desired speed.
             m_ForwardSpeed = Mathf.MoveTowards(m_ForwardSpeed, m_DesiredForwardSpeed, acceleration * Time.deltaTime);
@@ -273,7 +371,7 @@ namespace Gamekit3D
         void CalculateVerticalMovement()
         {
             // If jump is not currently held and Ellen is on the ground then she is ready to jump.
-            if (!m_Input.JumpInput && m_IsGrounded)
+            if (!m_jumping && m_IsGrounded)
                 m_ReadyToJump = true;
 
             if (m_IsGrounded)
@@ -282,9 +380,13 @@ namespace Gamekit3D
                 m_VerticalSpeed = -gravity * k_StickingGravityProportion;
 
                 // If jump is held, Ellen is ready to jump and not currently in the middle of a melee combo...
-                if (m_Input.JumpInput && m_ReadyToJump && !m_InCombo)
+                if (m_jumping && m_ReadyToJump && !m_InCombo)
                 {
                     // ... then override the previously set vertical speed and make sure she cannot jump again.
+                    if (isMine)
+                    {
+                        SendJumpingAction();
+                    }
                     m_VerticalSpeed = jumpSpeed;
                     m_IsGrounded = false;
                     m_ReadyToJump = false;
@@ -293,7 +395,7 @@ namespace Gamekit3D
             else
             {
                 // If Ellen is airborne, the jump button is not held and Ellen is currently moving upwards...
-                if (!m_Input.JumpInput && m_VerticalSpeed > 0.0f)
+                if (!m_jumping && m_VerticalSpeed > 0.0f)
                 {
                     // ... decrease Ellen's vertical speed.
                     // This is what causes holding jump to jump higher that tapping jump.
@@ -305,7 +407,7 @@ namespace Gamekit3D
                 {
                     m_VerticalSpeed = 0f;
                 }
-                
+
                 // If Ellen is airborne, apply gravity.
                 m_VerticalSpeed -= gravity * Time.deltaTime;
             }
@@ -315,15 +417,15 @@ namespace Gamekit3D
         void SetTargetRotation()
         {
             // Create three variables, move input local to the player, flattened forward direction of the camera and a local target rotation.
-            Vector2 moveInput = m_Input.MoveInput;
+            Vector2 moveInput = m_movement;
             Vector3 localMovementDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
-            
-            Vector3 forward = Quaternion.Euler(0f, cameraSettings.Current.m_XAxis.Value, 0f) * Vector3.forward;
+            float y = s_Instance == null ? 0 : s_Instance.cameraSettings.Current.m_XAxis.Value;
+            Vector3 forward = Quaternion.Euler(0f, y, 0f) * Vector3.forward;
             forward.y = 0f;
             forward.Normalize();
 
             Quaternion targetRotation;
-            
+
             // If the local movement direction is the opposite of forward then the target rotation should be towards the camera.
             if (Mathf.Approximately(Vector3.Dot(localMovementDirection, Vector3.forward), -1.0f))
             {
@@ -378,7 +480,7 @@ namespace Gamekit3D
                 {
                     // The desired forward is the direction to the closest enemy.
                     resultingForward = closestForward;
-                    
+
                     // We also directly set the rotation, as we want snappy fight and orientation isn't updated in the UpdateOrientation function during an atatck.
                     transform.rotation = Quaternion.LookRotation(resultingForward);
                 }
@@ -407,7 +509,7 @@ namespace Gamekit3D
         {
             m_Animator.SetFloat(m_HashAngleDeltaRad, m_AngleDiff * Mathf.Deg2Rad);
 
-            Vector3 localInput = new Vector3(m_Input.MoveInput.x, 0f, m_Input.MoveInput.y);
+            Vector3 localInput = new Vector3(m_movement.x, 0f, m_movement.y);
             float groundedTurnSpeed = Mathf.Lerp(maxTurnSpeed, minTurnSpeed, m_ForwardSpeed / m_DesiredForwardSpeed);
             float actualTurnSpeed = m_IsGrounded ? groundedTurnSpeed : Vector3.Angle(transform.forward, localInput) * k_InverseOneEighty * k_AirborneTurnSpeedProportion * groundedTurnSpeed;
             m_TargetRotation = Quaternion.RotateTowards(transform.rotation, m_TargetRotation, actualTurnSpeed * Time.deltaTime);
@@ -418,6 +520,9 @@ namespace Gamekit3D
         // Called each physics step to check if audio should be played and if so instruct the relevant random audio player to do so.
         void PlayAudio()
         {
+            if (!isMine)
+                return;
+
             float footfallCurve = m_Animator.GetFloat(m_HashFootFall);
 
             if (footfallCurve > 0.01f && !footstepPlayer.playing && footstepPlayer.canPlay)
@@ -468,7 +573,7 @@ namespace Gamekit3D
         // Called each physics step to count up to the point where Ellen considers a random idle.
         void TimeoutToIdle()
         {
-            bool inputDetected = IsMoveInput || m_Input.Attack || m_Input.JumpInput;
+            bool inputDetected = m_moving || m_attacking || m_jumping;
             if (m_IsGrounded && !inputDetected)
             {
                 m_IdleTimer += Time.deltaTime;
@@ -491,6 +596,22 @@ namespace Gamekit3D
         // Called each physics step (so long as the Animator component is set to Animate Physics) after FixedUpdate to override root motion.
         void OnAnimatorMove()
         {
+            if (isMine)
+            {
+                if (m_moving && m_moveStep == 0)
+                {
+                    SendMovingBegin();
+                }
+                else if (m_moving && m_moveStep > 0)
+                {
+                    SendMovingStep();
+                }
+                else if (!m_moving && m_moveStep != 0)
+                {
+                    SendMovingEnd();
+                }
+            }
+
             Vector3 movement;
 
             // If Ellen is on the ground...
@@ -503,7 +624,7 @@ namespace Gamekit3D
                 {
                     // ... and get the movement of the root motion rotated to lie along the plane of the ground.
                     movement = Vector3.ProjectOnPlane(m_Animator.deltaPosition, hit.normal);
-                    
+
                     // Also store the current walking surface so the correct audio is played.
                     Renderer groundRenderer = hit.collider.GetComponentInChildren<Renderer>();
                     m_CurrentWalkingSurface = groundRenderer ? groundRenderer.sharedMaterial : null;
@@ -542,7 +663,7 @@ namespace Gamekit3D
             // Send whether or not Ellen is on the ground to the animator.
             m_Animator.SetBool(m_HashGrounded, m_IsGrounded);
         }
-        
+
         // This is called by an animation event when Ellen swings her staff.
         public void MeleeAttackStart(int throwing = 0)
         {
@@ -569,7 +690,7 @@ namespace Gamekit3D
         {
             StartCoroutine(RespawnRoutine());
         }
-        
+
         protected IEnumerator RespawnRoutine()
         {
             // Wait for the animator to be transitioning from the EllenDeath state.
@@ -577,7 +698,7 @@ namespace Gamekit3D
             {
                 yield return null;
             }
-            
+
             // Wait for the screen to fade out.
             yield return StartCoroutine(ScreenFader.FadeSceneOut());
             while (ScreenFader.IsFading)
@@ -605,10 +726,10 @@ namespace Gamekit3D
 
             // Set the Respawn parameter of the animator.
             m_Animator.SetTrigger(m_HashRespawn);
-            
+
             // Start the respawn graphic effects.
             spawn.StartEffect();
-            
+
             // Wait for the screen to fade in.
             // Currently it is not important to yield here but should some changes occur that require waiting until a respawn has finished this will be required.
             yield return StartCoroutine(ScreenFader.FadeSceneIn());
@@ -639,6 +760,42 @@ namespace Gamekit3D
                     }
                     break;
             }
+        }
+        public void RecvMoveBegin()
+        {
+            m_moving = true;
+            m_movement.Set(0f, 0f);
+        }
+
+        public void RecvMoveStep(
+            float dirX, float dirY,
+            float posX, float posY, float posZ,
+            float rotX, float rotY, float rotZ, float rotW)
+        {
+            m_moving = true;
+            m_movement.Set(dirX, dirY);
+            Vector3 position = new Vector3(posX, posY, posZ);
+            Quaternion rotation = new Quaternion(rotX, rotY, rotZ, rotW);
+            transform.position = position;
+            transform.rotation = rotation;
+        }
+
+        public void RecvMoveEnd(float posX, float posY, float posZ)
+        {
+            Vector3 position = new Vector3(posX, posY, posZ);
+            transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * 10.0f);
+            m_movement.Set(0f, 0f);
+            m_moving = false;
+        }
+
+        public void RecvAttack()
+        {
+            m_attacking = true;
+        }
+
+        public void RecvJump()
+        {
+            m_jumping = true;
         }
 
         // Called by OnReceiveMessage.
@@ -675,6 +832,74 @@ namespace Gamekit3D
             m_VerticalSpeed = 0f;
             m_Respawning = true;
             m_Damageable.isInvulnerable = true;
+        }
+
+        void SendJumpingAction()
+        {
+            CPlayerJump action = new CPlayerJump();
+            action.player = m_entity.id;
+            MyNetwork.instance.Send(action);
+        }
+
+        void SendAttackingAction()
+        {
+            CPlayerAttack action = new CPlayerAttack();
+            action.player = m_entity.id;
+            MyNetwork.instance.Send(action);
+        }
+
+        void SendMovingBegin()
+        {
+            CPlayerMove action = new CPlayerMove();
+            action.code = PlayerActionCode.MOVE_BEGIN;
+            action.player = m_entity.id;
+            action.movementX = m_Input.MoveInput.x;
+            action.movementY = m_Input.MoveInput.y;
+            action.positionX = transform.position.x;
+            action.positionY = transform.position.y;
+            action.positionZ = transform.position.z;
+            action.rotationX = transform.rotation.x;
+            action.rotationY = transform.rotation.y;
+            action.rotationZ = transform.rotation.z;
+            action.rotationW = transform.rotation.w;
+            MyNetwork.instance.Send(action);
+            m_moveStep++;
+        }
+
+        void SendMovingStep()
+        {
+            CPlayerMove action = new CPlayerMove();
+            action.code = PlayerActionCode.MOVE_STEP;
+            action.player = m_entity.id;
+            action.movementX = m_Input.MoveInput.x;
+            action.movementY = m_Input.MoveInput.y;
+            action.positionX = transform.position.x;
+            action.positionY = transform.position.y;
+            action.positionZ = transform.position.z;
+            action.rotationX = transform.rotation.x;
+            action.rotationY = transform.rotation.y;
+            action.rotationZ = transform.rotation.z;
+            action.rotationW = transform.rotation.w;
+            MyNetwork.instance.Send(action);
+            m_moveStep++;
+        }
+
+        void SendMovingEnd()
+        {
+            CPlayerMove action = new CPlayerMove();
+            action.code = PlayerActionCode.MOVE_END;
+            action.player = m_entity.id;
+            action.movementX = m_Input.MoveInput.x;
+            action.movementY = m_Input.MoveInput.y;
+            action.positionX = transform.position.x;
+            action.positionY = transform.position.y;
+            action.positionZ = transform.position.z;
+            action.rotationX = transform.rotation.x;
+            action.rotationY = transform.rotation.y;
+            action.rotationZ = transform.rotation.z;
+            action.rotationW = transform.rotation.w;
+            MyNetwork.instance.Send(action);
+            m_moveStep = 0;
         }
     }
 }

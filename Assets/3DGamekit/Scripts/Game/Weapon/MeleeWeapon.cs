@@ -126,7 +126,7 @@ namespace Gamekit3D
 
                     if (attackVector.magnitude < 0.001f)
                     {
-                        // A zero vector for the sphere cast don't yield any result, even if a collider overlap the "sphere" created by radius. 
+                        // A zero vector for the sphere cast don't yield any result, even if a collider overlap the "sphere" created by radius.
                         // so we set a very tiny microscopic forward cast to be sure it will catch anything overlaping that "stationary" sphere cast
                         attackVector = Vector3.forward * 0.0001f;
                     }

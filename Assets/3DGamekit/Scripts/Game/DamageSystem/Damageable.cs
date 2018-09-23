@@ -24,7 +24,7 @@ namespace Gamekit3D
         public float hitForwardRotation = 360.0f;
 
         public bool isInvulnerable { get; set; }
-        public int currentHitPoints { get; private set; }
+        public int currentHitPoints { get; set; }
 
         public UnityEvent OnDeath, OnReceiveDamage, OnHitWhileInvulnerable, OnBecomeVulnerable, OnResetDamage;
 

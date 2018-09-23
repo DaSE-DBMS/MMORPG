@@ -66,5 +66,5 @@ namespace Gamekit3D
             }
         }
 
-    } 
+    }
 }

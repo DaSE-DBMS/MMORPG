@@ -7,7 +7,7 @@ namespace Gamekit3D
     public class TimeEffect : MonoBehaviour
     {
         public Light staffLight;
-        
+
         Animation m_Animation;
 
         void Awake()
@@ -35,5 +35,5 @@ namespace Gamekit3D
             gameObject.SetActive(false);
             staffLight.enabled = false;
         }
-    } 
+    }
 }

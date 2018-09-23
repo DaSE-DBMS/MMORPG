@@ -20,13 +20,13 @@ public class LightControlDrawer : PropertyDrawer
 
         Rect singleFieldRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
         EditorGUI.PropertyField(singleFieldRect, colorProp);
-        
+
         singleFieldRect.y += EditorGUIUtility.singleLineHeight;
         EditorGUI.PropertyField(singleFieldRect, intensityProp);
-        
+
         singleFieldRect.y += EditorGUIUtility.singleLineHeight;
         EditorGUI.PropertyField(singleFieldRect, bounceIntensityProp);
-        
+
         singleFieldRect.y += EditorGUIUtility.singleLineHeight;
         EditorGUI.PropertyField(singleFieldRect, rangeProp);
     }

@@ -6,4 +6,4 @@ for use inside inner game loops. Worst case is almost 40x slower.
 
 The interaction system is higher level than the UnityEvent system, and
 requires less input from the game designer to create functionality. It does
-not use reflection. 
+not use reflection.

@@ -14,12 +14,12 @@ EmojiOne Inc., is a Nevada Corporation. EmojiOne Inc. will be referred to in thi
 Our, or Us.
 2.2 EmojiOne’s artwork
 This license applies to the following artwork, which we will refer to as the EmojiOne Artwork for this agreement: (the
-“EmojiOne Artwork”)
+“EmojiOne Artwork?
 This license includes rights to updates to this third series of premium emojis (any 3.x version) only. This license does
 not include rights to any new series of premium emojis (4.x or higher), stickers, or any custom design.
 2.3 EmojiOne’s properties
 The EmojiOne Artwork, name, logos, trademarks, graphic files, and copyrights will be referred to collectively in this
-agreement as the EmojiOne Properties. (The “EmojiOne Properties”)
+agreement as the EmojiOne Properties. (The “EmojiOne Properties?
 2.4. What if you don’t agree to these terms?
 If you do not agree to the terms below, do not access or use the EmojiOne Artwork. If you have any questions or
 concerns about this agreement, please feel free to contact EmojiOne at licensing@emojione.com .
@@ -78,7 +78,7 @@ nature of your company. The latest pricing can be found on the license purchasin
 
 
 5. Term and termination
-The parties’ rights under this agreement will last until this agreement is terminated. In the event of termination you will
+The parties?rights under this agreement will last until this agreement is terminated. In the event of termination you will
 no longer have any rights to use the EmojiOne Properties. If either party breaches this agreement, the other party can
 terminate this agreement immediately. We reserve the right to terminate this agreement at any time and for any
 reason.
@@ -102,7 +102,7 @@ or use of the EmojiOne Properties; and
 
 8. Arbitration
 Any dispute, claim or controversy arising out of or relating to this agreement will be determined by arbitration in
-Las Vegas, Nevada. The arbitration will be administered by JAMS pursuant to JAMS’ Streamlined Arbitration
+Las Vegas, Nevada. The arbitration will be administered by JAMS pursuant to JAMS?Streamlined Arbitration
 Rules and Procedures and will utilize the Final Offer (or Baseball) option. The latest rules and procedures can be
 found on the JAMS website ( https://www.jamsadr.com/rules-streamlined-arbitration ). Judgment on the award
 may be entered in any court having jurisdiction. This court will not preclude parties from seeking provisional
@@ -138,7 +138,7 @@ that we’ll allow it, though we’ll try).
 14. Severability
 Invalidity or unenforceability of one or more provisions of this agreement shall not affect any other provision of
 this agreement. If possible, any unenforceable provision within this agreement will be modified to reflect the
-parties’ original intention.
+parties?original intention.
 
 
 15. Entire Agreement

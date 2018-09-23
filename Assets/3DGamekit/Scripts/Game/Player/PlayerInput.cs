@@ -27,7 +27,7 @@ public class PlayerInput : MonoBehaviour
     {
         get
         {
-            if(playerControllerInputBlocked || m_ExternalInputBlocked)
+            if (playerControllerInputBlocked || m_ExternalInputBlocked)
                 return Vector2.zero;
             return m_Movement;
         }
@@ -37,7 +37,7 @@ public class PlayerInput : MonoBehaviour
     {
         get
         {
-            if(playerControllerInputBlocked || m_ExternalInputBlocked)
+            if (playerControllerInputBlocked || m_ExternalInputBlocked)
                 return Vector2.zero;
             return m_Camera;
         }
@@ -58,6 +58,11 @@ public class PlayerInput : MonoBehaviour
         get { return m_Pause; }
     }
 
+    protected bool Move
+    {
+        get { return !Mathf.Approximately(MoveInput.sqrMagnitude, 0f); }
+    }
+
     WaitForSeconds m_AttackInputWait;
     Coroutine m_AttackWaitCoroutine;
 
@@ -66,18 +71,18 @@ public class PlayerInput : MonoBehaviour
     void Awake()
     {
         m_AttackInputWait = new WaitForSeconds(k_AttackInputDuration);
-
-        if (s_Instance == null)
-            s_Instance = this;
-        else if (s_Instance != this)
-            throw new UnityException("There cannot be more than one PlayerInput script.  The instances are " + s_Instance.name + " and " + name + ".");
+        s_Instance = this;
+        //if (s_Instance == null)
+        //    s_Instance = this;
+        //else if (s_Instance != this)
+        //    throw new UnityException("There cannot be more than one PlayerInput script.  The instances are " + s_Instance.name + " and " + name + ".");
     }
 
 
     void Update()
     {
         m_Movement.Set(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        m_Camera.Set(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        //m_Camera.Set(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         m_Jump = Input.GetButton("Jump");
 
         if (Input.GetButtonDown("Fire1"))
@@ -88,7 +93,7 @@ public class PlayerInput : MonoBehaviour
             m_AttackWaitCoroutine = StartCoroutine(AttackWait());
         }
 
-        m_Pause = Input.GetButtonDown ("Pause");
+        m_Pause = Input.GetButtonDown("Pause");
     }
 
     IEnumerator AttackWait()

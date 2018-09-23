@@ -62,7 +62,7 @@ namespace Polybrush
 					GUILayout.Label("Bake Options", EditorStyles.boldLabel);
 
 					GUI.enabled = m_VertexStreams.Count == 1;
-					
+
 					if(GUILayout.Button("Apply to\nCurrent Mesh"))
 					{
 						if( EditorUtility.DisplayDialog("Apply Vertex Streams to Mesh", "This action is not undo-able, are you sure you want to continue?", "Yes", "Cancel") )
@@ -161,7 +161,7 @@ namespace Polybrush
 					AssetDatabase.CreateAsset(composite, path);
 
 					MeshFilter mf = go.GetComponent<MeshFilter>();
-					
+
 					SkinnedMeshRenderer smr = go.GetComponent<SkinnedMeshRenderer>();
 
 					if(mf != null)
@@ -205,7 +205,7 @@ namespace Polybrush
 			composite.bindposes = vertexStream.bindposes != null && vertexStream.bindposes.Length == vertexCount ?
 				vertexStream.bindposes :
 				source.bindposes;
-	
+
 			List<Vector4> uvs = new List<Vector4>();
 
 			vertexStream.GetUVs(0, uvs);

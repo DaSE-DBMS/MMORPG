@@ -8,7 +8,7 @@ public class CutsceneScriptControlClip : PlayableAsset, ITimelineClipAsset
 {
     public ExposedReference<PlayerInput> playerInput;
     public CutsceneScriptControlBehaviour template = new CutsceneScriptControlBehaviour();
-    
+
     public ClipCaps clipCaps
     {
         get { return ClipCaps.None; }

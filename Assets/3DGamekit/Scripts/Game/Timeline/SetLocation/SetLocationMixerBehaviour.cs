@@ -11,7 +11,7 @@ public class SetLocationMixerBehaviour : PlayableBehaviour
 
         if (trackBinding == null)
             return;
-        
+
         int inputCount = playable.GetInputCount ();
 
         for (int i = 0; i < inputCount; i++)

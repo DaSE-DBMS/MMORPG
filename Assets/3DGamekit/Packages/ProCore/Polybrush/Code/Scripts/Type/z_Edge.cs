@@ -42,7 +42,7 @@ namespace Polybrush
 
 			a = (x < y ? x : y).GetHashCode();
 			b = (x < y ? y : x).GetHashCode();
-	
+
 			unchecked
 			{
 				hash = hash * 29 + a.GetHashCode();

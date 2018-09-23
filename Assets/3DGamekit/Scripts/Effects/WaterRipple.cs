@@ -22,5 +22,5 @@ namespace Gamekit3D
         {
             mat.SetVector("_UVOffset", new Vector4(offsetPos.position.x, 0, offsetPos.position.z, 1));
         }
-    } 
+    }
 }

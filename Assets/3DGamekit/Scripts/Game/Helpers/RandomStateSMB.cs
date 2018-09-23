@@ -32,5 +32,5 @@ namespace Gamekit3D
                 animator.SetInteger(m_HashRandomIdle, Random.Range(0, numberOfStates));
             }
         }
-    } 
+    }
 }

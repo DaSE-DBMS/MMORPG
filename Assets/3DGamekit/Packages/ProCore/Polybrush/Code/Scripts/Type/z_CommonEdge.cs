@@ -47,7 +47,7 @@ namespace Polybrush
 			// http://stackoverflow.com/questions/5221396/what-is-an-appropriate-gethashcode-algorithm-for-a-2d-point-struct-avoiding
 			return common.GetHashCode();
 		}
-		
+
 		public override string ToString()
 		{
 			return string.Format("{{ {{{0}:{1}}}, {{{2}:{3}}} }}", edge.x, common.x, edge.y, common.y);

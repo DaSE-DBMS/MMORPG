@@ -60,5 +60,5 @@ namespace Gamekit3D
             //need to inspect events and draw arrows to relevant gameObjects.
         }
 
-    } 
+    }
 }

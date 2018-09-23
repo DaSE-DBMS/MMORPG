@@ -18,7 +18,7 @@ public class AudioSnapshotBehaviour : PlayableBehaviour
     public float volume;
     public bool weightedVolume;
     public AudioPlayMode audioPlayMode;
-    
+
     bool m_IsPlaying;
 
     public void PlayAudio (float weight)

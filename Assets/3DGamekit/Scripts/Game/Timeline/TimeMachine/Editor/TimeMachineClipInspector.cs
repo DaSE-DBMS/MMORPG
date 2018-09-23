@@ -36,7 +36,7 @@ public class TimeMachineClipInspector : Editor
 			case TimeMachineBehaviour.TimeMachineAction.JumpToMarker:
 				EditorGUILayout.PropertyField(serializedObject.FindProperty("markerToJumpTo"));
 				break;
-			
+
 			case TimeMachineBehaviour.TimeMachineAction.JumpToTime:
 				EditorGUILayout.PropertyField(serializedObject.FindProperty("timeToJumpTo"));
 				break;
@@ -48,11 +48,11 @@ public class TimeMachineClipInspector : Editor
 			//Condition
 			EditorGUILayout.Space();
 			EditorGUILayout.LabelField("Logic", EditorStyles.boldLabel);
-			
+
 			//change the int into an enum
 			index = conditionProp.enumValueIndex;
 			TimeMachineBehaviour.Condition conditionType = (TimeMachineBehaviour.Condition)index;
-			
+
 			//Draws only the appropriate information based on the Condition type
 			switch(conditionType)
 			{
@@ -60,12 +60,12 @@ public class TimeMachineClipInspector : Editor
 					EditorGUILayout.HelpBox("The above action will always be executed.", MessageType.Warning);
 					EditorGUILayout.PropertyField(conditionProp);
 					break;
-				
+
 				case TimeMachineBehaviour.Condition.Never:
 					EditorGUILayout.HelpBox("The above action will never be executed. Practically, it's as if clip was disabled.", MessageType.Warning);
 					EditorGUILayout.PropertyField(conditionProp);
 					break;
-				
+
 			}
 		}
 

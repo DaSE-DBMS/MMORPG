@@ -36,7 +36,7 @@ public class ScreenFaderMixerBehaviour : PlayableBehaviour
             float inputWeight = playable.GetInputWeight(i);
             ScriptPlayable<ScreenFaderBehaviour> inputPlayable = (ScriptPlayable<ScreenFaderBehaviour>)playable.GetInput(i);
             ScreenFaderBehaviour input = inputPlayable.GetBehaviour ();
-            
+
             blendedColor += input.color * inputWeight;
             totalWeight += inputWeight;
 

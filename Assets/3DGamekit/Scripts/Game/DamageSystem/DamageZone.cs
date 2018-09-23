@@ -33,5 +33,5 @@ namespace Gamekit3D
 
             d.ApplyDamage(msg);
         }
-    } 
+    }
 }

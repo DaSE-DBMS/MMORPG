@@ -10,5 +10,5 @@ namespace Gamekit3D
         {
             animator.GetComponent<PlayerController>().Respawn();
         }
-    } 
+    }
 }

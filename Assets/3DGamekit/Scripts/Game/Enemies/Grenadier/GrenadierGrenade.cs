@@ -68,7 +68,7 @@ namespace Gamekit3D
 
             if (m_SinceFired > 0.2f)
             {
-                //we only enable collision after half a second to get it time to clear the grenadier body 
+                //we only enable collision after half a second to get it time to clear the grenadier body
                 m_RigidBody.detectCollisions = true;
             }
 

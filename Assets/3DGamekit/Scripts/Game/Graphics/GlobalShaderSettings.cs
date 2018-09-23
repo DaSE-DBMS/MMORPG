@@ -32,5 +32,5 @@ namespace Gamekit3D
             Shader.SetGlobalFloat("_FresnelAmount", FresnelAmount);
             Shader.SetGlobalFloat("_FresnelPower", FresnelPower);
         }
-    } 
+    }
 }

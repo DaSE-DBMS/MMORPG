@@ -12,6 +12,6 @@ public class CutsceneScriptControlBehaviour : PlayableBehaviour
 
     public override void OnGraphStart (Playable playable)
     {
-        
+
     }
 }

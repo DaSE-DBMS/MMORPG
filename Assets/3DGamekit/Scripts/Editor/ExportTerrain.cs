@@ -202,7 +202,7 @@ class ExportTerrain : EditorWindow
 
 		terrain = null;
 		EditorUtility.DisplayProgressBar("Saving file to disc.", "This might take a while...", 1f);
-		EditorWindow.GetWindow<ExportTerrain>().Close();      
+		EditorWindow.GetWindow<ExportTerrain>().Close();
 		EditorUtility.ClearProgressBar();
 	}
 

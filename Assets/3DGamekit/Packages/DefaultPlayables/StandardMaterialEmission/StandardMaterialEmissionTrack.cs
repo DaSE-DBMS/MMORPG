@@ -18,15 +18,15 @@ public class StandardMaterialEmissionTrack : TrackAsset
         Renderer trackBinding = director.GetGenericBinding (this) as Renderer;
         if (trackBinding == null)
             return;
-            
+
         var serializedObject = new UnityEditor.SerializedObject (trackBinding);
         var iterator = serializedObject.GetIterator();
-        
+
         while (iterator.NextVisible(true))
         {
             if (iterator.hasVisibleChildren)
                 continue;
-            
+
             driver.AddFromName<Renderer>(trackBinding.gameObject, iterator.propertyPath);
         }
 #endif

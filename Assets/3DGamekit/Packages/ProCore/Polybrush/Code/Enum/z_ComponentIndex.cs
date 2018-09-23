@@ -103,7 +103,7 @@ namespace Polybrush
 			new GUIContent("Z (B)"),
 			new GUIContent("W (A)")
 		};
-		
+
 		public static readonly int[] ComponentIndexPopupValues = new int[]
 		{
 			0,

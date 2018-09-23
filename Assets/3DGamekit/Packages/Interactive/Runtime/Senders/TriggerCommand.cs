@@ -12,7 +12,7 @@ namespace Gamekit3D.GameCommands
             var c = GetComponent<Collider>();
             if (c != null)
                 c.isTrigger = true;
-            
+
             base.Reset ();
         }
     }

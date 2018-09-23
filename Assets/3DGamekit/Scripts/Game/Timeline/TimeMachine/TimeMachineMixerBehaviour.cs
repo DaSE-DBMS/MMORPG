@@ -25,7 +25,7 @@ public class TimeMachineMixerBehaviour : PlayableBehaviour
             float inputWeight = playable.GetInputWeight(i);
             ScriptPlayable<TimeMachineBehaviour> inputPlayable = (ScriptPlayable<TimeMachineBehaviour>)playable.GetInput(i);
             TimeMachineBehaviour input = inputPlayable.GetBehaviour();
-            
+
 			if(inputWeight > 0f)
 			{
 				switch(input.action)
@@ -53,7 +53,7 @@ public class TimeMachineMixerBehaviour : PlayableBehaviour
 							}
 						}
 						break;
-						
+
 				}
 			}
         }

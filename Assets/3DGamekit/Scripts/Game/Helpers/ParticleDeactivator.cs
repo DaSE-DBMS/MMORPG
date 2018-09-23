@@ -26,5 +26,5 @@ namespace Gamekit3D
                 gameObject.SetActive(false);
             }
         }
-    } 
+    }
 }

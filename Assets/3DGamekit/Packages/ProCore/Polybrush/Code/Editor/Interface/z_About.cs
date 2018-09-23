@@ -66,7 +66,7 @@ namespace Polybrush
 
 			if(GUILayout.Button(" Website "))
 				Application.OpenURL(z_Pref.WebsiteLink);
-				
+
 			EndHorizontalCenter();
 
 			BeginHorizontalCenter();
@@ -75,7 +75,7 @@ namespace Polybrush
 				Application.OpenURL(z_Pref.ContactLink);
 
 			GUILayout.Space(12);
-			
+
 			EndHorizontalCenter();
 
 			GUILayout.Label("<b>Changelog</b>", EditorStyles.largeLabel);

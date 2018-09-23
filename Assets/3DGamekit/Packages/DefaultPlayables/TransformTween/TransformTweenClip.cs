@@ -9,7 +9,7 @@ public class TransformTweenClip : PlayableAsset, ITimelineClipAsset
     public TransformTweenBehaviour template = new TransformTweenBehaviour ();
     public ExposedReference<Transform> startLocation;
     public ExposedReference<Transform> endLocation;
-    
+
     public ClipCaps clipCaps
     {
         get { return ClipCaps.Blending; }

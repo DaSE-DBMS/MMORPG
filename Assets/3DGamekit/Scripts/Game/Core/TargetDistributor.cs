@@ -82,7 +82,7 @@ namespace Gamekit3D
             {
                 var follower = m_Followers[i];
 
-                //we free whatever arc this follower may already have. 
+                //we free whatever arc this follower may already have.
                 //If it still need it, it will be picked again next lines.
                 //if it changed position the new one will be picked.
                 if (follower.assignedSlot != -1)

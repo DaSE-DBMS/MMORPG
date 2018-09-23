@@ -19,5 +19,5 @@ namespace Gamekit3D
             if (stopOnDisable)
                 player.audioSource.Stop();
         }
-    } 
+    }
 }

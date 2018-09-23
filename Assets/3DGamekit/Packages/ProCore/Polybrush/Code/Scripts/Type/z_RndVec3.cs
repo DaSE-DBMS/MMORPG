@@ -19,7 +19,7 @@ namespace Polybrush
 			this.y = vector.y;
 			this.z = vector.z;
 		}
-		
+
 		public bool Equals(z_RndVec3 p)
 		{
 			return  Mathf.Abs(x - p.x) < resolution &&

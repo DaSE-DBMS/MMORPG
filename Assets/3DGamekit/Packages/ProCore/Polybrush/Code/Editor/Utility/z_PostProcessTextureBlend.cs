@@ -43,7 +43,7 @@ namespace Polybrush
 				return;
 
 			int channelCount = z_ShaderUtil.GetTextureChannelCount(source);
-			
+
 			if(channelCount < 1)
 				Debug.LogWarning("ShaderForge created shader does not contain a \"" + TEXTURE_CHANNEL_DEF + "\" comment.");
 
@@ -58,7 +58,7 @@ namespace Polybrush
 				System.Environment.NewLine,
 				TEXTURE_CHANNEL_DEF + channelCount,
 				MESH_ATTRIBS_DEF + attribs.ToString(" "));
-			
+
 			source = source.Insert(0, header);
 			source = Regex.Replace(source, "Shader\\s\"Hidden/", "Shader \"");
 			source = Regex.Replace(source, "CustomEditor\\s\\\"ShaderForgeMaterialInspector\\\"", "CustomEditor \"z_BlendMaterialInspector\"");

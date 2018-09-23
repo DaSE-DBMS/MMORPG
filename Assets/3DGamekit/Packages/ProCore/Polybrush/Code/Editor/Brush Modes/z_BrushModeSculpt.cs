@@ -98,7 +98,7 @@ namespace Polybrush
 			z_Mesh mesh = target.editableObject.editMesh;
 
 			cached_normals = new Vector3[mesh.vertexCount];
-			
+
 			if(mesh.normals != null && mesh.normals.Length == mesh.vertexCount)
 				System.Array.Copy(mesh.normals, 0, cached_normals, 0, mesh.vertexCount);
 		}

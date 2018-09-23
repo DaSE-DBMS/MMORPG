@@ -13,5 +13,5 @@ namespace Gamekit3D
         {
             transform.Rotate(axis, speed * Time.deltaTime);
         }
-    } 
+    }
 }

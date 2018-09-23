@@ -191,9 +191,9 @@ namespace Gamekit3D
             if (Mathf.Abs(angle) < 20.0f)
             { //for a very small angle, we directly rotate the model
                 transform.forward = v.normalized;
-                // if the player was above the player we return false to tell the Idle state 
+                // if the player was above the player we return false to tell the Idle state
                 // that we want a "shield up" attack as our punch attack wouldn't reach it.
-                return above ? OrientationState.ORIENTED_ABOVE : OrientationState.ORIENTED_FACE; 
+                return above ? OrientationState.ORIENTED_ABOVE : OrientationState.ORIENTED_FACE;
             }
 
             m_EnemyController.animator.SetFloat(hashTurnAngleParam, angle / 180.0f);

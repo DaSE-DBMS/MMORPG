@@ -33,7 +33,7 @@ namespace Polybrush
 			for(int i = 0; i < p_attributes.arraySize; i++)
 			{
 				SerializedProperty attrib = p_attributes.GetArrayElementAtIndex(i);
-				
+
 				GUI.backgroundColor = i % 2 == 0 ? LIGHT_GRAY : DARK_GRAY;
 				GUILayout.BeginVertical(z_GUI.backgroundColorStyle);
 				GUI.backgroundColor = Color.white;
@@ -47,7 +47,7 @@ namespace Polybrush
 				EditorGUILayout.PropertyField(target);
 				EditorGUILayout.PropertyField(channel);
 				EditorGUILayout.IntPopup(index, z_ComponentIndexUtility.ComponentIndexPopupDescriptions, z_ComponentIndexUtility.ComponentIndexPopupValues);
-				
+
 				bool old = EditorGUIUtility.wideMode;
 				EditorGUIUtility.wideMode = true;
 				EditorGUILayout.PropertyField(range);

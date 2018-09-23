@@ -24,7 +24,7 @@ namespace Polybrush
 
 			do
 			{
-				if( selection.Contains(node) )	
+				if( selection.Contains(node) )
 					return true;
 
 				node = node.parent;
@@ -155,7 +155,7 @@ namespace Polybrush
 		{
 			return SaveMeshAttributesData(container.shader, container.attributes, overwrite);
 		}
-		
+
 		public static string SaveMeshAttributesData(Shader shader, z_AttributeLayout[] attributes, bool overwrite = false)
 		{
 			if(shader == null || attributes == null)
@@ -372,7 +372,7 @@ namespace Polybrush
 		}
 
 		/**
-		 *	Set the selected render state for an object.  In Unity 5.4 and lower, this just toggles wireframe 
+		 *	Set the selected render state for an object.  In Unity 5.4 and lower, this just toggles wireframe
 		 *	on or off.
 		 */
 		public static void SetSelectionRenderState(Renderer renderer, z_SelectionRenderState state)
@@ -380,7 +380,7 @@ namespace Polybrush
 			#if UNITY_5_3 || UNITY_5_4
 				EditorUtility.SetSelectedWireframeHidden(renderer, state == 0);
 			#else
-				EditorUtility.SetSelectedRenderState(renderer, (EditorSelectedRenderState) state ); 
+				EditorUtility.SetSelectedRenderState(renderer, (EditorSelectedRenderState) state );
 			#endif
 		}
 
@@ -395,7 +395,7 @@ namespace Polybrush
 
 			bool wireframe = false, outline = false;
 
-			try {			
+			try {
 				wireframe = (bool) z_ReflectionUtil.GetValue(null, "UnityEditor.AnnotationUtility", "showSelectionWire");
 				outline = (bool) z_ReflectionUtil.GetValue(null, "UnityEditor.AnnotationUtility", "showSelectionOutline");
 			} catch {

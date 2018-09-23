@@ -2,7 +2,7 @@ namespace Polybrush
 {
 	public struct z_ColorMask
 	{
-		public bool r, g, b, a; 
+		public bool r, g, b, a;
 
 		public z_ColorMask(bool r, bool g, bool b, bool a)
 		{
@@ -13,4 +13,4 @@ namespace Polybrush
 		}
 	}
 }
-	
+

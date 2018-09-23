@@ -44,7 +44,7 @@ public class LightControlMixerBehaviour : PlayableBehaviour
             float inputWeight = playable.GetInputWeight(i);
             ScriptPlayable<LightControlBehaviour> inputPlayable = (ScriptPlayable<LightControlBehaviour>)playable.GetInput(i);
             LightControlBehaviour input = inputPlayable.GetBehaviour ();
-            
+
             blendedColor += input.color * inputWeight;
             blendedIntensity += input.intensity * inputWeight;
             blendedBounceIntensity += input.bounceIntensity * inputWeight;

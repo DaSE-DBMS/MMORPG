@@ -5,7 +5,7 @@ using System.Linq;
 namespace Polybrush
 {
 	public class z_SplatWeight
-	{	
+	{
 		private Dictionary<z_MeshChannel, int> map;
 		float[] values;
 
@@ -140,7 +140,7 @@ namespace Polybrush
 				values[4] = Mathf.LerpUnclamped(lhs.values[4], rhs.values[4], alpha);
 				values[5] = Mathf.LerpUnclamped(lhs.values[5], rhs.values[5], alpha);
 				values[6] = Mathf.LerpUnclamped(lhs.values[6], rhs.values[6], alpha);
-				values[7] = Mathf.LerpUnclamped(lhs.values[7], rhs.values[7], alpha);				
+				values[7] = Mathf.LerpUnclamped(lhs.values[7], rhs.values[7], alpha);
 			}
 			else if(len == 16)
 			{
@@ -151,7 +151,7 @@ namespace Polybrush
 				values[4] = Mathf.LerpUnclamped(lhs.values[4], rhs.values[4], alpha);
 				values[5] = Mathf.LerpUnclamped(lhs.values[5], rhs.values[5], alpha);
 				values[6] = Mathf.LerpUnclamped(lhs.values[6], rhs.values[6], alpha);
-				values[7] = Mathf.LerpUnclamped(lhs.values[7], rhs.values[7], alpha);	
+				values[7] = Mathf.LerpUnclamped(lhs.values[7], rhs.values[7], alpha);
 				values[8] = Mathf.LerpUnclamped(lhs.values[8], rhs.values[8], alpha);
 				values[9] = Mathf.LerpUnclamped(lhs.values[9], rhs.values[9], alpha);
 				values[10] = Mathf.LerpUnclamped(lhs.values[10], rhs.values[10], alpha);
@@ -159,7 +159,7 @@ namespace Polybrush
 				values[12] = Mathf.LerpUnclamped(lhs.values[12], rhs.values[12], alpha);
 				values[13] = Mathf.LerpUnclamped(lhs.values[13], rhs.values[13], alpha);
 				values[14] = Mathf.LerpUnclamped(lhs.values[14], rhs.values[14], alpha);
-				values[15] = Mathf.LerpUnclamped(lhs.values[15], rhs.values[15], alpha);				
+				values[15] = Mathf.LerpUnclamped(lhs.values[15], rhs.values[15], alpha);
 			}
 			else
 			{
@@ -188,7 +188,7 @@ namespace Polybrush
 				values[mask[4]] = Mathf.LerpUnclamped(lhs.values[mask[4]], rhs.values[mask[4]], alpha);
 				values[mask[5]] = Mathf.LerpUnclamped(lhs.values[mask[5]], rhs.values[mask[5]], alpha);
 				values[mask[6]] = Mathf.LerpUnclamped(lhs.values[mask[6]], rhs.values[mask[6]], alpha);
-				values[mask[7]] = Mathf.LerpUnclamped(lhs.values[mask[7]], rhs.values[mask[7]], alpha);				
+				values[mask[7]] = Mathf.LerpUnclamped(lhs.values[mask[7]], rhs.values[mask[7]], alpha);
 			}
 			else
 			{

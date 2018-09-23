@@ -17,10 +17,10 @@ namespace Gamekit3D.GameCommands
         public override void PerformInteraction()
         {
             OnDirectorPlay.Invoke ();
-            
+
             if (director)
                 director.Play();
-            
+
             Invoke ("FinishInvoke", (float)director.duration);
         }
 

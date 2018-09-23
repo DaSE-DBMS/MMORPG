@@ -20,7 +20,6 @@ namespace Gamekit3D
             public bool invertY;
         }
 
-
         public Transform follow;
         public Transform lookAt;
         public CinemachineFreeLook keyboardAndMouseCamera;
@@ -30,11 +29,16 @@ namespace Gamekit3D
         public InvertSettings controllerInvertSettings;
         public bool allowRuntimeCameraSettingsChanges;
 
+
         public CinemachineFreeLook Current
         {
             get { return inputChoice == InputChoice.KeyboardAndMouse ? keyboardAndMouseCamera : controllerCamera; }
         }
 
+        public bool fixCamera = false;
+        private string m_inputXAxisName;
+        private string m_inputYAxisName;
+        bool m_updateFix = false;
         void Reset()
         {
             Transform keyboardAndMouseCameraTransform = transform.Find("KeyboardAndMouseFreeLookRig");
@@ -60,6 +64,8 @@ namespace Gamekit3D
         void Awake()
         {
             UpdateCameraSettings();
+            m_inputXAxisName = keyboardAndMouseCamera.m_XAxis.m_InputAxisName;
+            m_inputYAxisName = keyboardAndMouseCamera.m_YAxis.m_InputAxisName;
         }
 
         void Update()
@@ -70,8 +76,36 @@ namespace Gamekit3D
             }
         }
 
+        public void FixCamera()
+        {
+            if (fixCamera)
+                return;
+
+            keyboardAndMouseCamera.m_XAxis.m_InputAxisName = "";
+            keyboardAndMouseCamera.m_YAxis.m_InputAxisName = "";
+            controllerCamera.m_XAxis.m_InputAxisName = "";
+            controllerCamera.m_YAxis.m_InputAxisName = "";
+            fixCamera = true;
+        }
+
+        public void UnFixCamera()
+        {
+            if (!fixCamera)
+                return;
+
+            keyboardAndMouseCamera.m_XAxis.m_InputAxisName = m_inputXAxisName;
+            keyboardAndMouseCamera.m_YAxis.m_InputAxisName = m_inputYAxisName;
+            controllerCamera.m_XAxis.m_InputAxisName = m_inputXAxisName;
+            controllerCamera.m_YAxis.m_InputAxisName = m_inputYAxisName;
+            fixCamera = false;
+        }
+
         void UpdateCameraSettings()
         {
+            if (fixCamera)
+            {
+                return;
+            }
             keyboardAndMouseCamera.Follow = follow;
             keyboardAndMouseCamera.LookAt = lookAt;
             keyboardAndMouseCamera.m_XAxis.m_InvertInput = keyboardAndMouseInvertSettings.invertX;
@@ -85,5 +119,5 @@ namespace Gamekit3D
             keyboardAndMouseCamera.Priority = inputChoice == InputChoice.KeyboardAndMouse ? 1 : 0;
             controllerCamera.Priority = inputChoice == InputChoice.Controller ? 1 : 0;
         }
-    } 
+    }
 }

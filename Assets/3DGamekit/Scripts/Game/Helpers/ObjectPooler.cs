@@ -45,5 +45,5 @@ namespace Gamekit3D
     {
         int poolID { get; set; }
         ObjectPooler<T> pool { get; set; }
-    } 
+    }
 }

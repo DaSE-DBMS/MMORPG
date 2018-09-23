@@ -88,7 +88,7 @@ namespace Gamekit3D
                     m_Directors[i].Resume ();
                 }
             }
-            
+
             if(!m_InPause)
                 CameraShake.Stop ();
 

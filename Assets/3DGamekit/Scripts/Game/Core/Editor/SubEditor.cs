@@ -29,5 +29,5 @@ namespace Gamekit3D
 
         Editor editor;
         System.Action defer;
-    } 
+    }
 }

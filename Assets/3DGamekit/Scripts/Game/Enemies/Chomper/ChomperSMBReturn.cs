@@ -19,7 +19,7 @@ namespace Gamekit3D
 
             if(m_MonoBehaviour.target != null)
                 m_MonoBehaviour.StartPursuit(); // if the player got back in our vision range, resume pursuit!
-            else 
+            else
                 m_MonoBehaviour.WalkBackToBase();
         }
     }

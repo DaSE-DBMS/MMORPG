@@ -35,5 +35,5 @@ namespace Gamekit3D
 
             transform.rotation = mat.rotation;
         }
-    } 
+    }
 }

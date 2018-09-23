@@ -53,7 +53,7 @@ namespace Gamekit3D
 
             if ((cam.cullingMask & (1 << gameObject.layer)) == 0)
                 return;
-            
+
             if (!_cameraBufferAdded.Contains(cam))
             {
                 _cameraBufferAdded.Add(cam);

@@ -13,5 +13,5 @@ namespace Gamekit3D
             transform.position = target.position;
             transform.rotation = target.rotation;
         }
-    } 
+    }
 }

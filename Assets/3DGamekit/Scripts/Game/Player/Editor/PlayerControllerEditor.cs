@@ -145,5 +145,5 @@ namespace Gamekit3D
 
             m_MaxTurnSpeedProp.floatValue = EditorGUI.IntField(maxRect, (int)m_MaxTurnSpeedProp.floatValue);
         }
-    } 
+    }
 }

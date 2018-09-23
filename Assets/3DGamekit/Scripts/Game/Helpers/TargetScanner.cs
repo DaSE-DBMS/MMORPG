@@ -24,13 +24,15 @@ namespace Gamekit3D
         /// <returns>The player controller if visible, null otherwise</returns>
         public PlayerController Detect(Transform detector, bool useHeightDifference = true)
         {
+            PlayerController player = PlayerController.instance;
+
             //if either the player is not spwned or they are spawning, we do not target them
-            if (PlayerController.instance == null || PlayerController.instance.respawning)
+            if (player == null || player.respawning)
                 return null;
 
             Vector3 eyePos = detector.position + Vector3.up * heightOffset;
-            Vector3 toPlayer = PlayerController.instance.transform.position - eyePos;
-            Vector3 toPlayerTop = PlayerController.instance.transform.position + Vector3.up * 1.5f - eyePos;
+            Vector3 toPlayer = player.transform.position - eyePos;
+            Vector3 toPlayerTop = player.transform.position + Vector3.up * 1.5f - eyePos;
 
             if (useHeightDifference && Mathf.Abs(toPlayer.y + heightOffset) > maxHeightDifference)
             { //if the target is too high or too low no need to try to reach it, just abandon pursuit
@@ -58,7 +60,7 @@ namespace Gamekit3D
                         viewBlockerLayerMask, QueryTriggerInteraction.Ignore);
 
                     if (canSee)
-                        return PlayerController.instance;
+                        return player;
                 }
             }
 

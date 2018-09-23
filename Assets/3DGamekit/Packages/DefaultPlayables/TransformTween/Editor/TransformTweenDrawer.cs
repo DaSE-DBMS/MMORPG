@@ -24,10 +24,10 @@ public class TransformTweenDrawer : PropertyDrawer
         SerializedProperty tweenPositionProp = property.FindPropertyRelative ("tweenPosition");
         SerializedProperty tweenRotationProp = property.FindPropertyRelative("tweenRotation");
         SerializedProperty tweenTypeProp = property.FindPropertyRelative ("tweenType");
-        
+
         Rect singleFieldRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
         EditorGUI.PropertyField (singleFieldRect, tweenPositionProp, m_TweenPositionContent);
-        
+
         singleFieldRect.y += EditorGUIUtility.singleLineHeight;
         EditorGUI.PropertyField (singleFieldRect, tweenRotationProp, m_TweenRotationContent);
 

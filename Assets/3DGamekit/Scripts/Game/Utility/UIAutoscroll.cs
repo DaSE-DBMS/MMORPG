@@ -28,5 +28,5 @@ namespace Gamekit3D
                 yield return null;
             }
         }
-    } 
+    }
 }
