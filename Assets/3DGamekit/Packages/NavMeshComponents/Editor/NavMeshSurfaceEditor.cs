@@ -148,7 +148,7 @@ namespace UnityEditor.AI
 
             serializedObject.Update();
 
-            var bs = NavMesh.GetSettingsByID(m_AgentTypeID.intValue);
+            var bs = UnityEngine.AI.NavMesh.GetSettingsByID(m_AgentTypeID.intValue);
 
             if (bs.agentTypeID != -1)
             {

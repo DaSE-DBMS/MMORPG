@@ -2,6 +2,8 @@ using UnityEngine;
 using Gamekit3D.Message;
 using System.Collections;
 using Frontend.Network;
+using System.Collections.Generic;
+using Common.Data;
 
 namespace Gamekit3D
 {
@@ -9,6 +11,7 @@ namespace Gamekit3D
     [RequireComponent(typeof(Animator))]
     public class PlayerController : MonoBehaviour, IMessageReceiver
     {
+
         protected static PlayerController s_Instance;
         public static PlayerController instance { get { return s_Instance; } }
 

@@ -38,12 +38,12 @@ namespace UnityEditor.AI
         public static void AgentTypePopup(string labelName, SerializedProperty agentTypeID)
         {
             var index = -1;
-            var count = NavMesh.GetSettingsCount();
+            var count = UnityEngine.AI.NavMesh.GetSettingsCount();
             var agentTypeNames = new string[count + 2];
             for (var i = 0; i < count; i++)
             {
-                var id = NavMesh.GetSettingsByIndex(i).agentTypeID;
-                var name = NavMesh.GetSettingsNameFromID(id);
+                var id = UnityEngine.AI.NavMesh.GetSettingsByIndex(i).agentTypeID;
+                var name = UnityEngine.AI.NavMesh.GetSettingsNameFromID(id);
                 agentTypeNames[i] = name;
                 if (id == agentTypeID.intValue)
                     index = i;
@@ -66,7 +66,7 @@ namespace UnityEditor.AI
             {
                 if (index >= 0 && index < count)
                 {
-                    var id = NavMesh.GetSettingsByIndex(index).agentTypeID;
+                    var id = UnityEngine.AI.NavMesh.GetSettingsByIndex(index).agentTypeID;
                     agentTypeID.intValue = id;
                 }
                 else if (index == count + 1)
@@ -110,11 +110,11 @@ namespace UnityEditor.AI
                 menu.AddItem(new GUIContent("All"), showAll, SetAgentMaskAll, agentMask);
                 menu.AddSeparator("");
 
-                var count = NavMesh.GetSettingsCount();
+                var count = UnityEngine.AI.NavMesh.GetSettingsCount();
                 for (var i = 0; i < count; i++)
                 {
-                    var id = NavMesh.GetSettingsByIndex(i).agentTypeID;
-                    var sname = NavMesh.GetSettingsNameFromID(id);
+                    var id = UnityEngine.AI.NavMesh.GetSettingsByIndex(i).agentTypeID;
+                    var sname = UnityEngine.AI.NavMesh.GetSettingsNameFromID(id);
 
                     var showSelected = show && AgentMaskHasSelectedAgentTypeID(agentMask, id);
                     var userData = new object[] { agentMask, id, !showSelected };
@@ -230,7 +230,7 @@ namespace UnityEditor.AI
                 for (var j = 0; j < agentMask.arraySize; j++)
                 {
                     var elem = agentMask.GetArrayElementAtIndex(j);
-                    var settingsName = NavMesh.GetSettingsNameFromID(elem.intValue);
+                    var settingsName = UnityEngine.AI.NavMesh.GetSettingsNameFromID(elem.intValue);
                     if (string.IsNullOrEmpty(settingsName))
                         continue;
 
