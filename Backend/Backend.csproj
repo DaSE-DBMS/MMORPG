@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="AI\index\**" />
+    <EmbeddedResource Remove="AI\index\**" />
+    <None Remove="AI\index\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Assembly-CSharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Game\Item.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GeometRi" Version="1.3.5.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="System.Spatial" Version="5.8.4" />
+  </ItemGroup>
+
+</Project>
