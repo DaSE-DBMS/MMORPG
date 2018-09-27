@@ -57,7 +57,7 @@ Also Remember to place that object in a layer that collide with what you want to
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            EditorGUI.HelpBox(position, property.stringValue, MessageType.Info);
+            EditorGUI.HelpBox(position, property.stringValue, UnityEditor.MessageType.Info);
         }
     }
 #endif

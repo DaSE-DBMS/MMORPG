@@ -32,13 +32,8 @@ public class SCreatureSpawn : Message
 {
     public SCreatureSpawn() : base(Command.S_CREATURE_SPAWN) { }
     public int id;
-    public float positionX;
-    public float positionY;
-    public float positionZ;
-    public float rotationX;
-    public float rotationY;
-    public float rotationZ;
-    public float rotationW;
+    public V3 pos;
+    public V4 rot;
     public int hitPoints;
     public int maxHitPoints;
     public int level;
@@ -66,15 +61,9 @@ public class SPlayerMove : SPlayerAction
     }
     // target is valid when action is ATTACK/MOVE
     // x, y, z is valid when action is MOVE
-    public float movementX;
-    public float movementY;
-    public float positionX;
-    public float positionY;
-    public float positionZ;
-    public float rotationX;
-    public float rotationY;
-    public float rotationZ;
-    public float rotationW;
+    public V2 move;
+    public V3 pos;
+    public V4 rot;
 }
 
 [Serializable]
@@ -136,8 +125,8 @@ public class SPathFinding : Message
 {
     public SPathFinding() : base(Command.S_PATH_FINDING)
     {
-        path = new List<Pos>();
+        path = new List<V3>();
     }
 
-    public List<Pos> path;
+    public List<V3> path;
 }

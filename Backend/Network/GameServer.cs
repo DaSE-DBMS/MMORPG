@@ -1,6 +1,9 @@
-﻿using System;
+﻿using System.Xml.Serialization;
+using System.IO;
 using Backend.Game;
 using Backend.AI;
+using Common.Data;
+
 namespace Backend.Network
 {
     public class GameServer : IRegister
@@ -20,10 +23,13 @@ namespace Backend.Network
         {
             server = new Server();
             incomming = new Incomming(this);
+
             // register message callback sink
-            PathFinding.Instance().LoadNavMesh();
             server.RegisterClose(RecvConnectionClose);
-            World.Instance.Create();
+
+            // load assets before create game world and receive client connections
+            LoadAssets();
+
             // start the server, block till program exit
             server.Start(ip, port);
         }
@@ -35,7 +41,21 @@ namespace Backend.Network
 
         private void RecvConnectionClose(IChannel channel)
         {
-            World.Instance.RemoveEntity(((Entity)channel.GetContent()).id);
+            World.Instance().RemoveEntity(((Entity)channel.GetContent()).id);
+        }
+
+        private void LoadAssets()
+        {
+            for (int i = 0; i < 1; i++)
+            {// foreach scene assets, TODO
+                XmlSerializer serializer = new XmlSerializer(typeof(DSceneAsset));
+
+                StreamReader reader = new StreamReader("E:/Users/ybbh/workspace/MMORPG/Assets/navmesh/Level1.xml");
+
+                DSceneAsset asset = (DSceneAsset)serializer.Deserialize(reader);
+
+                World.Instance().LoadScene(asset);
+            }
         }
     }
 }

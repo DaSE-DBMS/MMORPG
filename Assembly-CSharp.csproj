@@ -165,7 +165,7 @@
     <Compile Include="Assets\3DGamekit\Scripts\Common\IChannel.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Common\IRegister.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Common\Message.cs" />
-    <Compile Include="Assets\3DGamekit\Scripts\Common\Serializable.cs" />
+    <Compile Include="Assets\3DGamekit\Scripts\Common\SerializableData.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Common\Singleton.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Effects\CaptureDepthTexture.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Effects\CopyShadowMap.cs" />
@@ -325,13 +325,6 @@
     <Compile Include="Assets\3DGamekit\Scripts\Scripts\SoundTrack.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Scripts\SoundTrackVolume.cs" />
     <Compile Include="Assets\3DGamekit\TutorialInfo\Scripts\Readme.cs" />
-    <Compile Include="Assets\Advanced Waypoint System\Scripts\AWSEntityIdentifier.cs" />
-    <Compile Include="Assets\Advanced Waypoint System\Scripts\AWSManager.cs" />
-    <Compile Include="Assets\Advanced Waypoint System\Scripts\AWSPatrol.cs" />
-    <Compile Include="Assets\Advanced Waypoint System\Scripts\Waypoint.cs" />
-    <Compile Include="Assets\Advanced Waypoint System\Scripts\WaypointIdentifier.cs" />
-    <Compile Include="Assets\Advanced Waypoint System\Scripts\WaypointRoute.cs" />
-    <Compile Include="Assets\Advanced Waypoint System\Scripts\WaypointRouteIdentifier.cs" />
     <None Include="Assets\3DGameKit_Third-PartyNotice.txt" />
     <None Include="Assets\3DGamekit\Shaders\Rock.shader" />
     <None Include="Assets\3DGamekit\Packages\ProCore\Polybrush\README.txt" />
@@ -365,8 +358,8 @@
     <None Include="Assets\3DGamekit\Shaders\UnityStandardParticleShadow.cginc" />
     <None Include="Assets\3DGamekit\Shaders\UnityStandardParticles.cginc" />
     <None Include="Assets\3DGamekit\Shaders\Alien.shader" />
-    <None Include="Assets\navmesh\navmesh_Level1.xml" />
     <None Include="Assets\3DGamekit\Packages\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Mobile.shader" />
+    <None Include="Assets\navmesh\Level1.xml" />
     <None Include="Assets\3DGamekit\Packages\TextMesh Pro\Resources\Shaders\TMP_SDF Overlay.shader" />
     <None Include="Assets\3DGamekit\Shaders\WaterX.shader" />
     <None Include="Assets\3DGamekit\Shaders\Firefly.shader" />

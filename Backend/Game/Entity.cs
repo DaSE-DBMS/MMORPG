@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using Common.Data;
 
 namespace Backend.Game
 {
@@ -9,19 +10,14 @@ namespace Backend.Game
         private int parent = 0;
         public Dictionary<int, Entity> children = new Dictionary<int, Entity>();
         public int id;
-        public float positionX;
-        public float positionY;
-        public float positionZ;
-        public float rotationX = 0;
-        public float rotationY = 0;
-        public float rotationZ = 0;
-        public float rotationW = 0;
+        public V3 pos;
+        public V4 rot;
         public string name;
 
         public Entity()
         {
             id = sequence++;
-            World.Instance.AddEntity(id, this);
+            World.Instance().AddEntity(id, this);
         }
 
         public int Parent()
@@ -30,7 +26,7 @@ namespace Backend.Game
         }
         ~Entity()
         {
-            World.Instance.RemoveEntity(id);
+            World.Instance().RemoveEntity(id);
         }
 
         virtual public void AddEntity(int id, Entity entity)

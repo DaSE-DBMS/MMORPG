@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
-using System.IO;
 using Common.Data;
 using GeometRi;
 using System.Spatial;
 
 namespace Backend.AI
 {
-    public class PathFinding : Singleton<PathFinding>
+    public class PathFinding
     {
         string m_path;
 
         RTree.RTree<MeshElement> m_rtree = new RTree.RTree<MeshElement>();
-        Dictionary<int, MeshElement> mesh = new Dictionary<int, MeshElement>();
+        Dictionary<int, MeshElement> m_meshDict = new Dictionary<int, MeshElement>();
 
         class Step : IComparable<Step>
         {
@@ -58,20 +55,15 @@ namespace Backend.AI
             m_close.Clear();
         }
 
-        public void LoadNavMesh()
+        public void LoadNavMesh(DNavM mesh)
         {
-            //JsonReader reader = new JsonReader();
-            XmlSerializer serializer = new XmlSerializer(typeof(Common.Data.NavM));
-            StreamReader sm = new StreamReader("E:/Users/ybbh/workspace/MMORPG/Assets/navmesh/navmesh_Level1.xml");
-
-            Common.Data.NavM navM = (Common.Data.NavM)serializer.Deserialize(sm);
-            foreach (Common.Data.Tngl tr in navM.mesh)
+            foreach (Common.Data.DTngl tr in mesh.list)
             {
                 MeshElement me = new MeshElement(tr.p);
                 AddElement(me);
             }
 
-            foreach (KeyValuePair<int, MeshElement> kv in mesh)
+            foreach (KeyValuePair<int, MeshElement> kv in this.m_meshDict)
             {
                 List<MeshElement> meshList = m_rtree.Intersects(kv.Value.bounding);
                 foreach (MeshElement element in meshList)
@@ -97,12 +89,12 @@ namespace Backend.AI
 
         void AddElement(MeshElement element)
         {
-            mesh.Add(element.meshId, element);
+            m_meshDict.Add(element.meshId, element);
 
             m_rtree.Add(element.bounding, element);
         }
 
-        public bool FindPath(Pos p1, Pos p2, out List<Pos> path)
+        public bool FindPath(V3 p1, V3 p2, out List<V3> path)
         {
             bool ret = false;
             RTree.Point point = new RTree.Point(p1.x, p1.y, p1.z);
@@ -134,7 +126,7 @@ namespace Backend.AI
         }
 
 
-        bool FindPath(MeshElement start, Pos pos, out List<Pos> path)
+        bool FindPath(MeshElement start, V3 pos, out List<V3> path)
         {
             Point3d end = new Point3d();
             Point3d currentPos = start.triangle.Centroid.Copy();
@@ -206,14 +198,14 @@ namespace Backend.AI
             return false;
         }
 
-        void ConstructPath(Step lastStep, out List<Pos> path)
+        void ConstructPath(Step lastStep, out List<V3> path)
         {
             Step step = lastStep;
-            path = new List<Pos>();
+            path = new List<V3>();
             while (step.prev != null)
             {
                 Point3d point = step.element.triangle.Centroid;
-                Pos pos = new Pos();
+                V3 pos = new V3();
                 pos.x = (float)point.X;
                 pos.y = (float)point.Y;
                 pos.z = (float)point.Z;

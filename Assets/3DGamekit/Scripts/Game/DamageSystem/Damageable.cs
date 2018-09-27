@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using Gamekit3D.Message;
+using Gamekit3D;
 using UnityEngine.Serialization;
 
 namespace Gamekit3D
@@ -29,7 +29,7 @@ namespace Gamekit3D
         public UnityEvent OnDeath, OnReceiveDamage, OnHitWhileInvulnerable, OnBecomeVulnerable, OnResetDamage;
 
         [Tooltip("When this gameObject is damaged, these other gameObjects are notified.")]
-        [EnforceType(typeof(Message.IMessageReceiver))]
+        [EnforceType(typeof(IMessageReceiver))]
         public List<MonoBehaviour> onDamageMessageReceivers;
 
         protected float m_timeSinceLastHit = 0.0f;
@@ -101,7 +101,7 @@ namespace Gamekit3D
             else
                 OnReceiveDamage.Invoke();
 
-            var messageType = currentHitPoints <= 0 ? MessageType.DEAD : MessageType.DAMAGED;
+            var messageType = currentHitPoints <= 0 ? DamageMsgType.DEAD : DamageMsgType.DAMAGED;
 
             for (var i = 0; i < onDamageMessageReceivers.Count; ++i)
             {

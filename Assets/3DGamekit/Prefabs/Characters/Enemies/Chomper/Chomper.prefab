@@ -1285,7 +1285,7 @@ GameObject:
   - component: {fileID: 65771025306039616}
   - component: {fileID: 114643127116660914}
   - component: {fileID: 195733995024529676}
-  - component: {fileID: 114756126515446466}
+  - component: {fileID: 114510813362303408}
   m_Layer: 23
   m_Name: Chomper
   m_TagString: Untagged
@@ -4010,10 +4010,10 @@ MonoBehaviour:
   defaultBank:
     name: 
     clips:
-    - {fileID: 8300000, guid: bf7ffafeb00554918bb2c3d15fc2a029, type: 3}
-    - {fileID: 8300000, guid: b55626a1eb2774761adab017aeb7d3c1, type: 3}
-    - {fileID: 8300000, guid: 1fa4b2feb447e47e7934ccad24547d2c, type: 3}
-    - {fileID: 8300000, guid: 7d0afb4083ad64053bdeb009ee5f557f, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
   overrides: []
   playing: 0
   canPlay: 0
@@ -4064,6 +4064,21 @@ MonoBehaviour:
   gruntAudio: {fileID: 114720182369786316}
   deathAudio: {fileID: 114771674042626142}
   spottedAudio: {fileID: 114643955118306876}
+--- !u!114 &114510813362303408
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1722084123150156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6144b6ec46934af47ba50190c2e57eb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parent: {fileID: 0}
+  children: []
+  type: 1
+  id: 0
 --- !u!114 &114643127116660914
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4094,10 +4109,10 @@ MonoBehaviour:
   defaultBank:
     name: 
     clips:
-    - {fileID: 8300000, guid: f0d4346d9202b46cead7bb23493006ee, type: 3}
-    - {fileID: 8300000, guid: f642992729f22436393d0e273086c451, type: 3}
-    - {fileID: 8300000, guid: 89a46775cccb3436dbb6c56af49d8aa0, type: 3}
-    - {fileID: 8300000, guid: 823b8fbee86b74fa3b574b80d64a8082, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
   overrides: []
   playing: 0
   canPlay: 0
@@ -4173,15 +4188,15 @@ MonoBehaviour:
   defaultBank:
     name: 
     clips:
-    - {fileID: 8300000, guid: f0d4346d9202b46cead7bb23493006ee, type: 3}
-    - {fileID: 8300000, guid: f642992729f22436393d0e273086c451, type: 3}
-    - {fileID: 8300000, guid: 89a46775cccb3436dbb6c56af49d8aa0, type: 3}
-    - {fileID: 8300000, guid: b63b23c284dc045fcbccd1131f3242bc, type: 3}
-    - {fileID: 8300000, guid: d662be556027845fc93707790a3e966c, type: 3}
-    - {fileID: 8300000, guid: a8f50519932594413b42778333bd3d7f, type: 3}
-    - {fileID: 8300000, guid: 8068b821af9af4591a4aa3279c9206f2, type: 3}
-    - {fileID: 8300000, guid: f6146219f3e9b4d1485f4e513a4a5036, type: 3}
-    - {fileID: 8300000, guid: 85df966dffd37450988e3f4ddadce8c2, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
   overrides: []
   playing: 0
   canPlay: 0
@@ -4202,59 +4217,27 @@ MonoBehaviour:
   defaultBank:
     name: 
     clips:
-    - {fileID: 8300000, guid: 70ece8d618b4d43b08af272a3208792b, type: 3}
-    - {fileID: 8300000, guid: f33a5d43705e04a62938687b9c1f6ded, type: 3}
-    - {fileID: 8300000, guid: e1b27c08fa5c0494b92acd4c86ff28d4, type: 3}
-    - {fileID: 8300000, guid: c3d4cf13f2d4f410e867c031a88d48ee, type: 3}
-    - {fileID: 8300000, guid: 0145c2597c5a44b24824d11d4da5a42e, type: 3}
-    - {fileID: 8300000, guid: 8dc5fd5019c11480891bfa14d0d948cd, type: 3}
-    - {fileID: 8300000, guid: dfede9dde2ac8424f947fe460cd53949, type: 3}
-    - {fileID: 8300000, guid: cf0fc6e4e210042cf87e4e29ab384f5f, type: 3}
-    - {fileID: 8300000, guid: b9263ed33011d4993a837ade1234937e, type: 3}
-    - {fileID: 8300000, guid: 5735d52cf3c094ff1b024ad03e7b1026, type: 3}
-    - {fileID: 8300000, guid: fa23ab5f485f14afcbb0fe03ec670d3e, type: 3}
-    - {fileID: 8300000, guid: d3786ef5528f64804ac1d12d01aaf093, type: 3}
-    - {fileID: 8300000, guid: 5976be94a5153483d8d5ba5daa440145, type: 3}
-    - {fileID: 8300000, guid: 737c8640ecdb84f319604dc6ca741d83, type: 3}
-    - {fileID: 8300000, guid: c2307afe0651e45cc97499fc3a238d6b, type: 3}
-    - {fileID: 8300000, guid: a4d79a9472719436184e3c5e009536c8, type: 3}
-    - {fileID: 8300000, guid: 8d2cbb44966354db5aa880f7705709f3, type: 3}
-    - {fileID: 8300000, guid: a50623944f79c428cbf6c02a98720f68, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
   overrides: []
   playing: 0
   canPlay: 0
---- !u!114 &114756126515446466
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1722084123150156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SceneId:
-    m_Value: 0
-  m_AssetId:
-    i0: 233
-    i1: 86
-    i2: 156
-    i3: 126
-    i4: 19
-    i5: 229
-    i6: 18
-    i7: 100
-    i8: 8
-    i9: 41
-    i10: 16
-    i11: 65
-    i12: 90
-    i13: 18
-    i14: 13
-    i15: 56
-  m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
 --- !u!114 &114771674042626142
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4272,10 +4255,10 @@ MonoBehaviour:
   defaultBank:
     name: 
     clips:
-    - {fileID: 8300000, guid: 20b5f8cd003d14fca9e07f3eb4ed6018, type: 3}
-    - {fileID: 8300000, guid: 5debac2ba587047fabc1812fe04614a7, type: 3}
-    - {fileID: 8300000, guid: 3b266634d0a5a49fe83f29438b381dbb, type: 3}
-    - {fileID: 8300000, guid: 20341ed82ced64f398ad7d8f3f8b1264, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
   overrides: []
   playing: 0
   canPlay: 0
@@ -4296,24 +4279,24 @@ MonoBehaviour:
   defaultBank:
     name: 
     clips:
-    - {fileID: 8300000, guid: 05201c7c3f87c4cd3a6c4dc43a0652b2, type: 3}
-    - {fileID: 8300000, guid: 1639c7b6c675f4e5287b42be0d262e16, type: 3}
-    - {fileID: 8300000, guid: a3a8bae53c50142c2923d00a58fc3d0d, type: 3}
-    - {fileID: 8300000, guid: 6e667c8aa49bf45d0b0ec92981591abb, type: 3}
-    - {fileID: 8300000, guid: cf87bbfd6e3c947149b7e1538ff934f2, type: 3}
-    - {fileID: 8300000, guid: 6f35180019d6a4533b603f6312b137b5, type: 3}
-    - {fileID: 8300000, guid: 26059d7ea42244942b2dbdf682cc2074, type: 3}
-    - {fileID: 8300000, guid: 05a9422f68ca84ba2aba88f3162a3ae1, type: 3}
-    - {fileID: 8300000, guid: fa2c8cc074e534bf4a5452c6b5255079, type: 3}
-    - {fileID: 8300000, guid: 6aaa41fc368664d85b0d3c0baeeb48ee, type: 3}
-    - {fileID: 8300000, guid: 52aba2dde1ed541cc879924ed599e95c, type: 3}
-    - {fileID: 8300000, guid: 58fc687e70ffa420387e04808e1acc53, type: 3}
-    - {fileID: 8300000, guid: 130fc3c7e79534a09b2a2859c80b1659, type: 3}
-    - {fileID: 8300000, guid: f6e7ccadd0d9a4e608686215f44ceb90, type: 3}
-    - {fileID: 8300000, guid: 8a31748aa846c44009429daa71943e88, type: 3}
-    - {fileID: 8300000, guid: e4931864e27024f8a960f302569fc83b, type: 3}
-    - {fileID: 8300000, guid: 141cd882d47ab413ca0ed22d06dc5333, type: 3}
-    - {fileID: 8300000, guid: db5a5816ee14249a29ad63f5dce38e75, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
   overrides: []
   playing: 0
   canPlay: 0
@@ -4334,22 +4317,22 @@ MonoBehaviour:
   defaultBank:
     name: 
     clips:
-    - {fileID: 8300000, guid: c1c63d14bc9d9497b8f9b39c4ea3b1c7, type: 3}
-    - {fileID: 8300000, guid: 824847d62ccd14ff6b07903f9e05cfba, type: 3}
-    - {fileID: 8300000, guid: 4a528072e8ad445f28ddd34c84ecd462, type: 3}
-    - {fileID: 8300000, guid: 92e156953d62c4513a1a60f1b871d233, type: 3}
-    - {fileID: 8300000, guid: c2ab714771dae4836a6a3522a9748b11, type: 3}
-    - {fileID: 8300000, guid: 11e52601a1d3b4e0798b4243d08f17ab, type: 3}
-    - {fileID: 8300000, guid: 35826db396251463590686ad377413e8, type: 3}
-    - {fileID: 8300000, guid: a2e3e84de5b584e33b275126431dea5a, type: 3}
-    - {fileID: 8300000, guid: a33f1c181edb64a36a17f71ec8c8db58, type: 3}
-    - {fileID: 8300000, guid: b0f55fb2fae9744939a1dea66f139c79, type: 3}
-    - {fileID: 8300000, guid: fce2f1f6c101f45bbae456ddcd524a0d, type: 3}
-    - {fileID: 8300000, guid: b1a927b83b4394e17b6b0e380ca35d34, type: 3}
-    - {fileID: 8300000, guid: 859d527f503a74dfcb549cb59dc0217d, type: 3}
-    - {fileID: 8300000, guid: 70f6c9ce42fc64b4e9c0a82f7f33e3a8, type: 3}
-    - {fileID: 8300000, guid: 82aeda075249b4f079a224f18dc3fabb, type: 3}
-    - {fileID: 8300000, guid: c17dbba8e12e842f89fe6790df8e14e0, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
   overrides: []
   playing: 0
   canPlay: 0

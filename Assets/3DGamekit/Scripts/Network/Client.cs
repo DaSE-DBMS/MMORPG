@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Frontend.Network
+namespace Gamekit3D.Network
 {
     // Client use non-blocking socket, receive synchronously, send asynchronously
     public class Client : Singleton<Client>, IChannel, IRegister

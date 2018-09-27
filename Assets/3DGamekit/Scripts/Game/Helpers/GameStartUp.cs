@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-using Frontend.Network;
+using Gamekit3D.Network;
 
 public class GameStartUp : MonoBehaviour
 {

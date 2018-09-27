@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Gamekit3D.Message;
+using Gamekit3D;
 using UnityEngine;
 
 namespace Gamekit3D
@@ -50,14 +50,14 @@ namespace Gamekit3D
 
         }
 
-        public void OnReceiveMessage(Message.MessageType type, object sender, object msg)
+        public void OnReceiveMessage(DamageMsgType type, object sender, object msg)
         {
             switch (type)
             {
-                case Message.MessageType.DEAD:
+                case DamageMsgType.DEAD:
                     Death((Damageable.DamageMessage)msg);
                     break;
-                case Message.MessageType.DAMAGED:
+                case DamageMsgType.DAMAGED:
                     ApplyDamage((Damageable.DamageMessage)msg);
                     break;
                 default:
@@ -130,13 +130,13 @@ namespace Gamekit3D
             if (frontStepAudio != null && frontFoot == 1)
                 frontStepAudio.PlayRandomClip();
             else if (backStepAudio != null && frontFoot == 0)
-                backStepAudio.PlayRandomClip ();
+                backStepAudio.PlayRandomClip();
         }
 
-        public void Grunt ()
+        public void Grunt()
         {
             if (gruntAudio != null)
-                gruntAudio.PlayRandomClip ();
+                gruntAudio.PlayRandomClip();
         }
 
         public void Spotted()

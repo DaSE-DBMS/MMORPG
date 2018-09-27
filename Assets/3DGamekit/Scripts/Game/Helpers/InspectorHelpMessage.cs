@@ -21,7 +21,7 @@ namespace Gamekit3D
     {
         public override void OnInspectorGUI()
         {
-            EditorGUILayout.HelpBox((target as InspectorHelpMessage).message, MessageType.Info);
+            EditorGUILayout.HelpBox((target as InspectorHelpMessage).message, UnityEditor.MessageType.Info);
         }
     }
 #endif

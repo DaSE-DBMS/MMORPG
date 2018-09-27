@@ -160,9 +160,6 @@
     <Compile Include="Assets\3DGamekit\Scripts\Game\Timeline\SetLocation\Editor\SetLocationDrawer.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Timeline\TimeMachine\Editor\TimeMachineClipInspector.cs" />
     <Compile Include="Assets\3DGamekit\TutorialInfo\Scripts\Editor\ReadmeEditor.cs" />
-    <Compile Include="Assets\Advanced Waypoint System\Editor\AWSEditor.cs" />
-    <Compile Include="Assets\Advanced Waypoint System\Editor\AWSManagerInspector.cs" />
-    <Compile Include="Assets\Advanced Waypoint System\Editor\WaypointCreatorInspector.cs" />
     <Reference Include="Cinemachine">
       <HintPath>E:/Users/ybbh/workspace/MMORPG/Library/ScriptAssemblies/Cinemachine.dll</HintPath>
     </Reference>

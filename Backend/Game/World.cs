@@ -1,24 +1,14 @@
 ﻿using System.Collections.Generic;
+using Common.Data;
 
 namespace Backend.Game
 {
-    class World : MyObject
+    class World : Singleton<World>
     {
         private Dictionary<int, Entity> entities = new Dictionary<int, Entity>();
 
-        private static World instance = new World();
-
         private Dictionary<string, Scene> scenes = new Dictionary<string, Scene>();
 
-        private World() { }
-
-        public static World Instance
-        {
-            get
-            {
-                return instance;
-            }
-        }
 
         public Entity GetEntity(int id)
         {
@@ -54,19 +44,10 @@ namespace Backend.Game
             return ret;
         }
 
-        public void Create()
+        public void LoadScene(DSceneAsset asset)
         {
             Scene scene = new Scene();
-            scene.name = "Level1";
-
-            Scene scene1 = new Scene();
-            scene1.name = "Level2";
-
-
-
-            scenes.Add(scene.name, scene);
-            scenes.Add(scene1.name, scene1);
-
+            scene.Load(asset);
         }
 
         public Scene GetScene(string name)

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Frontend.Network
+namespace Gamekit3D.Network
 {
 
     public class MyNetwork : MonoBehaviour

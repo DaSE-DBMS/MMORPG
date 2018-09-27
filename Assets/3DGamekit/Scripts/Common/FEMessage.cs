@@ -41,15 +41,9 @@ public class CPlayerMove : CPlayerAction
     }
     // target is valid when action is ATTACK/MOVE
     // x, y, z is valid when action is MOVE
-    public float movementX;
-    public float movementY;
-    public float positionX;
-    public float positionY;
-    public float positionZ;
-    public float rotationX;
-    public float rotationY;
-    public float rotationZ;
-    public float rotationW;
+    public V2 move;
+    public V3 pos;
+    public V4 rot;
 }
 
 [Serializable]
@@ -77,8 +71,8 @@ public class CPathFinding : Message
 {
     public CPathFinding() : base(Command.C_PATH_FINDING)
     {
-        pos = new Pos();
+        pos = new V3();
     }
 
-    public Pos pos;
+    public V3 pos;
 }

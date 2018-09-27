@@ -11,7 +11,7 @@ namespace Backend.Game
 
         public Scene GetScene()
         {
-            return (Scene)World.Instance.GetEntity(Parent());
+            return (Scene)World.Instance().GetEntity(Parent());
         }
 
         public Player(IChannel channel)
@@ -54,13 +54,8 @@ namespace Backend.Game
         {
             SCreatureSpawn msg = new SCreatureSpawn();
             msg.id = creature.id;
-            msg.positionX = creature.positionX;
-            msg.positionY = creature.positionY;
-            msg.positionZ = creature.positionZ;
-            msg.rotationX = creature.rotationX;
-            msg.rotationY = creature.rotationY;
-            msg.rotationZ = creature.rotationZ;
-            msg.rotationW = creature.rotationW;
+            msg.pos = creature.pos;
+            msg.rot = creature.rot;
             msg.hitPoints = creature.hitPoints;
             msg.maxHitPoints = creature.maxHitPoints;
             msg.level = creature.level;

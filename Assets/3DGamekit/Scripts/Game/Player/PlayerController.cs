@@ -1,7 +1,7 @@
 using UnityEngine;
-using Gamekit3D.Message;
+using Gamekit3D;
 using System.Collections;
-using Frontend.Network;
+using Gamekit3D.Network;
 using System.Collections.Generic;
 using Common.Data;
 
@@ -746,17 +746,17 @@ namespace Gamekit3D
         }
 
         // Called by Ellen's Damageable when she is hurt.
-        public void OnReceiveMessage(MessageType type, object sender, object data)
+        public void OnReceiveMessage(DamageMsgType type, object sender, object data)
         {
             switch (type)
             {
-                case MessageType.DAMAGED:
+                case DamageMsgType.DAMAGED:
                     {
                         Damageable.DamageMessage damageData = (Damageable.DamageMessage)data;
                         Damaged(damageData);
                     }
                     break;
-                case MessageType.DEAD:
+                case DamageMsgType.DEAD:
                     {
                         Damageable.DamageMessage damageData = (Damageable.DamageMessage)data;
                         Die(damageData);
@@ -771,21 +771,21 @@ namespace Gamekit3D
         }
 
         public void RecvMoveStep(
-            float dirX, float dirY,
-            float posX, float posY, float posZ,
-            float rotX, float rotY, float rotZ, float rotW)
+            V2 move,
+            V3 pos,
+            V4 rot)
         {
             m_moving = true;
-            m_movement.Set(dirX, dirY);
-            Vector3 position = new Vector3(posX, posY, posZ);
-            Quaternion rotation = new Quaternion(rotX, rotY, rotZ, rotW);
+            m_movement.Set(move.x, move.y);
+            Vector3 position = new Vector3(pos.x, pos.y, pos.z);
+            Quaternion rotation = new Quaternion(rot.x, rot.y, rot.z, rot.w);
             transform.position = position;
             transform.rotation = rotation;
         }
 
-        public void RecvMoveEnd(float posX, float posY, float posZ)
+        public void RecvMoveEnd(V3 pos)
         {
-            Vector3 position = new Vector3(posX, posY, posZ);
+            Vector3 position = new Vector3(pos.x, pos.y, pos.z);
             transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * 10.0f);
             m_movement.Set(0f, 0f);
             m_moving = false;
@@ -851,20 +851,24 @@ namespace Gamekit3D
             MyNetwork.instance.Send(action);
         }
 
+        void InitAction(CPlayerMove action)
+        {
+            action.player = m_entity.id;
+            action.move.x = m_Input.MoveInput.x;
+            action.move.y = m_Input.MoveInput.y;
+            action.pos.x = transform.position.x;
+            action.pos.y = transform.position.y;
+            action.pos.z = transform.position.z;
+            action.rot.x = transform.rotation.x;
+            action.rot.y = transform.rotation.y;
+            action.rot.z = transform.rotation.z;
+            action.rot.w = transform.rotation.w;
+        }
         void SendMovingBegin()
         {
             CPlayerMove action = new CPlayerMove();
             action.code = PlayerActionCode.MOVE_BEGIN;
-            action.player = m_entity.id;
-            action.movementX = m_Input.MoveInput.x;
-            action.movementY = m_Input.MoveInput.y;
-            action.positionX = transform.position.x;
-            action.positionY = transform.position.y;
-            action.positionZ = transform.position.z;
-            action.rotationX = transform.rotation.x;
-            action.rotationY = transform.rotation.y;
-            action.rotationZ = transform.rotation.z;
-            action.rotationW = transform.rotation.w;
+            InitAction(action);
             MyNetwork.instance.Send(action);
             m_moveStep++;
         }
@@ -873,16 +877,7 @@ namespace Gamekit3D
         {
             CPlayerMove action = new CPlayerMove();
             action.code = PlayerActionCode.MOVE_STEP;
-            action.player = m_entity.id;
-            action.movementX = m_Input.MoveInput.x;
-            action.movementY = m_Input.MoveInput.y;
-            action.positionX = transform.position.x;
-            action.positionY = transform.position.y;
-            action.positionZ = transform.position.z;
-            action.rotationX = transform.rotation.x;
-            action.rotationY = transform.rotation.y;
-            action.rotationZ = transform.rotation.z;
-            action.rotationW = transform.rotation.w;
+            InitAction(action);
             MyNetwork.instance.Send(action);
             m_moveStep++;
         }
@@ -891,16 +886,7 @@ namespace Gamekit3D
         {
             CPlayerMove action = new CPlayerMove();
             action.code = PlayerActionCode.MOVE_END;
-            action.player = m_entity.id;
-            action.movementX = m_Input.MoveInput.x;
-            action.movementY = m_Input.MoveInput.y;
-            action.positionX = transform.position.x;
-            action.positionY = transform.position.y;
-            action.positionZ = transform.position.z;
-            action.rotationX = transform.rotation.x;
-            action.rotationY = transform.rotation.y;
-            action.rotationZ = transform.rotation.z;
-            action.rotationW = transform.rotation.w;
+            InitAction(action);
             MyNetwork.instance.Send(action);
             m_moveStep = 0;
         }

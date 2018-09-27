@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Common.Data;
+using Backend.AI;
 
 namespace Backend.Game
 {
@@ -6,6 +8,25 @@ namespace Backend.Game
     {
         private Dictionary<int, Player> players = new Dictionary<int, Player>();
         private Dictionary<int, Sprite> sprites = new Dictionary<int, Sprite>();
+        private PathFinding path = new PathFinding();
+
+        public void Load(DSceneAsset asset)
+        {
+            path.LoadNavMesh(asset.mesh);
+            foreach (DEntity e in asset.entities.list)
+            {
+                Entity entity = CreateEntity(e);
+                if (entity != null)
+                {
+                    AddEntity(e.id, entity);
+                }
+            }
+        }
+
+        public bool FindPath(V3 start, V3 end, out List<V3> steps)
+        {
+            return path.FindPath(start, end, out steps);
+        }
 
         public Dictionary<int, Player> Players
         {
@@ -90,6 +111,49 @@ namespace Backend.Game
             {
                 p.Value.connection.Send(message);
             }
+        }
+
+        static Entity CreateEntity(DEntity de)
+        {
+            Entity entity = null;
+            switch ((EntityType)de.type)
+            {
+                case EntityType.PLAYER:
+                    break;
+                case EntityType.SPRITE:
+                    Sprite sprite = new Sprite();
+                    sprite.pos = de.pos;
+                    sprite.rot = de.rot;
+                    sprite.hitPoints = de.HP;
+                    sprite.maxHitPoints = de.maxHP;
+                    sprite.level = de.level;
+                    sprite.speed = de.speed;
+                    sprite.aggressive = de.aggressive;
+                    sprite.name = de.name;
+                    entity = sprite;
+                    break;
+                case EntityType.ITEM:
+                    Item item = new Item();
+                    item.pos = de.pos;
+                    item.rot = de.rot;
+                    item.name = de.name;
+                    entity = item;
+                    break;
+                default:
+                    break;
+            }
+            if (entity != null)
+            {
+                foreach (DEntity e in de.children)
+                {
+                    Entity childEntity = CreateEntity(e);
+                    if (childEntity != null)
+                    {
+                        entity.AddEntity(childEntity.id, childEntity);
+                    }
+                }
+            }
+            return entity;
         }
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 using Gamekit3D;
 using Common.Data;
 
-namespace Frontend.Network
+namespace Gamekit3D.Network
 {
     public class Incomming
     {
@@ -64,8 +64,8 @@ namespace Frontend.Network
             }
 
             // Do not use transform.position.Set(x, y, z), because position return a cloned Vector3 object
-            clone.transform.position = new Vector3(m.positionX, m.positionY, m.positionZ);
-            clone.transform.rotation = new Quaternion(m.rotationX, m.rotationY, m.rotationZ, m.rotationW);
+            clone.transform.position = new Vector3(m.pos.x, m.pos.y, m.pos.z);
+            clone.transform.rotation = new Quaternion(m.rot.x, m.rot.y, m.rot.z, m.rot.w);
             damageable.currentHitPoints = m.hitPoints;
             damageable.maxHitPoints = m.maxHitPoints;
             entity.id = m.id;
@@ -121,15 +121,13 @@ namespace Frontend.Network
                 case PlayerActionCode.MOVE_STEP:
                     {
                         SPlayerMove m = (SPlayerMove)message;
-                        controller.RecvMoveStep(m.movementX, m.movementY,
-                            m.positionX, m.positionY, m.positionZ,
-                            m.rotationX, m.rotationY, m.rotationZ, m.rotationW);
+                        controller.RecvMoveStep(m.move, m.pos, m.rot);
                     }
                     break;
                 case PlayerActionCode.MOVE_END:
                     {
                         SPlayerMove m = (SPlayerMove)message;
-                        controller.RecvMoveEnd(m.positionX, m.positionY, m.positionZ);
+                        controller.RecvMoveEnd(m.pos);
                     }
                     break;
                 case PlayerActionCode.ATTACK:
@@ -162,7 +160,7 @@ namespace Frontend.Network
         private void RecvPathFinding(IChannel channel, Message message)
         {
             SPathFinding msg = (SPathFinding)message;
-            foreach (Pos p in msg.path)
+            foreach (V3 p in msg.path)
             {
                 Vector3 v = new Vector3(p.x, p.y, p.z);
                 Debug.DrawLine(v, v + Vector3.up * 10, Color.red, 60);

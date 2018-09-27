@@ -34,9 +34,9 @@ namespace Backend.Network
             channel.Send(response);
             Player player = new Player(channel);
             player.scene = "Level1";
-            player.positionX = 23;
-            player.positionY = 2;
-            player.positionZ = 64;
+            player.pos.x = 23;
+            player.pos.y = 2;
+            player.pos.z = 64;
             player.hitPoints = 3;
             player.maxHitPoints = 5;
             player.level = 1;
@@ -53,7 +53,7 @@ namespace Backend.Network
             if (player == null)
                 return;
 
-            Scene scene = World.Instance.GetScene(player.scene);
+            Scene scene = World.Instance().GetScene(player.scene);
             if (scene == null)
                 return;
 
@@ -65,7 +65,7 @@ namespace Backend.Network
         private void RecvPlayerAction(IChannel channel, Message message)
         {
             CPlayerAction request = (CPlayerAction)message;
-            Player player = (Player)World.Instance.GetEntity(request.player);
+            Player player = (Player)World.Instance().GetEntity(request.player);
             if (player == null)
             {
                 return;
@@ -81,20 +81,10 @@ namespace Backend.Network
                         SPlayerMove smsg = new SPlayerMove();
                         smsg.player = cmsg.player;
                         smsg.code = cmsg.code;
-                        smsg.movementX = cmsg.movementX;
-                        smsg.movementY = cmsg.movementY;
+                        smsg.pos = cmsg.pos;
+                        smsg.rot = cmsg.rot;
                         // TODO, we should not trust client's message data, players may cheat...
                         // TODO, server calculate position...
-                        player.positionX = cmsg.positionX;
-                        player.positionY = cmsg.positionY;
-                        player.positionZ = cmsg.positionZ;
-                        smsg.positionX = cmsg.positionX;
-                        smsg.positionY = cmsg.positionY;
-                        smsg.positionZ = cmsg.positionZ;
-                        smsg.rotationX = cmsg.rotationX;
-                        smsg.rotationY = cmsg.rotationY;
-                        smsg.rotationZ = cmsg.rotationZ;
-                        smsg.rotationW = cmsg.rotationW;
                         player.GetScene().Broundcast(smsg, player.id);
                     }
 
@@ -125,10 +115,10 @@ namespace Backend.Network
         {
             CPathFinding request = (CPathFinding)message;
             Player player = (Player)channel.GetContent();
-            Pos start = new Pos(player.positionX, player.positionY, player.positionZ);
-            Pos end = request.pos;
-            List<Pos> list;
-            if (PathFinding.Instance().FindPath(start, end, out list))
+            V3 start = player.pos;
+            V3 end = request.pos;
+            List<V3> list;
+            if (player.GetScene().FindPath(start, end, out list))
             {
                 SPathFinding response = new SPathFinding();
                 response.path = list;

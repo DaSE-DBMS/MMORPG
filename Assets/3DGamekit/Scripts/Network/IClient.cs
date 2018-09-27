@@ -1,5 +1,5 @@
 ﻿
-namespace Frontend.Network
+namespace Gamekit3D.Network
 {
     public abstract class IClient
     {

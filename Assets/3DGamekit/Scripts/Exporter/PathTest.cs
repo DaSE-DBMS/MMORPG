@@ -6,7 +6,7 @@ using UnityEngine;
 //using UnityEngine.AI;
 using System.Xml.Serialization;
 using Common.Data;
-using Frontend.Network;
+using Gamekit3D.Network;
 
 //navmesh导出数据
 public class PathTest : MonoBehaviour

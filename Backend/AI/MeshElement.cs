@@ -28,7 +28,7 @@ namespace Backend.AI
         Dictionary<int, int> m_equalPoint = new Dictionary<int, int>();
 
 
-        public MeshElement(Pos[] p)
+        public MeshElement(V3[] p)
         {
             meshId = id++;
 

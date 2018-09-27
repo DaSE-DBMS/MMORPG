@@ -6,13 +6,73 @@ using UnityEngine;
 //using UnityEngine.AI;
 using System.Xml.Serialization;
 using Common.Data;
+using Gamekit3D.Network;
 
 //navmesh导出数据
 public class NavMeshExporter : MonoBehaviour
 {
     private GameObject _testMap;
-    [MenuItem("Tools/Export NavMesh Data")]
+    [MenuItem("Tools/Export Assets")]
     private static void Export()
+    {
+        DSceneAsset asset = new DSceneAsset();
+        NavMeshToAsset(asset);
+        EntitiesToAsset(asset);
+        using (StreamWriter sw = new StreamWriter(Application.dataPath + "/navmesh/" + asset.scene + ".xml"))
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(DSceneAsset));
+            serializer.Serialize(sw, asset);
+        }
+        Debug.Log("导出完成：" + asset.scene);
+        AssetDatabase.Refresh();
+    }
+
+    private static void NavMeshToAsset(DSceneAsset asset)
+    {
+        GameObject obj = CreateNavMeshObject();
+        Transform transform = obj.transform.Find("_NavMesh");
+        Vector3[] localVectors = transform.GetComponent<MeshFilter>().sharedMesh.vertices;
+        int[] triangles = transform.GetComponent<MeshFilter>().sharedMesh.triangles;
+        Vector3[] worldVectors = new Vector3[localVectors.Length];
+        for (int i = 0; i < localVectors.Length; i++)
+        {
+            Vector3 pos = transform.TransformPoint(localVectors[i]);
+            worldVectors[i] = pos;
+
+        }
+        for (int i = 0; i < triangles.Length; i += 3)
+        {
+
+            DTngl element = new DTngl();
+            for (int j = 0; j < 3; j++)
+            {
+                element.p[j] = new V3();
+                element.p[j].x = worldVectors[triangles[i + j]].x;
+                element.p[j].y = worldVectors[triangles[i + j]].y;
+                element.p[j].z = worldVectors[triangles[i + j]].z;
+            }
+            asset.mesh.list.Add(element);
+        }
+
+        DestroyImmediate(obj);
+    }
+
+    private static void EntitiesToAsset(DSceneAsset asset)
+    {
+        // exprot all network entity
+        asset.scene = SceneManager.GetActiveScene().name;
+        NetworkEntity[] entities = GameObject.FindObjectsOfType<NetworkEntity>();
+        foreach (NetworkEntity entity in entities)
+        {
+            entity.Init();
+            if (entity.parent == null)
+            {
+                asset.entities.list.Add(entity.ToDEntity());
+            }
+        }
+    }
+
+    static private GameObject CreateNavMeshObject()
     {
         UnityEngine.AI.NavMeshTriangulation triangulatedNavMesh = UnityEngine.AI.NavMesh.CalculateTriangulation();
 
@@ -29,9 +89,9 @@ public class NavMeshExporter : MonoBehaviour
         string assetName = fileName.Replace(Application.dataPath, "Assets");
         GameObject navMesh = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(assetName));
         navMesh.name = baseName;
-        ExportNavData(navMesh);
-        Debug.Log("导出完成：" + baseName);
-        AssetDatabase.Refresh();
+
+        ExportNavMeshLua(navMesh);
+        return navMesh;
     }
 
     [MenuItem("Tools/NavMesh Data Test")]
@@ -111,10 +171,8 @@ public class NavMeshExporter : MonoBehaviour
         }
     }
 
-    private static void ExportNavData(GameObject obj)
+    private static void ExportNavMeshLua(GameObject obj)
     {
-        Common.Data.NavM xmlMesh = new NavM();
-
         Transform transform = obj.transform.Find("_NavMesh");
         Vector3[] localVectors = transform.GetComponent<MeshFilter>().sharedMesh.vertices;
         int[] triangles = transform.GetComponent<MeshFilter>().sharedMesh.triangles;
@@ -124,24 +182,11 @@ public class NavMeshExporter : MonoBehaviour
         {
             Vector3 pos = transform.TransformPoint(localVectors[i]);
             worldVectors[i] = pos;
-
         }
         StringBuilder sb = new StringBuilder();
         sb.Append("local nav = {\n");
         for (int i = 0; i < triangles.Length; i += 3)
         {
-
-            Tngl element = new Tngl();
-
-            for (int j = 0; j < 3; j++)
-            {
-                element.p[j] = new Pos();
-                element.p[j].x = worldVectors[triangles[i + j]].x;
-                element.p[j].y = worldVectors[triangles[i + j]].y;
-                element.p[j].z = worldVectors[triangles[i + j]].z;
-            }
-            xmlMesh.mesh.Add(element);
-
             sb.AppendFormat("\t{{{0},{1},{2}}},\n", _VectorToLua(worldVectors[triangles[i]]), _VectorToLua(worldVectors[triangles[i + 1]]), _VectorToLua(worldVectors[triangles[i + 2]]));
         }
         sb.Append("}\n");
@@ -150,12 +195,6 @@ public class NavMeshExporter : MonoBehaviour
         {
             sw.Write(sb.ToString());
         }
-        using (StreamWriter sw = new StreamWriter(Application.dataPath + "/navmesh/" + obj.name + ".xml"))
-        {
-            XmlSerializer serializer = new XmlSerializer(typeof(NavM));
-            serializer.Serialize(sw, xmlMesh);
-        }
-        DestroyImmediate(obj);
     }
 
     private static string _VectorToLua(Vector3 vec)

@@ -1,4 +1,4 @@
-﻿using Gamekit3D.Message;
+﻿using Gamekit3D;
 using UnityEngine;
 
 namespace Gamekit3D
@@ -70,16 +70,16 @@ namespace Gamekit3D
             if (frontStepAudio != null && frontFoot == 1)
                 frontStepAudio.PlayRandomClip();
             else if (backStepAudio != null && frontFoot == 0)
-                backStepAudio.PlayRandomClip ();
+                backStepAudio.PlayRandomClip();
         }
 
         /// <summary>
         /// Called by animation events.
         /// </summary>
-        public void Grunt ()
+        public void Grunt()
         {
             if (gruntAudio != null)
-                gruntAudio.PlayRandomClip ();
+                gruntAudio.PlayRandomClip();
         }
 
         public void Spotted()
@@ -216,14 +216,14 @@ namespace Gamekit3D
             meleeWeapon.EndAttack();
         }
 
-        public void OnReceiveMessage(Message.MessageType type, object sender, object msg)
+        public void OnReceiveMessage(DamageMsgType type, object sender, object msg)
         {
             switch (type)
             {
-                case Message.MessageType.DEAD:
+                case DamageMsgType.DEAD:
                     Death((Damageable.DamageMessage)msg);
                     break;
-                case Message.MessageType.DAMAGED:
+                case DamageMsgType.DAMAGED:
                     ApplyDamage((Damageable.DamageMessage)msg);
                     break;
                 default:
