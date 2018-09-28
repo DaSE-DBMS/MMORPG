@@ -9,7 +9,7 @@ namespace Gamekit3D
 {
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(Animator))]
-    public class PlayerController : MonoBehaviour, IMessageReceiver
+    public class PlayerController : MonoBehaviour, IMessageReceiver, IMoveable, IJumpable, IAttackable, IHitable
     {
 
         protected static PlayerController s_Instance;
@@ -764,13 +764,15 @@ namespace Gamekit3D
                     break;
             }
         }
-        public void RecvMoveBegin()
+        public void RecvActionMoveBegin(V2 move,
+            V3 pos,
+            V4 rot)
         {
             m_moving = true;
             m_movement.Set(0f, 0f);
         }
 
-        public void RecvMoveStep(
+        public void RecvActionMoveStep(
             V2 move,
             V3 pos,
             V4 rot)
@@ -783,7 +785,9 @@ namespace Gamekit3D
             transform.rotation = rotation;
         }
 
-        public void RecvMoveEnd(V3 pos)
+        public void RecvActionMoveEnd(V2 move,
+            V3 pos,
+            V4 rot)
         {
             Vector3 position = new Vector3(pos.x, pos.y, pos.z);
             transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * 10.0f);
@@ -791,14 +795,38 @@ namespace Gamekit3D
             m_moving = false;
         }
 
-        public void RecvAttack()
+        public void RecvActionAttack()
         {
             m_attacking = true;
         }
 
-        public void RecvJump()
+        public void RecvActionJump()
         {
             m_jumping = true;
+        }
+
+        public void RecvHit(int HP, GameObject source)
+        {
+            m_Animator.SetTrigger(m_HashHurt);
+
+            // Find the direction of the damage.
+            Vector3 forward = source.transform.position - transform.position;
+            forward.y = 0f;
+
+            Vector3 localHurt = transform.InverseTransformDirection(forward);
+
+            // Set the HurtFromX and HurtFromY parameters of the animator based on the direction of the damage.
+            m_Animator.SetFloat(m_HashHurtFromX, localHurt.x);
+            m_Animator.SetFloat(m_HashHurtFromY, localHurt.z);
+
+            // Shake the camera.
+            CameraShake.Shake(CameraShake.k_PlayerHitShakeAmount, CameraShake.k_PlayerHitShakeTime);
+
+            // Play an audio clip of being hurt.
+            if (hurtAudioPlayer != null)
+            {
+                hurtAudioPlayer.PlayRandomClip();
+            }
         }
 
         // Called by OnReceiveMessage.
@@ -851,7 +879,7 @@ namespace Gamekit3D
             MyNetwork.instance.Send(action);
         }
 
-        void InitAction(CPlayerMove action)
+        void InitMove(CPlayerMove action)
         {
             action.player = m_entity.id;
             action.move.x = m_Input.MoveInput.x;
@@ -867,8 +895,8 @@ namespace Gamekit3D
         void SendMovingBegin()
         {
             CPlayerMove action = new CPlayerMove();
-            action.code = PlayerActionCode.MOVE_BEGIN;
-            InitAction(action);
+            action.state = MoveState.BEGIN;
+            InitMove(action);
             MyNetwork.instance.Send(action);
             m_moveStep++;
         }
@@ -876,8 +904,8 @@ namespace Gamekit3D
         void SendMovingStep()
         {
             CPlayerMove action = new CPlayerMove();
-            action.code = PlayerActionCode.MOVE_STEP;
-            InitAction(action);
+            action.state = MoveState.STEP;
+            InitMove(action);
             MyNetwork.instance.Send(action);
             m_moveStep++;
         }
@@ -885,8 +913,8 @@ namespace Gamekit3D
         void SendMovingEnd()
         {
             CPlayerMove action = new CPlayerMove();
-            action.code = PlayerActionCode.MOVE_END;
-            InitAction(action);
+            action.state = MoveState.END;
+            InitMove(action);
             MyNetwork.instance.Send(action);
             m_moveStep = 0;
         }

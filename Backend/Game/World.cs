@@ -9,6 +9,7 @@ namespace Backend.Game
 
         private Dictionary<string, Scene> scenes = new Dictionary<string, Scene>();
 
+        public Dictionary<string, DEntity> InitialData = new Dictionary<string, DEntity>();
 
         public Entity GetEntity(int id)
         {
@@ -31,14 +32,10 @@ namespace Backend.Game
             bool ret = entities.Remove(id, out entity);
             if (ret)
             {
-                if (entity.Parent() != 0)
+                Entity parent = entity.GetParent();
+                if (parent != null)
                 {
-                    Entity parent;
-                    bool hasParent = entities.TryGetValue(entity.Parent(), out parent);
-                    if (hasParent)
-                    {
-                        parent.RemoveEntity(entity.id, out entity);
-                    }
+                    parent.RemoveEntity(entity.id, out entity);
                 }
             }
             return ret;
@@ -48,11 +45,46 @@ namespace Backend.Game
         {
             Scene scene = new Scene();
             scene.Load(asset);
+            scenes[scene.name] = scene;
         }
 
         public Scene GetScene(string name)
         {
             return scenes[name];
+        }
+
+
+        public void Broundcast(Message message)
+        {
+            foreach (KeyValuePair<string, Scene> kv in scenes)
+            {
+                foreach (KeyValuePair<int, Player> p in kv.Value.Players)
+                {
+                    p.Value.connection.Send(message);
+                }
+            }
+        }
+
+        public void Broundcast(Message message, Scene scene, int exclude)
+        {
+            foreach (KeyValuePair<int, Player> p in scene.Players)
+            {
+                if (p.Key != exclude)
+                {
+                    p.Value.connection.Send(message);
+                }
+            }
+        }
+
+        public void Broundcast(Message message, Scene scene, Entity centre, float radius, int exclude)
+        {
+            foreach (KeyValuePair<int, Player> p in scene.Players)
+            {
+                if (p.Value.Distance(centre) < radius && p.Key != exclude)
+                {
+                    p.Value.connection.Send(message);
+                }
+            }
         }
     }
 }

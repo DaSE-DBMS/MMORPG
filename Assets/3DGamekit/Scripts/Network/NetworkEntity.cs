@@ -30,6 +30,8 @@ namespace Gamekit3D.Network
         {
             DEntity entity = new DEntity();
 
+            entity.name = name;
+
             entity.pos.x = transform.position.x;
             entity.pos.y = transform.position.y;
             entity.pos.z = transform.position.z;

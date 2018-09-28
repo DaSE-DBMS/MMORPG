@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Common.Data;
 
 namespace Backend.Game
 {
@@ -9,15 +10,37 @@ namespace Backend.Game
         public string user;
         public string token;
 
-        public Scene GetScene()
-        {
-            return (Scene)World.Instance().GetEntity(Parent());
-        }
-
         public Player(IChannel channel)
         {
             connection = channel;
             channel.SetContent(this);
+        }
+        override public void BeHit(Creature creature)
+        {
+            base.BeHit(creature);
+        }
+
+        override public DEntity ToDEntity()
+        {
+            DEntity entity = base.ToDEntity();
+            entity.HP = hitPoints;
+            entity.maxHP = maxHitPoints;
+            entity.level = level;
+            entity.speed = speed;
+            entity.type = (int)EntityType.PLAYER;
+            return entity;
+        }
+
+        override public void FromDEntity(DEntity entity)
+        {
+            scene = "Level1";
+            pos = entity.pos;
+            rot = entity.rot;
+            hitPoints = entity.HP;
+            maxHitPoints = entity.maxHP;
+            level = 1;
+            name = "Ellen";
+            base.FromDEntity(entity);
         }
 
         virtual public void OnEnterScene(Scene scene)
@@ -50,17 +73,11 @@ namespace Backend.Game
 
         }
 
-        public void SendSpawn(Creature creature)
+        public void SendSpawn(DEntity entity)
         {
-            SCreatureSpawn msg = new SCreatureSpawn();
-            msg.id = creature.id;
-            msg.pos = creature.pos;
-            msg.rot = creature.rot;
-            msg.hitPoints = creature.hitPoints;
-            msg.maxHitPoints = creature.maxHitPoints;
-            msg.level = creature.level;
-            msg.objectName = creature.name;
-            msg.isMine = creature.id == this.id;
+            SEntitySpawn msg = new SEntitySpawn();
+            msg.entity = entity;
+            msg.isMine = entity.id == id;
             connection.Send(msg);
         }
 

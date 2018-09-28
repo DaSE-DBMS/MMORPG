@@ -94,21 +94,22 @@ namespace Backend.AI
             m_rtree.Add(element.bounding, element);
         }
 
-        public bool FindPath(V3 p1, V3 p2, out List<V3> path)
+        public bool FindPath(V3 start, V3 end, Queue<V3> path)
         {
             bool ret = false;
-            RTree.Point point = new RTree.Point(p1.x, p1.y, p1.z);
+            RTree.Point point = new RTree.Point(end.x, end.y, end.z);
             List<MeshElement> list = m_rtree.Nearest(point, 10.0f);
-            path = null;
             MeshElement nearest = null;
-            Point3d start = new Point3d();
-            start.X = p1.x;
-            start.Y = p1.y;
-            start.Z = p1.z;
+
+            Point3d s = new Point3d();
+            s.X = end.x;
+            s.Y = end.y;
+            s.Z = end.z;
             float minDis = float.MaxValue;
+
             foreach (MeshElement e in list)
             {
-                float dis = (float)e.triangle.Centroid.DistanceTo(start);
+                float dis = (float)e.triangle.Centroid.DistanceTo(s);
                 if (dis < minDis)
                 {
                     nearest = e;
@@ -120,13 +121,13 @@ namespace Backend.AI
             {
                 return false;
             }
-            ret = FindPath(nearest, p2, out path);
+            ret = FindPath(nearest, start, path);
             ClearState();
             return ret;
         }
 
 
-        bool FindPath(MeshElement start, V3 pos, out List<V3> path)
+        bool FindPath(MeshElement start, V3 pos, Queue<V3> path)
         {
             Point3d end = new Point3d();
             Point3d currentPos = start.triangle.Centroid.Copy();
@@ -139,7 +140,6 @@ namespace Backend.AI
             step.costS2E = distance;
             m_open.Add(start.meshId, step);
             m_openSorted.Add(step);
-            path = null;
             while (m_openSorted.Count != 0)
             {
                 IEnumerator<Step> e = m_openSorted.GetEnumerator();
@@ -155,7 +155,7 @@ namespace Backend.AI
                 if (TriangleContainPoint(element.triangle, end))
                 {
                     // Success ...
-                    ConstructPath(currentStep, out path);
+                    ConstructPath(currentStep, path);
                     return true;
                 }
                 m_close.Add(id);
@@ -198,10 +198,9 @@ namespace Backend.AI
             return false;
         }
 
-        void ConstructPath(Step lastStep, out List<V3> path)
+        void ConstructPath(Step lastStep, Queue<V3> path)
         {
             Step step = lastStep;
-            path = new List<V3>();
             while (step.prev != null)
             {
                 Point3d point = step.element.triangle.Centroid;
@@ -209,7 +208,7 @@ namespace Backend.AI
                 pos.x = (float)point.X;
                 pos.y = (float)point.Y;
                 pos.z = (float)point.Z;
-                path.Add(pos);
+                path.Enqueue(pos);
                 step = step.prev;
             }
         }

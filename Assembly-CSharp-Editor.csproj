@@ -73,7 +73,6 @@
     <Compile Include="Assets\3DGamekit\Packages\Interactive\Editor\SimpleTransformerEditor.cs" />
     <Compile Include="Assets\3DGamekit\Packages\Interactive\Editor\SimpleTranslatorEditor.cs" />
     <Compile Include="Assets\3DGamekit\Packages\Interactive\Editor\TeleporterGizmo.cs" />
-    <Compile Include="Assets\3DGamekit\Packages\NavMeshComponents\Editor\EditorObjExporter.cs" />
     <Compile Include="Assets\3DGamekit\Packages\NavMeshComponents\Editor\NavMeshComponentsGUIUtility.cs" />
     <Compile Include="Assets\3DGamekit\Packages\NavMeshComponents\Editor\NavMeshLinkEditor.cs" />
     <Compile Include="Assets\3DGamekit\Packages\NavMeshComponents\Editor\NavMeshModifierEditor.cs" />

@@ -8,24 +8,26 @@ namespace Backend.Game
     {
         private Dictionary<int, Player> players = new Dictionary<int, Player>();
         private Dictionary<int, Sprite> sprites = new Dictionary<int, Sprite>();
+        private Dictionary<int, Item> items = new Dictionary<int, Item>();
         private PathFinding path = new PathFinding();
 
         public void Load(DSceneAsset asset)
         {
+            name = asset.scene;
             path.LoadNavMesh(asset.mesh);
             foreach (DEntity e in asset.entities.list)
             {
                 Entity entity = CreateEntity(e);
                 if (entity != null)
                 {
-                    AddEntity(e.id, entity);
+                    AddEntity(entity);
                 }
             }
         }
 
-        public bool FindPath(V3 start, V3 end, out List<V3> steps)
+        public bool FindPath(V3 start, V3 end, Queue<V3> steps)
         {
-            return path.FindPath(start, end, out steps);
+            return path.FindPath(start, end, steps);
         }
 
         public Dictionary<int, Player> Players
@@ -37,8 +39,12 @@ namespace Backend.Game
         {
             get { return sprites; }
         }
+        public Dictionary<int, Item> Items
+        {
+            get { return items; }
+        }
 
-        override public void AddEntity(int id, Entity entity)
+        override public void AddEntity(Entity entity)
         {
             if (entity.GetType() == typeof(Player))
             {
@@ -46,9 +52,9 @@ namespace Backend.Game
             }
             if (entity.GetType() == typeof(Sprite))
             {
-                sprites.Add(id, (Sprite)entity);
+                sprites.Add(entity.id, (Sprite)entity);
             }
-            base.AddEntity(id, entity);
+            base.AddEntity(entity);
         }
 
         override public bool RemoveEntity(int id, out Entity entity)
@@ -65,20 +71,37 @@ namespace Backend.Game
             return ret;
 
         }
+
+        public override void Update()
+        {
+            foreach (KeyValuePair<int, Entity> kv in children)
+            {
+                if (kv.Value.update)
+                {
+                    kv.Value.Update();
+                }
+            }
+            base.Update();
+        }
+
         void PlayerEnter(Player player)
         {
             players.Add(player.id, player);
-            player.SendSpawn(player);
-            foreach (KeyValuePair<int, Sprite> p in Sprites)
+            player.SendSpawn(player.ToDEntity());
+            foreach (KeyValuePair<int, Item> kv in Items)
             {
-                player.SendSpawn(p.Value);
+                player.SendSpawn(kv.Value.ToDEntity());
             }
-            foreach (KeyValuePair<int, Player> p in Players)
+            foreach (KeyValuePair<int, Sprite> kv in Sprites)
             {
-                if (player.id != p.Value.id)
+                player.SendSpawn(kv.Value.ToDEntity());
+            }
+            foreach (KeyValuePair<int, Player> kv in Players)
+            {
+                if (player.id != kv.Value.id)
                 {
-                    p.Value.SendSpawn(player);
-                    player.SendSpawn(p.Value);
+                    kv.Value.SendSpawn(kv.Value.ToDEntity());
+                    player.SendSpawn(kv.Value.ToDEntity());
                 }
 
             }
@@ -87,57 +110,28 @@ namespace Backend.Game
 
         void PlayerLeave(Player player)
         {
-            players.Remove(player.id);
             SEntityDestory msg = new SEntityDestory();
             msg.id = player.id;
-            Broundcast(msg, player.id);
+            player.Broundcast(msg);
+            players.Remove(player.id);
             player.OnLeaveScene(this);
         }
 
-        public void Broundcast(Message message, int exclude)
-        {
-            foreach (KeyValuePair<int, Player> p in players)
-            {
-                if (p.Key != exclude)
-                {
-                    p.Value.connection.Send(message);
-                }
-            }
-        }
-
-        public void Broundcast(Message message, int x, int y, int z)
-        {
-            foreach (KeyValuePair<int, Player> p in players)
-            {
-                p.Value.connection.Send(message);
-            }
-        }
-
-        static Entity CreateEntity(DEntity de)
+        Entity CreateEntity(DEntity de)
         {
             Entity entity = null;
             switch ((EntityType)de.type)
             {
                 case EntityType.PLAYER:
+                    World.Instance().InitialData.Add(de.name, de);
                     break;
                 case EntityType.SPRITE:
-                    Sprite sprite = new Sprite();
-                    sprite.pos = de.pos;
-                    sprite.rot = de.rot;
-                    sprite.hitPoints = de.HP;
-                    sprite.maxHitPoints = de.maxHP;
-                    sprite.level = de.level;
-                    sprite.speed = de.speed;
-                    sprite.aggressive = de.aggressive;
-                    sprite.name = de.name;
-                    entity = sprite;
+                    entity = new Sprite();
+                    entity.FromDEntity(de);
                     break;
                 case EntityType.ITEM:
-                    Item item = new Item();
-                    item.pos = de.pos;
-                    item.rot = de.rot;
-                    item.name = de.name;
-                    entity = item;
+                    entity = new Item();
+                    entity.FromDEntity(de);
                     break;
                 default:
                     break;
@@ -149,7 +143,7 @@ namespace Backend.Game
                     Entity childEntity = CreateEntity(e);
                     if (childEntity != null)
                     {
-                        entity.AddEntity(childEntity.id, childEntity);
+                        entity.AddEntity(childEntity);
                     }
                 }
             }

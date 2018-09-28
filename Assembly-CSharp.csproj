@@ -317,7 +317,11 @@
     <Compile Include="Assets\3DGamekit\Scripts\Game\Weapon\TimeEffect.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\Client.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\Command.cs" />
+    <Compile Include="Assets\3DGamekit\Scripts\Network\IAttackable.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\IClient.cs" />
+    <Compile Include="Assets\3DGamekit\Scripts\Network\IHitable.cs" />
+    <Compile Include="Assets\3DGamekit\Scripts\Network\IJumpable.cs" />
+    <Compile Include="Assets\3DGamekit\Scripts\Network\IMoveable.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\Incomming.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\MyNetwork.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\NetworkEntity.cs" />

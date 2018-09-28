@@ -14,7 +14,7 @@ public class SPlayerEnter : Message
 [Serializable]
 public class SItemSpawn : Message
 {
-    public SItemSpawn() : base(Command.S_CREATURE_SPAWN) { }
+    public SItemSpawn() : base(Command.S_ENTITY_SPAWN) { }
     public int id;
     public float positionX;
     public float positionY;
@@ -28,37 +28,28 @@ public class SItemSpawn : Message
 
 
 [Serializable]
-public class SCreatureSpawn : Message
+public class SEntitySpawn : Message
 {
-    public SCreatureSpawn() : base(Command.S_CREATURE_SPAWN) { }
-    public int id;
-    public V3 pos;
-    public V4 rot;
-    public int hitPoints;
-    public int maxHitPoints;
-    public int level;
-    public bool aggressive;
-    public string objectName;
+    public SEntitySpawn() : base(Command.S_ENTITY_SPAWN) { }
     public bool isMine;
+    public DEntity entity;
+}
+
+
+public enum MoveState
+{
+    BEGIN,
+    STEP,
+    END,
+    //Add your user defined message type after
 }
 
 [Serializable]
-public class SPlayerAction : Message
+public class SActionMove : Message
 {
-
-    public SPlayerAction() : base(Command.S_PLAYER_ACTION) { }
-    public int player;
-    public PlayerActionCode code;
-    // target is valid when action is ATTACK/MOVE
-}
-
-[Serializable]
-public class SPlayerMove : SPlayerAction
-{
-    public SPlayerMove()
-    {
-        code = PlayerActionCode.MOVE_BEGIN;
-    }
+    public SActionMove() : base(Command.S_ACTION_MOVE) { }
+    public int id;
+    public MoveState state;
     // target is valid when action is ATTACK/MOVE
     // x, y, z is valid when action is MOVE
     public V2 move;
@@ -67,22 +58,26 @@ public class SPlayerMove : SPlayerAction
 }
 
 [Serializable]
-public class SPlayerJump : SPlayerAction
+public class SActionJump : Message
 {
-    public SPlayerJump()
-    {
-        code = PlayerActionCode.JUMP;
-    }
+    public SActionJump() : base(Command.S_ACTION_JUMP) { }
+    public int id;
+}
+
+public class BeHit : Message
+{
+    public BeHit() : base(Command.S_BE_HITTED) { }
+    public int id;
+    public int source;
+    public int HP;
 }
 
 [Serializable]
-public class SPlayerAttack : SPlayerAction
+public class SActionAttack : Message
 {
-    public SPlayerAttack()
-    {
-        code = PlayerActionCode.ATTACK;
-    }
-    int target;
+    public SActionAttack() : base(Command.S_ACTION_ATTACK) { }
+    public int id;
+    public int target;
 }
 
 

@@ -25,8 +25,10 @@ namespace Gamekit3D.Network
         public void RegisterAll()
         {
             register.Register(Command.S_PLAYER_ENTER, RecvEnter);
-            register.Register(Command.S_CREATURE_SPAWN, RecvCreatureSpawn);
-            register.Register(Command.S_PLAYER_ACTION, RecvPlayerAction);
+            register.Register(Command.S_ENTITY_SPAWN, RecvEntitySpawn);
+            register.Register(Command.S_ACTION_ATTACK, RecvActionAttack);
+            register.Register(Command.S_ACTION_JUMP, RecvActionJump);
+            register.Register(Command.S_ACTION_MOVE, RecvActionMove);
             register.Register(Command.S_ENTITY_DESTORY, RecvEntityDestory);
 
             // DEBUG ...
@@ -45,50 +47,58 @@ namespace Gamekit3D.Network
             SceneManager.LoadSceneAsync("Level1");
         }
 
-        private void RecvCreatureSpawn(IChannel channel, Message message)
+        private void RecvEntitySpawn(IChannel channel, Message message)
         {
-            SCreatureSpawn m = (SCreatureSpawn)message;
-            GameObject toClone;
-            bool found = networkObjects.TryGetValue(m.objectName, out toClone);
+            SEntitySpawn m = (SEntitySpawn)message;
+            GameObject go;
+            bool found = networkObjects.TryGetValue(m.entity.name, out go);
             if (!found)
             {
                 return;
             }
+            if (m.entity.type == (int)EntityType.PLAYER)
+            {
+                go = GameObject.Instantiate(go);
+            }
 
-            GameObject clone = GameObject.Instantiate(toClone);
-            Damageable damageable = clone.GetComponent<Damageable>();
-            NetworkEntity entity = clone.GetComponent<NetworkEntity>();
-            if (damageable == null || entity == null)
+            NetworkEntity entity = go.GetComponent<NetworkEntity>();
+            if (entity == null)
             {
                 return;
             }
 
-            // Do not use transform.position.Set(x, y, z), because position return a cloned Vector3 object
-            clone.transform.position = new Vector3(m.pos.x, m.pos.y, m.pos.z);
-            clone.transform.rotation = new Quaternion(m.rot.x, m.rot.y, m.rot.z, m.rot.w);
-            damageable.currentHitPoints = m.hitPoints;
-            damageable.maxHitPoints = m.maxHitPoints;
-            entity.id = m.id;
+            // Do not use transform.position.Set(x, y, z)
+            go.transform.position = new Vector3(m.entity.pos.x, m.entity.pos.y, m.entity.pos.z);
+            go.transform.rotation = new Quaternion(m.entity.rot.x, m.entity.rot.y, m.entity.rot.z, m.entity.rot.w);
+            Damageable damageable = go.GetComponent<Damageable>();
+            if (damageable == null)
+            {
+                return;
+            }
 
-            clone.SetActive(true);
+            damageable.currentHitPoints = m.entity.HP;
+            damageable.maxHitPoints = m.entity.maxHP;
+            entity.id = m.entity.id;
+
+            go.SetActive(true);
 
 
             // if this creature is a player ... TODO type test
-            PlayerController controller = clone.GetComponent<PlayerController>();
-            PlayerInput input = clone.GetComponent<PlayerInput>();
-            if (!gameObjects.ContainsKey(m.id))
+            PlayerController controller = go.GetComponent<PlayerController>();
+            PlayerInput input = go.GetComponent<PlayerInput>();
+            if (!gameObjects.ContainsKey(m.entity.id))
             {
-                gameObjects.Add(m.id, clone);
+                gameObjects.Add(m.entity.id, go);
             }
             if (controller == null || input == null || entity == null)
             {
                 return;
             }
 
-            if (m.isMine)
+            if (m.isMine && m.entity.type == (int)EntityType.PLAYER)
             {
                 thisPlayer = controller;
-                channel.SetContent(clone);
+                channel.SetContent(go);
                 controller.InitLocalPlayer();
             }
             else
@@ -98,43 +108,70 @@ namespace Gamekit3D.Network
             }
         }
 
-        private void RecvPlayerAction(IChannel channel, Message message)
+        private void RecvActionAttack(IChannel channel, Message message)
         {
-            SPlayerAction action = (SPlayerAction)message;
-
-            GameObject player;
-            if (!gameObjects.TryGetValue(action.player, out player))
+            SActionAttack msg = (SActionAttack)message;
+            GameObject attacker;
+            if (!gameObjects.TryGetValue(msg.id, out attacker))
             {
                 return;
             }
-
-            PlayerController controller = player.GetComponent<PlayerController>();
-            if (controller == null)
+            /*
+            GameObject target;
+            if (!gameObjects.TryGetValue(msg.target, out target))
             {
                 return;
             }
-            switch (action.code)
+            */
+            IAttackable attackable = attacker.GetComponent<IAttackable>();
+            if (attackable == null)
             {
-                case PlayerActionCode.MOVE_BEGIN:
-                    controller.RecvMoveBegin();
-                    break;
-                case PlayerActionCode.MOVE_STEP:
+                return;
+            }
+            attackable.RecvActionAttack();
+        }
+
+        private void RecvActionJump(IChannel channel, Message message)
+        {
+            SActionMove msg = (SActionMove)message;
+            GameObject go;
+            if (!gameObjects.TryGetValue(msg.id, out go))
+            {
+                return;
+            }
+            IJumpable jumpable = go.GetComponent<IJumpable>();
+            if (jumpable == null)
+            {
+                return;
+            }
+            jumpable.RecvActionJump();
+        }
+
+        private void RecvActionMove(IChannel channel, Message message)
+        {
+            SActionMove msg = (SActionMove)message;
+            GameObject go;
+            if (!gameObjects.TryGetValue(msg.id, out go))
+            {
+                return;
+            }
+            IMoveable moveable = go.GetComponent<IMoveable>();
+            switch (msg.state)
+            {
+                case MoveState.BEGIN:
                     {
-                        SPlayerMove m = (SPlayerMove)message;
-                        controller.RecvMoveStep(m.move, m.pos, m.rot);
+                        moveable.RecvActionMoveBegin(msg.move, msg.pos, msg.rot);
+                        break;
+                    }
+                case MoveState.STEP:
+                    {
+                        moveable.RecvActionMoveStep(msg.move, msg.pos, msg.rot);
                     }
                     break;
-                case PlayerActionCode.MOVE_END:
+                case MoveState.END:
                     {
-                        SPlayerMove m = (SPlayerMove)message;
-                        controller.RecvMoveEnd(m.pos);
+                        moveable.RecvActionMoveEnd(msg.move, msg.pos, msg.rot);
                     }
-                    break;
-                case PlayerActionCode.ATTACK:
-                    controller.RecvAttack();
-                    break;
-                case PlayerActionCode.JUMP:
-                    controller.RecvJump();
                     break;
                 default:
                     break;
@@ -165,6 +202,18 @@ namespace Gamekit3D.Network
                 Vector3 v = new Vector3(p.x, p.y, p.z);
                 Debug.DrawLine(v, v + Vector3.up * 10, Color.red, 60);
             }
+        }
+
+        private void RecvBeHit(IChannel channel, Message message)
+        {
+            BeHit msg = (BeHit)message;
+            GameObject go = gameObjects[msg.id];
+            GameObject source = gameObjects[msg.source];
+            IHitable hitable = go.GetComponent<IHitable>();
+            if (hitable == null)
+                return;
+
+            hitable.RecvHit(msg.HP, source);
         }
     }
 }

@@ -21,7 +21,9 @@ namespace Backend.Network
         {
             register.Register(Command.C_LOGIN, RecvLogin);
             register.Register(Command.C_ENTER_SCENE_DONE, RecvEnterSceneDone);
-            register.Register(Command.C_PLAYER_ACTION, RecvPlayerAction);
+            register.Register(Command.C_PLAYER_MOVE, RecvPlayerMove);
+            register.Register(Command.C_PLAYER_JUMP, RecvPlayerJump);
+            register.Register(Command.C_PLAYER_ATTACK, RecvPlayerAttack);
             register.Register(Command.C_PATH_FINDING, RecvPathFinding);
         }
 
@@ -33,14 +35,13 @@ namespace Backend.Network
             response.token = request.user;
             channel.Send(response);
             Player player = new Player(channel);
-            player.scene = "Level1";
-            player.pos.x = 23;
-            player.pos.y = 2;
-            player.pos.z = 64;
-            player.hitPoints = 3;
-            player.maxHitPoints = 5;
-            player.level = 1;
-            player.name = "Ellen";
+            DEntity dentity;
+            // TODO .. read from database if exists
+            if (!World.Instance().InitialData.TryGetValue("Ellen", out dentity))
+            {
+                return;
+            }
+            player.FromDEntity(dentity);
 
             // player will be added to scene when receive client's CEnterSceneDone message
         }
@@ -48,7 +49,7 @@ namespace Backend.Network
         private void RecvEnterSceneDone(IChannel channel, Message message)
         {
             CEnterSceneDone request = (CEnterSceneDone)message;
-            SCreatureSpawn response = new SCreatureSpawn();
+            SEntitySpawn response = new SEntitySpawn();
             Player player = (Player)channel.GetContent();
             if (player == null)
                 return;
@@ -59,69 +60,77 @@ namespace Backend.Network
 
             // add the player to the scene
             player.Spawn();
-            scene.AddEntity(player.id, player);
+            scene.AddEntity(player);
         }
 
-        private void RecvPlayerAction(IChannel channel, Message message)
+        private void RecvPlayerJump(IChannel channel, Message message)
         {
-            CPlayerAction request = (CPlayerAction)message;
+            CPlayerJump request = (CPlayerJump)message;
             Player player = (Player)World.Instance().GetEntity(request.player);
             if (player == null)
             {
                 return;
             }
-            // TODO ... costum player actions
-            switch (request.code)
-            {
-                case PlayerActionCode.MOVE_BEGIN:
-                case PlayerActionCode.MOVE_STEP:
-                case PlayerActionCode.MOVE_END:
-                    {
-                        CPlayerMove cmsg = (CPlayerMove)request;
-                        SPlayerMove smsg = new SPlayerMove();
-                        smsg.player = cmsg.player;
-                        smsg.code = cmsg.code;
-                        smsg.pos = cmsg.pos;
-                        smsg.rot = cmsg.rot;
-                        // TODO, we should not trust client's message data, players may cheat...
-                        // TODO, server calculate position...
-                        player.GetScene().Broundcast(smsg, player.id);
-                    }
-
-                    break;
-                case PlayerActionCode.ATTACK:
-                    {
-                        CPlayerAttack cmsg = (CPlayerAttack)request;
-                        SPlayerAttack smsg = new SPlayerAttack();
-                        smsg.player = cmsg.player;
-                        smsg.code = cmsg.code;
-                        player.GetScene().Broundcast(smsg, player.id);
-                    }
-                    break;
-                case PlayerActionCode.JUMP:
-                    {
-                        CPlayerJump cmsg = (CPlayerJump)request;
-                        SPlayerJump smsg = new SPlayerJump();
-                        smsg.player = cmsg.player;
-                        smsg.code = cmsg.code;
-                        player.GetScene().Broundcast(smsg, player.id);
-                    }
-                    break;
-                default:
-                    break;
-            }
+            SActionJump response = new SActionJump();
+            response.id = request.player;
+            player.Broundcast(response);
         }
+
+        private void RecvPlayerAttack(IChannel channel, Message message)
+        {
+            CPlayerAttack request = (CPlayerAttack)message;
+            Player player = (Player)World.Instance().GetEntity(request.player);
+            if (player == null)
+                return;
+
+            Entity target = (Player)World.Instance().GetEntity(request.target);
+            if (target == null)
+                return;
+
+
+            if (target.GetType() == typeof(Sprite))
+            {
+                Sprite sprite = (Sprite)target;
+                sprite.BeHit(player);
+            }
+            SActionAttack response = new SActionAttack();
+            response.id = request.player;
+            response.target = request.target;
+            player.Broundcast(response);
+        }
+
+        private void RecvPlayerMove(IChannel channel, Message message)
+        {
+            CPlayerMove request = (CPlayerMove)message;
+            Player player = (Player)World.Instance().GetEntity(request.player);
+            if (player == null)
+            {
+                return;
+            }
+            player.pos = request.pos;
+            SActionMove response = new SActionMove();
+            response.id = request.player;
+            response.state = request.state;
+            response.pos = request.pos;
+            response.rot = request.rot;
+            response.state = request.state;
+            player.Broundcast(response);
+        }
+
         private void RecvPathFinding(IChannel channel, Message message)
         {
             CPathFinding request = (CPathFinding)message;
             Player player = (Player)channel.GetContent();
             V3 start = player.pos;
             V3 end = request.pos;
-            List<V3> list;
-            if (player.GetScene().FindPath(start, end, out list))
+            Queue<V3> path = new Queue<V3>();
+            if (player.GetScene().FindPath(start, end, path))
             {
                 SPathFinding response = new SPathFinding();
-                response.path = list;
+                foreach (V3 v in path)
+                {
+                    response.path.Add(v);
+                }
                 channel.Send(response);
             }
         }

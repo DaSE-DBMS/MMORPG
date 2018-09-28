@@ -77,7 +77,14 @@ namespace Gamekit3D.Network
             {
                 GameObject go = entity.gameObject;
                 go.SetActive(false);
-                incomming.networkObjects[go.name] = go;
+                if (incomming.networkObjects.ContainsKey(go.name))
+                {
+                    GameObject.Destroy(go);
+                }
+                else
+                {
+                    incomming.networkObjects[go.name] = go;
+                }
             }
             CEnterSceneDone message = new CEnterSceneDone();
             Client.Instance().Send(message);

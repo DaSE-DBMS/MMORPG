@@ -1,6 +1,8 @@
 ﻿
 using System.Collections.Generic;
 using Common.Data;
+using GeometRi;
+using UnityEngine;
 
 namespace Backend.Game
 {
@@ -12,7 +14,11 @@ namespace Backend.Game
         public int id;
         public V3 pos;
         public V4 rot;
+        public Vector3d vector3d = new Vector3d();
         public string name;
+        public bool update = false;
+
+        private Point3d m_pos = new Point3d();
 
         public Entity()
         {
@@ -20,19 +26,20 @@ namespace Backend.Game
             World.Instance().AddEntity(id, this);
         }
 
-        public int Parent()
+        public Entity GetParent()
         {
-            return parent;
+            return World.Instance().GetEntity(parent);
         }
+
         ~Entity()
         {
             World.Instance().RemoveEntity(id);
         }
 
-        virtual public void AddEntity(int id, Entity entity)
+        virtual public void AddEntity(Entity entity)
         {
             entity.parent = this.id;
-            children.Add(id, entity);
+            children.Add(entity.id, entity);
         }
 
         virtual public bool RemoveEntity(int id, out Entity entity)
@@ -50,6 +57,11 @@ namespace Backend.Game
             return children.TryGetValue(id, out entity);
         }
 
+        virtual public void Update()
+        {
+
+        }
+
         virtual public void Spawn()
         {
 
@@ -58,6 +70,64 @@ namespace Backend.Game
         virtual public void Vanish()
         {
 
+        }
+
+        virtual public DEntity ToDEntity()
+        {
+            DEntity entity = new DEntity();
+            entity.id = id;
+            entity.name = name;
+            entity.pos = pos;
+            entity.rot = rot;
+            return entity;
+        }
+
+        virtual public void FromDEntity(DEntity entity)
+        {
+            name = entity.name;
+            //id = entity.id; not assign here
+            pos = entity.pos;
+            rot = entity.rot;
+        }
+
+        virtual public void Broundcast(Message message, bool exclude = false)
+        {
+            World.Instance().Broundcast(message, GetScene(), this, 100, exclude ? id : 0);
+        }
+
+        public Scene GetScene()
+        {
+            Entity parent = GetParent();
+            if (parent != null)
+            {
+                if (parent.GetType() == typeof(Scene))
+                {
+                    return (Scene)parent;
+                }
+                else
+                {
+                    return parent.GetScene();
+                }
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
+        public float Distance(Entity entity)
+        {
+            V3ToPoint3D();
+            entity.V3ToPoint3D();
+            return (float)m_pos.DistanceTo(entity.m_pos);
+        }
+
+        void V3ToPoint3D()
+        {
+            m_pos.X = pos.x;
+            m_pos.Y = pos.y;
+            m_pos.Z = pos.z;
         }
     }
 }

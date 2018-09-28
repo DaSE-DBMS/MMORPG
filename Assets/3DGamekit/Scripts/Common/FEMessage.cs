@@ -15,7 +15,7 @@ public class CEnterSceneDone : Message
 {
     public CEnterSceneDone() : base(Command.C_ENTER_SCENE_DONE) { }
 }
-public enum PlayerActionCode
+public enum MoveStep
 {
     JUMP,
     ATTACK,
@@ -25,43 +25,30 @@ public enum PlayerActionCode
 }
 
 [Serializable]
-public class CPlayerAction : Message
+public class CPlayerMove : Message
 {
-    public CPlayerAction() : base(Command.C_PLAYER_ACTION) { }
-    public int player;
-    public PlayerActionCode code;
-}
-
-[Serializable]
-public class CPlayerMove : CPlayerAction
-{
-    public CPlayerMove()
-    {
-        code = PlayerActionCode.MOVE_BEGIN;
-    }
+    public CPlayerMove() : base(Command.C_PLAYER_MOVE) { }
     // target is valid when action is ATTACK/MOVE
     // x, y, z is valid when action is MOVE
+    public int player;
+    public MoveState state;
     public V2 move;
     public V3 pos;
     public V4 rot;
 }
 
 [Serializable]
-public class CPlayerJump : CPlayerAction
+public class CPlayerJump : Message
 {
-    public CPlayerJump()
-    {
-        code = PlayerActionCode.JUMP;
-    }
+    public CPlayerJump() : base(Command.C_PLAYER_JUMP) { }
+    public int player;
 }
 
 [Serializable]
-public class CPlayerAttack : CPlayerAction
+public class CPlayerAttack : Message
 {
-    public CPlayerAttack()
-    {
-        code = PlayerActionCode.ATTACK;
-    }
+    public CPlayerAttack() : base(Command.C_PLAYER_ATTACK) { }
+    public int player;
     public int target;
 }
 
