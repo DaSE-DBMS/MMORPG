@@ -1282,9 +1282,6 @@ GameObject:
   - component: {fileID: 114290622220327500}
   - component: {fileID: 114700785457422906}
   - component: {fileID: 114675004760664532}
-  - component: {fileID: 65771025306039616}
-  - component: {fileID: 114643127116660914}
-  - component: {fileID: 195733995024529676}
   - component: {fileID: 114510813362303408}
   m_Layer: 23
   m_Name: Chomper
@@ -3256,18 +3253,6 @@ Transform:
   m_Father: {fileID: 4111328061247126}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &65771025306039616
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1722084123150156}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.63598824, y: 1.1292851, z: 0.84204507}
-  m_Center: {x: 0.010750532, y: 0.60911524, z: 0.018225312}
 --- !u!65 &65925898071369330
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -4079,19 +4064,6 @@ MonoBehaviour:
   children: []
   type: 1
   id: 0
---- !u!114 &114643127116660914
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1722084123150156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25877601b9081164b9b64ec159b9a452, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interpolateTurning: 0
-  applyAnimationRotation: 0
 --- !u!114 &114643955118306876
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4459,24 +4431,3 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.000000014901161, y: 0.2972716, z: 0.12567535}
     m_Extent: {x: 0.43989497, y: 0.5674504, z: 0.81411386}
   m_DirtyAABB: 0
---- !u!195 &195733995024529676
-NavMeshAgent:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1722084123150156}
-  m_Enabled: 1
-  m_AgentTypeID: -1372625422
-  m_Radius: 0.6
-  m_Speed: 5
-  m_Acceleration: 999
-  avoidancePriority: 50
-  m_AngularSpeed: 999
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 1
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4

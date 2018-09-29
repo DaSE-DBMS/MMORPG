@@ -5,6 +5,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using Backend.Game;
 
 namespace Backend.Network
 {
@@ -24,6 +25,8 @@ namespace Backend.Network
 
         public BlockingCollection<CompleteEvent> CompleteQueue { get { return completeQueue; } }
 
+        private const int millisecondsPerTick = 500;
+        public int m_millisecondsElapsed = millisecondsPerTick;
         public Server()
         {
         }
@@ -50,10 +53,18 @@ namespace Backend.Network
 
                     // Start an asynchronous socket to listen for connections.
 
-
+                    DateTime start = DateTime.Now;
 
                     // Wait until a connection is made before continuing.
-                    InvokeCompletion();
+                    InvokeCompletion(m_millisecondsElapsed);
+                    DateTime end = DateTime.Now;
+                    TimeSpan interval = end - start;
+                    m_millisecondsElapsed -= (int)interval.TotalMilliseconds;
+                    if (m_millisecondsElapsed <= 0)
+                    {
+                        World.Instance().Tick();
+                        m_millisecondsElapsed = millisecondsPerTick;
+                    }
                 }
 
             }
@@ -63,30 +74,32 @@ namespace Backend.Network
             }
         }
 
-        public bool InvokeCompletion(bool nonblocking = false)
+        public bool InvokeCompletion(int millisecondsTimeout)
         {
             try
             {
-                CompleteEvent e;
-                bool success;
-                if (nonblocking && !CompleteQueue.TryTake(out e))
+                CompleteEvent ce;
+                if (millisecondsTimeout == 0 && !CompleteQueue.TryTake(out ce))
                 {
                     return false;
                 }
                 else
                 {
-                    e = CompleteQueue.Take();
-                    success = true;
+                    if (!CompleteQueue.TryTake(out ce, millisecondsTimeout))
+                    {
+                        return false;
+                    }
                 }
-                if (e.message == null)
+
+                if (ce.message == null)
                 {
-                    ((ChannelDelegate)e.@delegate).Invoke(e.channel);
+                    ((ChannelDelegate)ce.@delegate).Invoke(ce.channel);
                 }
                 else
                 {
-                    ((MessageDelegate)e.@delegate).Invoke(e.channel, e.message);
+                    ((MessageDelegate)ce.@delegate).Invoke(ce.channel, ce.message);
                 }
-                return success;
+                return true;
             }
             catch (SystemException e)
             {// Catch what exception ????

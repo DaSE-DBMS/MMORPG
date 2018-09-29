@@ -11,7 +11,9 @@ public enum Command
     S_ACTION_MOVE,
     S_ACTION_JUMP,
     S_ACTION_ATTACK,
+    S_EQUIP_WEAPON,
     S_BE_HITTED,
+    S_TAKE_ITEM,
     S_EXIT,
 
     SEND,
@@ -22,6 +24,7 @@ public enum Command
     C_PLAYER_ATTACK,
     C_PLAYER_JUMP,
     C_PLAYER_MOVE,
+    C_PLAYER_TAKE,
     CEND,
 
     DEBUGGING, // THE FOLLOWING MESSEGES ARE FOR DEBUGGING

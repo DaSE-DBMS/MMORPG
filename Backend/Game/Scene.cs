@@ -50,25 +50,36 @@ namespace Backend.Game
             {
                 PlayerEnter((Player)entity);
             }
-            if (entity.GetType() == typeof(Sprite))
+            else if (entity.GetType() == typeof(Sprite))
             {
                 sprites.Add(entity.id, (Sprite)entity);
+            }
+            else if (entity.GetType() == typeof(Item))
+            {
+                items.Add(entity.id, (Item)entity);
             }
             base.AddEntity(entity);
         }
 
         override public bool RemoveEntity(int id, out Entity entity)
         {
-            bool ret = base.RemoveEntity(id, out entity);
-            if (ret && entity.GetType() == typeof(Player))
+            if (!base.RemoveEntity(id, out entity))
+            {
+                return false;
+            }
+            if (entity.GetType() == typeof(Player))
             {
                 PlayerLeave((Player)entity);
             }
-            if (ret && entity.GetType() == typeof(Sprite))
+            else if (entity.GetType() == typeof(Sprite))
             {
                 sprites.Remove(id);
             }
-            return ret;
+            else if (entity.GetType() == typeof(Item))
+            {
+                items.Remove(id);
+            }
+            return true;
 
         }
 
@@ -88,15 +99,15 @@ namespace Backend.Game
         {
             players.Add(player.id, player);
             player.SendSpawn(player.ToDEntity());
-            foreach (KeyValuePair<int, Item> kv in Items)
+            foreach (KeyValuePair<int, Item> kv in items)
             {
                 player.SendSpawn(kv.Value.ToDEntity());
             }
-            foreach (KeyValuePair<int, Sprite> kv in Sprites)
+            foreach (KeyValuePair<int, Sprite> kv in sprites)
             {
                 player.SendSpawn(kv.Value.ToDEntity());
             }
-            foreach (KeyValuePair<int, Player> kv in Players)
+            foreach (KeyValuePair<int, Player> kv in players)
             {
                 if (player.id != kv.Value.id)
                 {

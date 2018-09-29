@@ -3,16 +3,22 @@ using System.Collections.Generic;
 using Common.Data;
 namespace Gamekit3D.Network
 {
+
+    public delegate void RecvHit(IChannel channel, Message message);
+
+
     public class NetworkEntity : MonoBehaviour
     {
+
+        public ICreatureBehavior creatureBehavior;
 
         public NetworkEntity parent;
         public List<NetworkEntity> children = new List<NetworkEntity>();
 
         public EntityType type;
         public int id;
-
-        public void Init()
+        public bool canClone = false;
+        public void BuildTree()
         {
             parent = transform.parent == null ? null : transform.parent.GetComponent<NetworkEntity>();
             children.Clear();
@@ -40,6 +46,8 @@ namespace Gamekit3D.Network
             entity.rot.y = transform.rotation.y;
             entity.rot.z = transform.rotation.z;
             entity.rot.w = transform.rotation.w;
+
+            entity.canClone = canClone;
             Damageable damageable = GetComponent<Damageable>();
             if (damageable != null)
             {
@@ -57,7 +65,7 @@ namespace Gamekit3D.Network
         }
         void Awake()
         {
-            Init();
+            BuildTree();
         }
 
         // Use this for initialization

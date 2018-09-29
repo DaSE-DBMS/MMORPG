@@ -80,25 +80,12 @@ public class SActionAttack : Message
     public int target;
 }
 
-
 [Serializable]
-public class AnimationInfo
+public class SEquipWeapon : Message
 {
-    public enum Operation
-    {
-        SET_FLOAT,
-        SET_INT,
-        SET_BOOL,
-        SET_TRIGGER,
-        RESET_TRIGGER
-    };
-
-    public Operation operation;
-    public float floatValue;
-    public bool boolValue;
-    public int intValue;
+    public SEquipWeapon() : base(Command.S_EQUIP_WEAPON) { }
+    public int item;
 }
-
 
 [Serializable]
 public class SEntityDestory : Message
@@ -107,6 +94,13 @@ public class SEntityDestory : Message
     public int id;
 }
 
+[Serializable]
+public class STakeItem : Message
+{
+    public STakeItem() : base(Command.S_TAKE_ITEM) { }
+    public int itemId;
+    public int newId; // If newId != itemId, then clone a item use the newId
+}
 
 [Serializable]
 public class SExit : Message

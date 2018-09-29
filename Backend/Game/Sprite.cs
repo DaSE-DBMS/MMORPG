@@ -24,7 +24,7 @@ namespace Backend.Game
 
         override public void BeHit(Creature creature)
         {
-
+            update = true;
             if (hitPoints <= 0)
             {
                 return;

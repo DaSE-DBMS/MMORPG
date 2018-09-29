@@ -1,10 +1,13 @@
 ﻿using Gamekit3D;
+using Gamekit3D.Network;
+using Common.Data;
 using UnityEngine;
+
 
 namespace Gamekit3D
 {
     [DefaultExecutionOrder(100)]
-    public class ChomperBehavior : MonoBehaviour, IMessageReceiver
+    public class ChomperBehavior : MonoBehaviour, IMessageReceiver, ICreatureBehavior
     {
         public static readonly int hashInPursuit = Animator.StringToHash("InPursuit");
         public static readonly int hashAttack = Animator.StringToHash("Attack");
@@ -48,17 +51,19 @@ namespace Gamekit3D
         protected EnemyController m_Controller;
         protected TargetDistributor.TargetFollower m_FollowerInstance = null;
 
+        private Animator m_Animator;
+        private bool m_ground = true;
         protected void OnEnable()
         {
-            m_Controller = GetComponentInChildren<EnemyController>();
-
+            //m_Controller = GetComponentInChildren<EnemyController>();
+            m_Animator = GetComponent<Animator>();
             originalPosition = transform.position;
 
             meleeWeapon.SetOwner(gameObject);
 
-            m_Controller.animator.Play(hashIdleState, 0, Random.value);
+            m_Animator.Play(hashIdleState, 0, Random.value);
 
-            SceneLinkedSMB<ChomperBehavior>.Initialise(m_Controller.animator, this);
+            SceneLinkedSMB<ChomperBehavior>.Initialise(m_Animator, this);
         }
 
         /// <summary>
@@ -96,16 +101,18 @@ namespace Gamekit3D
 
         private void FixedUpdate()
         {
-            m_Controller.animator.SetBool(hashGrounded, controller.grounded);
+            m_Animator.SetBool(hashGrounded, m_ground);
 
             Vector3 toBase = originalPosition - transform.position;
             toBase.y = 0;
 
-            m_Controller.animator.SetBool(hashNearBase, toBase.sqrMagnitude < 0.1 * 0.1f);
+            m_Animator.SetBool(hashNearBase, toBase.sqrMagnitude < 0.1 * 0.1f);
         }
 
+
         public void FindTarget()
-        {
+        {/*
+
             //we ignore height difference if the target was already seen
             PlayerController target = playerScanner.Detect(transform, m_Target == null);
 
@@ -160,6 +167,7 @@ namespace Gamekit3D
                     m_TimerSinceLostTarget = 0.0f;
                 }
             }
+        */
         }
 
         public void StartPursuit()
@@ -170,7 +178,7 @@ namespace Gamekit3D
                 RequestTargetPosition();
             }
 
-            m_Controller.animator.SetBool(hashInPursuit, true);
+            m_Animator.SetBool(hashInPursuit, true);
         }
 
         public void StopPursuit()
@@ -180,30 +188,32 @@ namespace Gamekit3D
                 m_FollowerInstance.requireSlot = false;
             }
 
-            m_Controller.animator.SetBool(hashInPursuit, false);
+            m_Animator.SetBool(hashInPursuit, false);
         }
 
         public void RequestTargetPosition()
         {
+            /*
             Vector3 fromTarget = transform.position - m_Target.transform.position;
             fromTarget.y = 0;
 
             m_FollowerInstance.requiredPoint = m_Target.transform.position + fromTarget.normalized * attackDistance * 0.9f;
+            */
         }
 
         public void WalkBackToBase()
         {
             if (m_FollowerInstance != null)
                 m_FollowerInstance.distributor.UnregisterFollower(m_FollowerInstance);
-            m_Target = null;
-            StopPursuit();
-            m_Controller.SetTarget(originalPosition);
-            m_Controller.SetFollowNavmeshAgent(true);
+            //m_Target = null;
+            //StopPursuit();
+            //m_Controller.SetTarget(originalPosition);
+            //m_Controller.SetFollowNavmeshAgent(true);
         }
 
         public void TriggerAttack()
         {
-            m_Controller.animator.SetTrigger(hashAttack);
+            m_Animator.SetTrigger(hashAttack);
         }
 
         public void AttackBegin()
@@ -238,10 +248,10 @@ namespace Gamekit3D
             pushForce.y = 0;
 
             transform.forward = -pushForce.normalized;
-            controller.AddForce(pushForce.normalized * 7.0f - Physics.gravity * 0.6f);
+            //controller.AddForce(pushForce.normalized * 7.0f - Physics.gravity * 0.6f);
 
-            controller.animator.SetTrigger(hashHit);
-            controller.animator.SetTrigger(hashThrown);
+            m_Animator.SetTrigger(hashHit);
+            m_Animator.SetTrigger(hashThrown);
 
             //We unparent the hit source, as it would destroy it with the gameobject when it get replaced by the ragdol otherwise
             deathAudio.transform.SetParent(null, true);
@@ -263,14 +273,81 @@ namespace Gamekit3D
             pushForce.y = 0;
 
             transform.forward = -pushForce.normalized;
-            controller.AddForce(pushForce.normalized * 5.5f, false);
+            //controller.AddForce(pushForce.normalized * 5.5f, false);
 
-            controller.animator.SetFloat(hashVerticalDot, verticalDot);
-            controller.animator.SetFloat(hashHorizontalDot, horizontalDot);
+            m_Animator.SetFloat(hashVerticalDot, verticalDot);
+            m_Animator.SetFloat(hashHorizontalDot, horizontalDot);
 
-            controller.animator.SetTrigger(hashHit);
+            m_Animator.SetTrigger(hashHit);
 
             hitAudio.PlayRandomClip();
+        }
+
+        public void ReHited(int HP, ICreatureBehavior source)
+        {
+
+            Vector3 direction = source.GetPosition() - transform.position;
+            float verticalDot = Vector3.Dot(Vector3.up, direction);
+            float horizontalDot = Vector3.Dot(transform.right, direction);
+
+            Vector3 pushForce = transform.position - source.GetPosition();
+
+            pushForce.y = 0;
+
+            transform.forward = -pushForce.normalized;
+            //controller.AddForce(pushForce.normalized * 5.5f, false);
+
+            m_Animator.SetFloat(hashVerticalDot, verticalDot);
+            m_Animator.SetFloat(hashHorizontalDot, horizontalDot);
+
+            m_Animator.SetTrigger(hashHit);
+
+            hitAudio.PlayRandomClip();
+        }
+
+        public void ActionJump()
+        {
+            // Chomper can't jump
+        }
+
+        public void ActionAttack(ICreatureBehavior target)
+        {
+        }
+
+        public void ActionMoveBegin(V2 move,
+            V3 pos,
+            V4 rot)
+        {
+            //m_moving = true;
+            //m_movement.Set(0f, 0f);
+        }
+
+        public void ActionMoveStep(
+            V2 move,
+            V3 pos,
+            V4 rot)
+        {
+            //m_moving = true;
+            //m_movement.Set(move.x, move.y);
+            Vector3 position = new Vector3(pos.x, pos.y, pos.z);
+            Quaternion rotation = new Quaternion(rot.x, rot.y, rot.z, rot.w);
+            transform.position = position;
+            transform.rotation = rotation;
+        }
+
+        public void ActionMoveEnd(V2 move,
+            V3 pos,
+            V4 rot)
+        {
+            Vector3 position = new Vector3(pos.x, pos.y, pos.z);
+            transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * 10.0f);
+            //m_movement.Set(0f, 0f);
+            //m_moving = false;
+        }
+
+        public Vector3 GetPosition()
+        {
+            return transform.position;
         }
 
 #if UNITY_EDITOR

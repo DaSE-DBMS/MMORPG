@@ -64,7 +64,7 @@ public class NavMeshExporter : MonoBehaviour
         NetworkEntity[] entities = GameObject.FindObjectsOfType<NetworkEntity>();
         foreach (NetworkEntity entity in entities)
         {
-            entity.Init();
+            entity.BuildTree();
             if (entity.parent == null)
             {
                 asset.entities.list.Add(entity.ToDEntity());

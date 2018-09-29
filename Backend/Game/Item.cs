@@ -4,6 +4,8 @@ namespace Backend.Game
 {
     public class Item : Entity
     {
+        public ItemType itemType;
+
         override public DEntity ToDEntity()
         {
             DEntity entity = base.ToDEntity();

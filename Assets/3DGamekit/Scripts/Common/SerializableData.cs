@@ -66,7 +66,7 @@ namespace Common
             PLAYER = 0,
             SPRITE = 1,
             ITEM = 2,
-
+            UNKOWN = 3
         }
 
         [Serializable]
@@ -81,6 +81,7 @@ namespace Common
             public int level;
             public int speed;
             public bool aggressive;
+            public bool canClone;
             public DEntity parent;
             public List<DEntity> children = new List<DEntity>();
             public V3 pos = new V3();

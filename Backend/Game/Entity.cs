@@ -15,6 +15,7 @@ namespace Backend.Game
         public V3 pos;
         public V4 rot;
         public Vector3d vector3d = new Vector3d();
+        public bool canClone;
         public string name;
         public bool update = false;
 
@@ -79,6 +80,7 @@ namespace Backend.Game
             entity.name = name;
             entity.pos = pos;
             entity.rot = rot;
+            entity.canClone = canClone;
             return entity;
         }
 
@@ -88,6 +90,7 @@ namespace Backend.Game
             //id = entity.id; not assign here
             pos = entity.pos;
             rot = entity.rot;
+            canClone = entity.canClone;
         }
 
         virtual public void Broundcast(Message message, bool exclude = false)

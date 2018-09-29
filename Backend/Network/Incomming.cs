@@ -24,7 +24,12 @@ namespace Backend.Network
             register.Register(Command.C_PLAYER_MOVE, RecvPlayerMove);
             register.Register(Command.C_PLAYER_JUMP, RecvPlayerJump);
             register.Register(Command.C_PLAYER_ATTACK, RecvPlayerAttack);
+            register.Register(Command.C_PLAYER_TAKE, RecvPlayerTake);
+
+
+            // DEBUG ..
             register.Register(Command.C_PATH_FINDING, RecvPathFinding);
+
         }
 
         private void RecvLogin(IChannel channel, Message message)
@@ -132,6 +137,22 @@ namespace Backend.Network
                     response.path.Add(v);
                 }
                 channel.Send(response);
+            }
+        }
+
+        private void RecvPlayerTake(IChannel channel, Message message)
+        {
+            CPlayerTake request = (CPlayerTake)message;
+            Player player = (Player)channel.GetContent();
+
+            Entity target = World.Instance().GetEntity(request.targetId);
+            if (target == null)
+                return;
+            Item item = (Item)target;
+            player.TakeItem(item);
+            if (request.itemType == ItemType.WEAPON)
+            {
+                player.EquipWeapon(item);
             }
         }
     }

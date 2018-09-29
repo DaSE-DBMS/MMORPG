@@ -10,6 +10,8 @@ namespace Backend.Game
         public string user;
         public string token;
 
+        private Item m_weapon;
+
         public Player(IChannel channel)
         {
             connection = channel;
@@ -88,6 +90,41 @@ namespace Backend.Game
         override public void Vanish()
         {
 
+        }
+
+        public void TakeItem(Item target)
+        {
+            STakeItem msgTake = new STakeItem();
+
+            if (target.canClone)
+            {
+                Entity clone = World.Instance().CreateEntityByName(target.name);
+                if (target == null)
+                    return;
+                msgTake.itemId = target.id;
+                msgTake.newId = clone.id;
+                target = (Item)clone;
+            }
+            else
+            {
+                msgTake.itemId = msgTake.newId = target.id;
+            }
+
+            if (target.GetType() != typeof(Item))
+            {
+                return;
+            }
+            //msgTake.itemId;
+            AddEntity(target);
+            connection.Send(msgTake);
+        }
+
+        public void EquipWeapon(Item item)
+        {
+            m_weapon = item;
+            SEquipWeapon msgEquip = new SEquipWeapon();
+            msgEquip.item = item.id;
+            connection.Send(msgEquip);
         }
     }
 }

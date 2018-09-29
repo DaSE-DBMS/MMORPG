@@ -9,7 +9,7 @@ namespace Gamekit3D
 {
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(Animator))]
-    public class PlayerController : MonoBehaviour, IMessageReceiver, IMoveable, IJumpable, IAttackable, IHitable
+    public class PlayerController : MonoBehaviour, IMessageReceiver, ICreatureBehavior, IPlayerBehavior
     {
 
         protected static PlayerController s_Instance;
@@ -214,6 +214,7 @@ namespace Gamekit3D
             m_CharCtrl = GetComponent<CharacterController>();
             m_entity = GetComponent<NetworkEntity>();
             meleeWeapon.SetOwner(gameObject);
+            m_entity.creatureBehavior = this;
         }
 
         // Called automatically by Unity after Awake whenever the script is enabled.
@@ -764,7 +765,7 @@ namespace Gamekit3D
                     break;
             }
         }
-        public void RecvActionMoveBegin(V2 move,
+        public void ActionMoveBegin(V2 move,
             V3 pos,
             V4 rot)
         {
@@ -772,7 +773,7 @@ namespace Gamekit3D
             m_movement.Set(0f, 0f);
         }
 
-        public void RecvActionMoveStep(
+        public void ActionMoveStep(
             V2 move,
             V3 pos,
             V4 rot)
@@ -785,7 +786,7 @@ namespace Gamekit3D
             transform.rotation = rotation;
         }
 
-        public void RecvActionMoveEnd(V2 move,
+        public void ActionMoveEnd(V2 move,
             V3 pos,
             V4 rot)
         {
@@ -795,22 +796,22 @@ namespace Gamekit3D
             m_moving = false;
         }
 
-        public void RecvActionAttack()
+        public void ActionAttack(ICreatureBehavior target)
         {
             m_attacking = true;
         }
 
-        public void RecvActionJump()
+        public void ActionJump()
         {
             m_jumping = true;
         }
 
-        public void RecvHit(int HP, GameObject source)
+        public void ReHited(int HP, ICreatureBehavior source)
         {
             m_Animator.SetTrigger(m_HashHurt);
 
             // Find the direction of the damage.
-            Vector3 forward = source.transform.position - transform.position;
+            Vector3 forward = source.GetPosition() - transform.position;
             forward.y = 0f;
 
             Vector3 localHurt = transform.InverseTransformDirection(forward);
@@ -827,6 +828,11 @@ namespace Gamekit3D
             {
                 hurtAudioPlayer.PlayRandomClip();
             }
+        }
+
+        public Vector3 GetPosition()
+        {
+            return transform.position;
         }
 
         // Called by OnReceiveMessage.
@@ -917,6 +923,41 @@ namespace Gamekit3D
             InitMove(action);
             MyNetwork.instance.Send(action);
             m_moveStep = 0;
+        }
+        public void PlayerWantTakeWeapon(GameObject weapon)
+        {
+            NetworkEntity weaponEntity = weapon.GetComponent<NetworkEntity>();
+            if (weaponEntity == null)
+                return;
+
+            CPlayerTake msg = new CPlayerTake();
+            msg.byName = weaponEntity.canClone;
+            msg.targetName = weapon.name;
+            msg.playerId = m_entity.id;
+            msg.targetId = weaponEntity.id;
+            msg.itemType = ItemType.WEAPON;
+            MyNetwork.instance.Send(msg);
+        }
+
+        public void EquipWeapon(NetworkEntity weapon)
+        {
+            canAttack = true;
+            weapon.gameObject.SetActive(true);
+        }
+
+        public void TakeItem(NetworkEntity item, int newItemId)
+        {
+            GameObject goItem;
+            if (item.canClone)
+            {
+                goItem = GameObject.Instantiate(item.gameObject);
+                goItem.GetComponent<NetworkEntity>().id = newItemId;
+            }
+            else
+            {
+                goItem = item.gameObject;
+            }
+            goItem.transform.SetParent(this.gameObject.transform);
         }
     }
 }

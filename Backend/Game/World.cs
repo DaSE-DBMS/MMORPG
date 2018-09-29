@@ -11,6 +11,13 @@ namespace Backend.Game
 
         public Dictionary<string, DEntity> InitialData = new Dictionary<string, DEntity>();
 
+        public void Tick()
+        {
+            foreach (KeyValuePair<string, Scene> kv in scenes)
+            {
+                kv.Value.Update();
+            }
+        }
         public Entity GetEntity(int id)
         {
             Entity entity = null;
@@ -85,6 +92,34 @@ namespace Backend.Game
                     p.Value.connection.Send(message);
                 }
             }
+        }
+
+        public Entity CreateEntityByName(string name)
+        {
+            DEntity dentity;
+            if (!World.Instance().InitialData.TryGetValue("Ellen", out dentity))
+            {
+                return null;
+            }
+            Entity entity = null;
+            switch ((EntityType)dentity.type)
+            {
+                case EntityType.PLAYER:
+                    //entity = new Player();
+                    break;
+                case EntityType.ITEM:
+                    entity = new Item();
+                    break;
+                case EntityType.SPRITE:
+                    entity = new Sprite();
+                    break;
+                default:
+                    break;
+            }
+            if (entity != null)
+                entity.FromDEntity(dentity);
+
+            return entity;
         }
     }
 }
