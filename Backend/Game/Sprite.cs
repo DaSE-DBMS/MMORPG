@@ -73,7 +73,6 @@ namespace Backend.Game
             entity.maxHP = maxHitPoints;
             entity.level = level;
             entity.speed = speed;
-            entity.type = (int)EntityType.SPRITE;
             return entity;
         }
 

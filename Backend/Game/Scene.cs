@@ -17,7 +17,11 @@ namespace Backend.Game
             path.LoadNavMesh(asset.mesh);
             foreach (DEntity e in asset.entities.list)
             {
-                Entity entity = CreateEntity(e);
+                if (e.forClone)
+                {
+                    World.Instance().InitialData.TryAdd(e.name, e);
+                }
+                Entity entity = World.CreateEntity(e);
                 if (entity != null)
                 {
                     AddEntity(entity);
@@ -46,15 +50,15 @@ namespace Backend.Game
 
         override public void AddEntity(Entity entity)
         {
-            if (entity.GetType() == typeof(Player))
+            if (entity is Player)
             {
                 PlayerEnter((Player)entity);
             }
-            else if (entity.GetType() == typeof(Sprite))
+            else if (entity is Sprite)
             {
                 sprites.Add(entity.id, (Sprite)entity);
             }
-            else if (entity.GetType() == typeof(Item))
+            else if (entity is Item)
             {
                 items.Add(entity.id, (Item)entity);
             }
@@ -63,21 +67,25 @@ namespace Backend.Game
 
         override public bool RemoveEntity(int id, out Entity entity)
         {
-            if (!base.RemoveEntity(id, out entity))
+            if (!base.FindEntity(id, out entity))
             {
                 return false;
             }
-            if (entity.GetType() == typeof(Player))
+            if (entity is Player)
             {
                 PlayerLeave((Player)entity);
             }
-            else if (entity.GetType() == typeof(Sprite))
+            else if (entity is Sprite)
             {
                 sprites.Remove(id);
             }
-            else if (entity.GetType() == typeof(Item))
+            else if (entity is Item)
             {
                 items.Remove(id);
+            }
+            if (!base.RemoveEntity(id, out entity))
+            {
+                return false;
             }
             return true;
 
@@ -123,42 +131,9 @@ namespace Backend.Game
         {
             SEntityDestory msg = new SEntityDestory();
             msg.id = player.id;
-            player.Broundcast(msg);
+            player.Broundcast(msg, true);
             players.Remove(player.id);
             player.OnLeaveScene(this);
-        }
-
-        Entity CreateEntity(DEntity de)
-        {
-            Entity entity = null;
-            switch ((EntityType)de.type)
-            {
-                case EntityType.PLAYER:
-                    World.Instance().InitialData.Add(de.name, de);
-                    break;
-                case EntityType.SPRITE:
-                    entity = new Sprite();
-                    entity.FromDEntity(de);
-                    break;
-                case EntityType.ITEM:
-                    entity = new Item();
-                    entity.FromDEntity(de);
-                    break;
-                default:
-                    break;
-            }
-            if (entity != null)
-            {
-                foreach (DEntity e in de.children)
-                {
-                    Entity childEntity = CreateEntity(e);
-                    if (childEntity != null)
-                    {
-                        entity.AddEntity(childEntity);
-                    }
-                }
-            }
-            return entity;
         }
     }
 }

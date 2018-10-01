@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using Backend.Game;
 
+
 namespace Backend.Network
 {
     public class Server : IServer
@@ -25,8 +26,8 @@ namespace Backend.Network
 
         public BlockingCollection<CompleteEvent> CompleteQueue { get { return completeQueue; } }
 
-        private const int millisecondsPerTick = 500;
-        public int m_millisecondsElapsed = millisecondsPerTick;
+        public const int DeltaTime = 500;
+        public int m_millisecondsElapsed = DeltaTime;
         public Server()
         {
         }
@@ -63,7 +64,7 @@ namespace Backend.Network
                     if (m_millisecondsElapsed <= 0)
                     {
                         World.Instance().Tick();
-                        m_millisecondsElapsed = millisecondsPerTick;
+                        m_millisecondsElapsed = DeltaTime;
                     }
                 }
 

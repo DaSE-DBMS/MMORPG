@@ -94,31 +94,48 @@ namespace Backend.Game
             }
         }
 
-        public Entity CreateEntityByName(string name)
+        static public Entity CreateEntityByName(string name)
         {
             DEntity dentity;
-            if (!World.Instance().InitialData.TryGetValue("Ellen", out dentity))
+            if (!World.Instance().InitialData.TryGetValue(name, out dentity))
             {
                 return null;
             }
+            return CreateEntity(dentity);
+        }
+
+
+        public static Entity CreateEntity(DEntity de)
+        {
             Entity entity = null;
-            switch ((EntityType)dentity.type)
+            switch ((EntityType)de.type)
             {
                 case EntityType.PLAYER:
-                    //entity = new Player();
+                    break;
+                case EntityType.SPRITE:
+                    entity = new Sprite();
                     break;
                 case EntityType.ITEM:
                     entity = new Item();
                     break;
-                case EntityType.SPRITE:
-                    entity = new Sprite();
+                case EntityType.WEAPON:
+                    entity = new Weapon();
                     break;
                 default:
                     break;
             }
             if (entity != null)
-                entity.FromDEntity(dentity);
-
+            {
+                entity.FromDEntity(de);
+                foreach (DEntity e in de.children)
+                {
+                    Entity childEntity = CreateEntity(e);
+                    if (childEntity != null)
+                    {
+                        entity.AddEntity(childEntity);
+                    }
+                }
+            }
             return entity;
         }
     }

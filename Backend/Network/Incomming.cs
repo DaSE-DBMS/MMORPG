@@ -47,6 +47,7 @@ namespace Backend.Network
                 return;
             }
             player.FromDEntity(dentity);
+            player.forClone = false;
 
             // player will be added to scene when receive client's CEnterSceneDone message
         }
@@ -88,12 +89,12 @@ namespace Backend.Network
             if (player == null)
                 return;
 
-            Entity target = (Player)World.Instance().GetEntity(request.target);
+            Entity target = World.Instance().GetEntity(request.target);
             if (target == null)
                 return;
 
 
-            if (target.GetType() == typeof(Sprite))
+            if (target is Sprite)
             {
                 Sprite sprite = (Sprite)target;
                 sprite.BeHit(player);
@@ -146,14 +147,11 @@ namespace Backend.Network
             Player player = (Player)channel.GetContent();
 
             Entity target = World.Instance().GetEntity(request.targetId);
-            if (target == null)
+            if (target == null || !(target is Item))
                 return;
+
             Item item = (Item)target;
             player.TakeItem(item);
-            if (request.itemType == ItemType.WEAPON)
-            {
-                player.EquipWeapon(item);
-            }
         }
     }
 }

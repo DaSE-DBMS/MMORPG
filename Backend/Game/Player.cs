@@ -9,7 +9,6 @@ namespace Backend.Game
         public IChannel connection;
         public string user;
         public string token;
-
         private Item m_weapon;
 
         public Player(IChannel channel)
@@ -29,7 +28,6 @@ namespace Backend.Game
             entity.maxHP = maxHitPoints;
             entity.level = level;
             entity.speed = speed;
-            entity.type = (int)EntityType.PLAYER;
             return entity;
         }
 
@@ -96,34 +94,45 @@ namespace Backend.Game
         {
             STakeItem msgTake = new STakeItem();
 
-            if (target.canClone)
+            if (target.forClone)
             {
-                Entity clone = World.Instance().CreateEntityByName(target.name);
+                Entity clone = World.CreateEntityByName(target.name);
+                clone.forClone = false;
                 if (target == null)
                     return;
-                msgTake.itemId = target.id;
-                msgTake.newId = clone.id;
+                msgTake.clone = true;
+                msgTake.itemId = clone.id;
+                msgTake.name = clone.name;
                 target = (Item)clone;
             }
             else
             {
-                msgTake.itemId = msgTake.newId = target.id;
+                msgTake.clone = false;
+                msgTake.itemId = target.id;
+                msgTake.name = target.name;
             }
 
-            if (target.GetType() != typeof(Item))
+            if (!(target is Item))
             {
                 return;
             }
             //msgTake.itemId;
             AddEntity(target);
             connection.Send(msgTake);
+            if (target is Weapon)
+            {
+                EquipWeapon((Weapon)target);
+            }
         }
 
-        public void EquipWeapon(Item item)
+        public void EquipWeapon(Weapon weapon)
         {
-            m_weapon = item;
+            if (m_weapon != null)
+                return;
+
+            m_weapon = weapon;
             SEquipWeapon msgEquip = new SEquipWeapon();
-            msgEquip.item = item.id;
+            msgEquip.item = weapon.id;
             connection.Send(msgEquip);
         }
     }

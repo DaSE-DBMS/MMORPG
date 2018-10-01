@@ -8,6 +8,7 @@ namespace Backend.Game
 {
     public class Entity : MyObject
     {
+        EntityType entityType;
         private static int sequence = 1;
         private int parent = 0;
         public Dictionary<int, Entity> children = new Dictionary<int, Entity>();
@@ -15,7 +16,7 @@ namespace Backend.Game
         public V3 pos;
         public V4 rot;
         public Vector3d vector3d = new Vector3d();
-        public bool canClone;
+        public bool forClone;
         public string name;
         public bool update = false;
 
@@ -80,7 +81,8 @@ namespace Backend.Game
             entity.name = name;
             entity.pos = pos;
             entity.rot = rot;
-            entity.canClone = canClone;
+            entity.forClone = forClone;
+            entity.type = (int)entityType;
             return entity;
         }
 
@@ -90,7 +92,8 @@ namespace Backend.Game
             //id = entity.id; not assign here
             pos = entity.pos;
             rot = entity.rot;
-            canClone = entity.canClone;
+            forClone = entity.forClone;
+            entityType = (EntityType)entity.type;
         }
 
         virtual public void Broundcast(Message message, bool exclude = false)
