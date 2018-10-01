@@ -20,7 +20,7 @@ namespace Gamekit3D
             if (controller == null)
                 return;
 
-            controller.SetCheckpoint(this);
+            //controller.SetCheckpoint(this);
         }
 
         void OnDrawGizmos()

@@ -24,7 +24,7 @@ namespace Gamekit3D
         public float maxTurnSpeed = 1200f;        // How fast Ellen turns when stationary.
         public float idleTimeout = 5f;            // How long before Ellen starts considering random idles.
         public bool canAttack;                    // Whether or not Ellen can swing her staff.
-
+        public GameObject leftHandAttach;
         public CameraSettings cameraSettings;            // Reference used to determine the camera's direction.
         public MeleeWeapon meleeWeapon;                  // Reference used to (de)activate the staff when attacking.
         public RandomAudioPlayer footstepPlayer;         // Random Audio Players used for various situations.
@@ -34,7 +34,7 @@ namespace Gamekit3D
         public RandomAudioPlayer emoteDeathPlayer;
         public RandomAudioPlayer emoteAttackPlayer;
         public RandomAudioPlayer emoteJumpPlayer;
-        private bool m_audioInit = false;
+        //private bool m_audioInit = false;
 
         protected AnimatorStateInfo m_CurrentStateInfo;    // Information about the base layer of the animator cached.
         protected AnimatorStateInfo m_NextStateInfo;
@@ -59,7 +59,7 @@ namespace Gamekit3D
         protected bool m_InCombo;                      // Whether Ellen is currently in the middle of her melee combo.
         protected Damageable m_Damageable;             // Reference used to set invulnerablity and health based on respawning.
         protected Renderer[] m_Renderers;              // References used to make sure Renderers are reset properly.
-        protected Checkpoint m_CurrentCheckpoint;      // Reference used to reset Ellen to the correct position on respawn.
+        //protected Checkpoint m_CurrentCheckpoint;      // Reference used to reset Ellen to the correct position on respawn.
         protected bool m_Respawning;                   // Whether Ellen is currently respawning.
         protected float m_IdleTimer;                   // Used to count up to Ellen considering a random idle.
 
@@ -110,7 +110,7 @@ namespace Gamekit3D
         Vector2 m_movement = new Vector2();
         //Vector3 m_position = new Vector3();
         //Quaternion m_rotation = new Quaternion();
-
+        public LayerMask damagedLayers;
         int m_moveStep = 0;
         NetworkEntity m_entity;
 
@@ -127,7 +127,7 @@ namespace Gamekit3D
         // Called automatically by Unity when the script is first added to a gameobject or is reset from the context menu.
         void Reset()
         {
-            meleeWeapon = GetComponentInChildren<MeleeWeapon>();
+            //meleeWeapon = GetComponentInChildren<MeleeWeapon>();
 
             Transform footStepSource = transform.Find("FootstepSource");
             if (footStepSource != null)
@@ -213,7 +213,7 @@ namespace Gamekit3D
             m_Animator = GetComponent<Animator>();
             m_CharCtrl = GetComponent<CharacterController>();
             m_entity = GetComponent<NetworkEntity>();
-            meleeWeapon.SetOwner(gameObject);
+            //meleeWeapon.SetOwner(gameObject);
             m_entity.creatureBehavior = this;
         }
 
@@ -331,18 +331,27 @@ namespace Gamekit3D
         // Called after the animator state has been cached to determine whether or not the staff should be active or not.
         bool IsWeaponEquiped()
         {
+            return meleeWeapon != null;
+            /*
             bool equipped = m_NextStateInfo.shortNameHash == m_HashEllenCombo1 || m_CurrentStateInfo.shortNameHash == m_HashEllenCombo1;
             equipped |= m_NextStateInfo.shortNameHash == m_HashEllenCombo2 || m_CurrentStateInfo.shortNameHash == m_HashEllenCombo2;
             equipped |= m_NextStateInfo.shortNameHash == m_HashEllenCombo3 || m_CurrentStateInfo.shortNameHash == m_HashEllenCombo3;
             equipped |= m_NextStateInfo.shortNameHash == m_HashEllenCombo4 || m_CurrentStateInfo.shortNameHash == m_HashEllenCombo4;
 
-            return equipped;
+            return equipped;*/
         }
 
         // Called each physics step with a parameter based on the return value of IsWeaponEquiped.
         void EquipMeleeWeapon(bool equip)
         {
+            if (meleeWeapon == null)
+                return;
+
             meleeWeapon.gameObject.SetActive(equip);
+            foreach (TimeEffect timeEffect in meleeWeapon.effects)
+            {
+                timeEffect.enabled = true;
+            }
             m_InAttack = false;
             m_InCombo = equip;
 
@@ -384,7 +393,7 @@ namespace Gamekit3D
                 m_VerticalSpeed = -gravity * k_StickingGravityProportion;
 
                 // If jump is held, Ellen is ready to jump and not currently in the middle of a melee combo...
-                if (m_jumping && m_ReadyToJump && !m_InCombo)
+                if (m_jumping && m_ReadyToJump)
                 {
                     // ... then override the previously set vertical speed and make sure she cannot jump again.
                     if (isMine)
@@ -671,6 +680,8 @@ namespace Gamekit3D
         // This is called by an animation event when Ellen swings her staff.
         public void MeleeAttackStart(int throwing = 0)
         {
+            if (meleeWeapon == null)
+                return;
             meleeWeapon.BeginAttack(throwing != 0);
             m_InAttack = true;
         }
@@ -678,16 +689,18 @@ namespace Gamekit3D
         // This is called by an animation event when Ellen finishes swinging her staff.
         public void MeleeAttackEnd()
         {
+            if (meleeWeapon == null)
+                return;
             meleeWeapon.EndAttack();
             m_InAttack = false;
         }
 
         // This is called by Checkpoints to make sure Ellen respawns correctly.
-        public void SetCheckpoint(Checkpoint checkpoint)
+        /*public void SetCheckpoint(Checkpoint checkpoint)
         {
             if (checkpoint != null)
                 m_CurrentCheckpoint = checkpoint;
-        }
+        }*/
 
         // This is usually called by a state machine behaviour on the animator controller but can be called from anywhere.
         public void Respawn()
@@ -713,17 +726,6 @@ namespace Gamekit3D
             // Enable spawning.
             EllenSpawn spawn = GetComponentInChildren<EllenSpawn>();
             spawn.enabled = true;
-
-            // If there is a checkpoint, move Ellen to it.
-            if (m_CurrentCheckpoint != null)
-            {
-                transform.position = m_CurrentCheckpoint.transform.position;
-                transform.rotation = m_CurrentCheckpoint.transform.rotation;
-            }
-            else
-            {
-                Debug.LogError("There is no Checkpoint set, there should always be a checkpoint set. Did you add a checkpoint at the spawn?");
-            }
 
             // Get Ellen's health back.
             m_Damageable.ResetDamage();
@@ -878,10 +880,11 @@ namespace Gamekit3D
             MyNetwork.instance.Send(action);
         }
 
-        void SendAttackingAction()
+        void SendAttackingAction(int targetID = 0)
         {
             CPlayerAttack action = new CPlayerAttack();
             action.player = m_entity.id;
+            action.target = targetID;
             MyNetwork.instance.Send(action);
         }
 
@@ -898,6 +901,7 @@ namespace Gamekit3D
             action.rot.z = transform.rotation.z;
             action.rot.w = transform.rotation.w;
         }
+
         void SendMovingBegin()
         {
             CPlayerMove action = new CPlayerMove();
@@ -926,6 +930,9 @@ namespace Gamekit3D
         }
         public void PlayerWantTakeWeapon(GameObject weapon)
         {
+            if (canAttack)
+                return;
+
             NetworkEntity weaponEntity = weapon.GetComponent<NetworkEntity>();
             if (weaponEntity == null)
                 return;
@@ -935,29 +942,61 @@ namespace Gamekit3D
             msg.targetName = weapon.name;
             msg.playerId = m_entity.id;
             msg.targetId = weaponEntity.id;
-            msg.itemType = ItemType.WEAPON;
             MyNetwork.instance.Send(msg);
         }
 
         public void EquipWeapon(NetworkEntity weapon)
         {
             canAttack = true;
-            weapon.gameObject.SetActive(true);
+            FixedUpdateFollow follow = weapon.gameObject.GetComponent<FixedUpdateFollow>();
+            if (follow != null && leftHandAttach != null)
+            {
+                follow.toFollow = leftHandAttach.transform;
+            }
+            meleeWeapon = weapon.gameObject.GetComponent<MeleeWeapon>();
+            if (meleeWeapon != null)
+            {
+                meleeWeapon.gameObject.SetActive(true);
+                meleeWeapon.SetOwner(gameObject);
+                EquipMeleeWeapon(true);
+            }
+
         }
 
-        public void TakeItem(NetworkEntity item, int newItemId)
+        public void TakeItem(NetworkEntity item)
         {
-            GameObject goItem;
-            if (item.canClone)
-            {
-                goItem = GameObject.Instantiate(item.gameObject);
-                goItem.GetComponent<NetworkEntity>().id = newItemId;
-            }
-            else
-            {
-                goItem = item.gameObject;
-            }
-            goItem.transform.SetParent(this.gameObject.transform);
+            item.gameObject.transform.SetParent(this.gameObject.transform);
+        }
+
+        private void OnTriggerStay(Collider other)
+        {
+            if (!(isMine && canAttack && m_attacking))
+                return;
+
+            if ((damagedLayers.value & 1 << other.gameObject.layer) == 0)
+                return;
+
+            NetworkEntity damager = other.gameObject.GetComponent<NetworkEntity>();
+            if (damager == null)
+                return;
+
+            SendAttackingAction(damager.id);
+
+        }
+
+        private void OnCollisionStay(Collision other)
+        {
+            if (!(isMine && canAttack && m_attacking))
+                return;
+
+            if ((damagedLayers.value & 1 << other.gameObject.layer) == 0)
+                return;
+
+            NetworkEntity damager = other.gameObject.GetComponent<NetworkEntity>();
+            if (damager == null)
+                return;
+
+            SendAttackingAction(damager.id);
         }
     }
 }

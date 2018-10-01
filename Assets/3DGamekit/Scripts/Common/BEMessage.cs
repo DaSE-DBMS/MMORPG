@@ -98,8 +98,9 @@ public class SEntityDestory : Message
 public class STakeItem : Message
 {
     public STakeItem() : base(Command.S_TAKE_ITEM) { }
+    public bool clone;
+    public string name;
     public int itemId;
-    public int newId; // If newId != itemId, then clone a item use the newId
 }
 
 [Serializable]

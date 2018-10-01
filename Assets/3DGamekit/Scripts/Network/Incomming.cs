@@ -11,8 +11,8 @@ namespace Gamekit3D.Network
 {
     public class Incomming
     {
-        public Dictionary<string, GameObject> networkObjects = new Dictionary<string, GameObject>();
-        public Dictionary<int, GameObject> gameObjects = new Dictionary<int, GameObject>();
+        private Dictionary<string, GameObject> networkObjects = new Dictionary<string, GameObject>();
+        private Dictionary<int, GameObject> gameObjects = new Dictionary<int, GameObject>();
         public Dictionary<int, NetworkEntity> networkEntities = new Dictionary<int, NetworkEntity>();
         public PlayerController thisPlayer;
         bool debug = true;
@@ -37,6 +37,51 @@ namespace Gamekit3D.Network
             register.Register(Command.S_PATH_FINDING, RecvPathFinding);
         }
 
+        public void InitNetworkEntity()
+        {
+            NetworkEntity[] all = GameObject.FindObjectsOfType<NetworkEntity>();
+            foreach (NetworkEntity entity in all)
+            {
+                GameObject go = entity.gameObject;
+                go.SetActive(false);
+                if (networkObjects.ContainsKey(go.name))
+                {
+                    GameObject.Destroy(go);
+                }
+                else
+                {
+                    networkObjects[go.name] = go;
+                }
+            }
+        }
+
+        public GameObject CloneGameObject(string name, int entityID)
+        {
+            GameObject go;
+            bool found = networkObjects.TryGetValue(name, out go);
+            if (!found)
+            {
+                return null;
+            }
+            return CloneGameObject(go, entityID);
+        }
+
+        public GameObject CloneGameObject(GameObject gameObject, int entityID)
+        {
+            GameObject go = GameObject.Instantiate(gameObject);
+            NetworkEntity entity = go.GetComponent<NetworkEntity>();
+            if (entity == null)
+            {
+                GameObject.Destroy(go);
+                return null;
+            }
+            entity.id = entityID;
+            if (!networkEntities.ContainsKey(entity.id))
+            {
+                networkEntities.Add(entity.id, entity);
+            }
+            return go;
+        }
         // message receive callback
         private void RecvEnter(IChannel channel, Message message)
         {
@@ -52,36 +97,26 @@ namespace Gamekit3D.Network
         private void RecvEntitySpawn(IChannel channel, Message message)
         {
             SEntitySpawn m = (SEntitySpawn)message;
-            GameObject go;
-            bool found = networkObjects.TryGetValue(m.entity.name, out go);
-            if (!found)
-            {
-                return;
-            }
+            GameObject go = null;
             if (m.entity.type == (int)EntityType.PLAYER)
             {
-                go = GameObject.Instantiate(go);
+                go = CloneGameObject(m.entity.name, m.entity.id);
             }
-
-
-            NetworkEntity entity = go.GetComponent<NetworkEntity>();
-            if (entity == null)
+            else if (networkObjects.TryGetValue(m.entity.name, out go))
+            {
+                go.GetComponent<NetworkEntity>().id = m.entity.id;
+            }
+            if (go == null)
             {
                 return;
             }
-
-
             // Do not use transform.position.Set(x, y, z)
             go.transform.position = new Vector3(m.entity.pos.x, m.entity.pos.y, m.entity.pos.z);
             go.transform.rotation = new Quaternion(m.entity.rot.x, m.entity.rot.y, m.entity.rot.z, m.entity.rot.w);
-            entity.id = m.entity.id;
-            go.SetActive(true);
-            if (!gameObjects.ContainsKey(m.entity.id))
+            if (!m.entity.forClone)
             {
-                gameObjects.Add(entity.id, go);
-                networkEntities.Add(entity.id, entity);
+                go.SetActive(true);
             }
-
             Damageable damageable = go.GetComponent<Damageable>();
             if (damageable == null)
             {
@@ -95,7 +130,7 @@ namespace Gamekit3D.Network
             // if this creature is a player ... TODO type test
             PlayerController controller = go.GetComponent<PlayerController>();
             PlayerInput input = go.GetComponent<PlayerInput>();
-            if (controller == null || input == null || entity == null)
+            if (controller == null || input == null)
             {
                 return;
             }
@@ -212,8 +247,19 @@ namespace Gamekit3D.Network
         private void RecvTakeItem(IChannel channel, Message message)
         {
             STakeItem msg = (STakeItem)message;
-            NetworkEntity item = networkEntities[msg.itemId];
-            thisPlayer.TakeItem(item, msg.newId);
+            NetworkEntity item;
+            if (msg.clone)
+            {
+                GameObject go = CloneGameObject(msg.name, msg.itemId);
+                if (go == null)
+                    return;
+                item = networkEntities[msg.itemId];
+            }
+            else
+            {
+                item = networkEntities[msg.itemId];
+            }
+            thisPlayer.TakeItem(item);
         }
     }
 }

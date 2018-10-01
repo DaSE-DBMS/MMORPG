@@ -15,7 +15,7 @@ namespace Gamekit3D.Network
         public NetworkEntity parent;
         public List<NetworkEntity> children = new List<NetworkEntity>();
 
-        public EntityType type;
+        public EntityType entityType;
         public int id;
         public bool canClone = false;
         public void BuildTree()
@@ -47,14 +47,14 @@ namespace Gamekit3D.Network
             entity.rot.z = transform.rotation.z;
             entity.rot.w = transform.rotation.w;
 
-            entity.canClone = canClone;
+            entity.forClone = canClone;
             Damageable damageable = GetComponent<Damageable>();
             if (damageable != null)
             {
                 entity.maxHP = damageable.maxHitPoints;
                 entity.HP = damageable.currentHitPoints;
             }
-            entity.type = (int)type;
+            entity.type = (int)entityType;
             foreach (NetworkEntity child in children)
             {
                 DEntity childEntity = child.ToDEntity();

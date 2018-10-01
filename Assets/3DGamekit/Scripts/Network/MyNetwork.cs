@@ -72,20 +72,7 @@ namespace Gamekit3D.Network
 
         private void RecvSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            NetworkEntity[] all = GameObject.FindObjectsOfType<NetworkEntity>();
-            foreach (NetworkEntity entity in all)
-            {
-                GameObject go = entity.gameObject;
-                go.SetActive(false);
-                if (incomming.networkObjects.ContainsKey(go.name))
-                {
-                    GameObject.Destroy(go);
-                }
-                else
-                {
-                    incomming.networkObjects[go.name] = go;
-                }
-            }
+            incomming.InitNetworkEntity();
             CEnterSceneDone message = new CEnterSceneDone();
             Client.Instance().Send(message);
         }

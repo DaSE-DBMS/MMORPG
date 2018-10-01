@@ -68,7 +68,10 @@ namespace Gamekit3D
 
         private void OnEnable()
         {
-
+            foreach (TimeEffect effect in effects)
+            {
+                effect.gameObject.SetActive(true);
+            }
         }
 
         //whoever own the weapon is responsible for calling that. Allow to avoid "self harm"
@@ -117,6 +120,7 @@ namespace Gamekit3D
         {
             if (m_InAttack)
             {
+                /*
                 for (int i = 0; i < attackPoints.Length; ++i)
                 {
                     AttackPoint pts = attackPoints[i];
@@ -152,6 +156,7 @@ namespace Gamekit3D
                     pts.previousPositions.Add(m_PreviousPos[i]);
 #endif
                 }
+                */
             }
         }
 
@@ -176,11 +181,11 @@ namespace Gamekit3D
             {
                 var renderer = other.GetComponent<Renderer>();
                 if (!renderer)
-                    renderer = other.GetComponentInChildren<Renderer> ();
+                    renderer = other.GetComponentInChildren<Renderer>();
                 if (renderer)
-                    hitAudio.PlayRandomClip (renderer.sharedMaterial);
+                    hitAudio.PlayRandomClip(renderer.sharedMaterial);
                 else
-                    hitAudio.PlayRandomClip ();
+                    hitAudio.PlayRandomClip();
             }
 
             Damageable.DamageMessage data;

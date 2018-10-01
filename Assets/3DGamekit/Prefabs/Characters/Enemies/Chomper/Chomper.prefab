@@ -4062,8 +4062,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parent: {fileID: 0}
   children: []
-  type: 1
+  entityType: 1
   id: 0
+  canClone: 0
 --- !u!114 &114643955118306876
 MonoBehaviour:
   m_ObjectHideFlags: 1
