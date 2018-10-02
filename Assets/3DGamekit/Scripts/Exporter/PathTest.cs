@@ -1,11 +1,6 @@
-﻿using System.IO;
-using System.Text;
-using UnityEditor;
-using UnityEngine.SceneManagement;
+﻿using UnityEditor;
 using UnityEngine;
-//using UnityEngine.AI;
-using System.Xml.Serialization;
-using Common.Data;
+using Common;
 using Gamekit3D.Network;
 
 //navmesh导出数据

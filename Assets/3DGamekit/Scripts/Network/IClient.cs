@@ -1,4 +1,5 @@
-﻿
+﻿using Common;
+
 namespace Gamekit3D.Network
 {
     public abstract class IClient
