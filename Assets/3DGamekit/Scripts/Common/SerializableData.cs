@@ -106,6 +106,20 @@ namespace Common
 
             public DNavM mesh = new DNavM();
         }
+
+        [Serializable]
+        public struct ClientConfig
+        {
+            string host;
+            int port;
+        }
+
+        [Serializable]
+        public struct ServerConfig
+        {
+            int port;
+            string asset;
+        }
     }
 }
 

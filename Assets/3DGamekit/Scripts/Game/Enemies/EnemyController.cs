@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 namespace Gamekit3D
 {
-//this assure it's runned before any behaviour that may use it, as the animator need to be fecthed
+    //this assure it's runned before any behaviour that may use it, as the animator need to be fecthed
     [DefaultExecutionOrder(-1)]
     [RequireComponent(typeof(NavMeshAgent))]
     public class EnemyController : MonoBehaviour
@@ -72,7 +72,7 @@ namespace Gamekit3D
 
         void ForceMovement()
         {
-            if(m_ExternalForceAddGravity)
+            if (m_ExternalForceAddGravity)
                 m_ExternalForce += Physics.gravity * Time.deltaTime;
 
             RaycastHit hit;
@@ -118,7 +118,7 @@ namespace Gamekit3D
             {
                 m_NavMeshAgent.ResetPath();
             }
-            else if(follow && !m_NavMeshAgent.enabled)
+            else if (follow && !m_NavMeshAgent.enabled)
             {
                 m_NavMeshAgent.Warp(transform.position);
             }
