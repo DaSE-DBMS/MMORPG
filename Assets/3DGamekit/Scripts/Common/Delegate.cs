@@ -1,11 +1,14 @@
 ﻿using System;
 
-public class CompleteEvent
+namespace Common
 {
-    public Object @delegate;
-    public IChannel channel;
-    public Message message;
-}
+    public class CompleteEvent
+    {
+        public Object @delegate;
+        public IChannel channel;
+        public Message message;
+    }
 
-public delegate void MessageDelegate(IChannel channel, Message message);
-public delegate void ChannelDelegate(IChannel channel);
+    public delegate void MessageDelegate(IChannel channel, Message message);
+    public delegate void ChannelDelegate(IChannel channel);
+}

@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using System.Text;
 
-
-[Serializable]
-public class Message
+namespace Common
 {
-    public const int MsgHeaderSize = 4;
 
-    public Message(Command c)
+    [Serializable]
+    public class Message
     {
-        command = c;
-    }
+        public const int MsgHeaderSize = 4;
 
-    public Command command;
+        public Message(Command c)
+        {
+            command = c;
+        }
+
+        public Command command;
+    }
 }

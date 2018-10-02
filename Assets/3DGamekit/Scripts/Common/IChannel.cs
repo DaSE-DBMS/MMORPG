@@ -1,13 +1,16 @@
 ﻿
 using System;
-public interface IChannel
+
+namespace Common
 {
-    void SetContent(Object content);
+    public interface IChannel
+    {
+        void SetContent(Object content);
 
-    Object GetContent();
+        Object GetContent();
 
-    void Send(Message msg);
+        void Send(Message msg);
 
-    void OnClose();
+        void OnClose();
+    }
 }
-

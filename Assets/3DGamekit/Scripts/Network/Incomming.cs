@@ -5,6 +5,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Gamekit3D;
+using Common;
 using Common.Data;
 
 namespace Gamekit3D.Network
@@ -176,7 +177,7 @@ namespace Gamekit3D.Network
         private void RecvActionMove(IChannel channel, Message message)
         {
             SActionMove msg = (SActionMove)message;
-            NetworkEntity self = networkEntities[msg.targetID];
+            NetworkEntity self = networkEntities[msg.id];
             if (self.creatureBehavior == null)
                 return;
 

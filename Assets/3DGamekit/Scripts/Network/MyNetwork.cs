@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using Common;
 
 namespace Gamekit3D.Network
 {

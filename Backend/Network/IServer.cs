@@ -1,4 +1,5 @@
-﻿
+﻿using Common;
+
 namespace Backend.Network
 {
     public abstract class IServer

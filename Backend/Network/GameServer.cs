@@ -1,9 +1,8 @@
 ﻿using System.Xml.Serialization;
 using System.IO;
 using Backend.Game;
-using Backend.AI;
+using Common;
 using Common.Data;
-using System.Diagnostics;
 
 namespace Backend.Network
 {

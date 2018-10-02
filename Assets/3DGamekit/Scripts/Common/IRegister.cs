@@ -1,6 +1,7 @@
-﻿
-public interface IRegister
+﻿namespace Common
 {
-    void Register(Command command, MessageDelegate @delegate);
+    public interface IRegister
+    {
+        void Register(Command command, MessageDelegate @delegate);
+    }
 }
-

@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Runtime.Serialization.Formatters.Binary;
+using Common;
 
 namespace Backend.Network
 {

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using Backend.Game;
+using Common;
 using Common.Data;
-using Backend.AI;
 
 namespace Backend.Network
 {
@@ -93,7 +91,7 @@ namespace Backend.Network
             Player player = (Player)World.Instance().GetEntity(request.player);
             player.pos = request.pos;
             SActionMove response = new SActionMove();
-            response.targetID = request.player;
+            response.id = request.player;
             response.state = request.state;
             response.pos = request.pos;
             response.rot = request.rot;

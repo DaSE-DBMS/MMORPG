@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Common;
 using Common.Data;
 
 namespace Backend.Game
@@ -63,7 +64,7 @@ namespace Backend.Game
                 V3 pos = steps.Dequeue();
                 this.pos = pos;
                 SActionMove message = new SActionMove();
-                message.targetID = entityID;
+                message.id = entityID;
                 message.pos = pos;
                 message.state = m_moving ? MoveState.STEP : MoveState.BEGIN;
                 Broundcast(message);
@@ -78,7 +79,7 @@ namespace Backend.Game
                 m_moving = false;
                 this.pos = enemy.pos;
                 SActionMove message = new SActionMove();
-                message.targetID = entityID;
+                message.id = entityID;
                 message.pos = enemy.pos;
                 message.state = MoveState.END;
                 Broundcast(message);

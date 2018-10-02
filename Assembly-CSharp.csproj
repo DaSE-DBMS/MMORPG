@@ -167,7 +167,6 @@
     <Compile Include="Assets\3DGamekit\Scripts\Common\Message.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Common\SerializableData.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Common\Singleton.cs" />
-    <Compile Include="Assets\3DGamekit\Scripts\Common\Type.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Effects\CaptureDepthTexture.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Effects\CopyShadowMap.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Effects\EffectEvents.cs" />
