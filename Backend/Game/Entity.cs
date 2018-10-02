@@ -10,36 +10,36 @@ namespace Backend.Game
     {
         private static int sequence = 1;
 
-        public EntityType type;
-        public int id;
+        public EntityType entityType;
+        public int entityID;
         public V3 pos;
         public V4 rot;
         public bool forClone;
         public string name;
         public bool update = false;
 
-        private int parent = 0;
+        private int parentID = 0;
         private Point3d m_pos = new Point3d();
         private Dictionary<int, Entity> m_children = new Dictionary<int, Entity>();
 
         public Dictionary<int, Entity> Children { get { return m_children; } }
-        public Entity Parent { get { return World.Instance().GetEntity(parent); } }
+        public Entity Parent { get { return World.Instance().GetEntity(parentID); } }
 
         public Entity()
         {
-            id = sequence++;
-            World.Instance().AddEntity(id, this);
+            entityID = sequence++;
+            World.Instance().AddEntity(entityID, this);
         }
 
         ~Entity()
         {
-            World.Instance().RemoveEntity(id);
+            World.Instance().RemoveEntity(entityID);
         }
 
         virtual public void AddEntity(Entity entity)
         {
-            entity.parent = this.id;
-            Children.Add(entity.id, entity);
+            entity.parentID = this.entityID;
+            Children.Add(entity.entityID, entity);
         }
 
         virtual public bool RemoveEntity(int id, out Entity entity)
@@ -47,7 +47,7 @@ namespace Backend.Game
             bool ret = Children.Remove(id, out entity);
             if (ret)
             {
-                entity.parent = 0;
+                entity.parentID = 0;
             }
             return ret;
         }
@@ -75,12 +75,12 @@ namespace Backend.Game
         virtual public DEntity ToDEntity()
         {
             DEntity entity = new DEntity();
-            entity.id = id;
+            entity.entityID = entityID;
             entity.name = name;
             entity.pos = pos;
             entity.rot = rot;
             entity.forClone = forClone;
-            entity.type = (int)type;
+            entity.type = (int)entityType;
             return entity;
         }
 
@@ -91,12 +91,12 @@ namespace Backend.Game
             pos = entity.pos;
             rot = entity.rot;
             forClone = entity.forClone;
-            type = (EntityType)entity.type;
+            entityType = (EntityType)entity.type;
         }
 
         virtual public void Broundcast(Message message, bool exclude = false)
         {
-            World.Instance().Broundcast(message, GetScene(), this, 100, exclude ? id : 0);
+            World.Instance().Broundcast(message, GetScene(), this, 100, exclude ? entityID : 0);
         }
 
         public Scene GetScene()

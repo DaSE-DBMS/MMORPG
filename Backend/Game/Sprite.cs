@@ -19,7 +19,7 @@ namespace Backend.Game
                 return;
             }
             targetDistance = dis;
-            attackTarget = creature.id;
+            attackTarget = creature.entityID;
         }
 
         override public void BeHit(Creature creature)
@@ -63,7 +63,7 @@ namespace Backend.Game
                 V3 pos = steps.Dequeue();
                 this.pos = pos;
                 SActionMove message = new SActionMove();
-                message.id = id;
+                message.targetID = entityID;
                 message.pos = pos;
                 message.state = m_moving ? MoveState.STEP : MoveState.BEGIN;
                 Broundcast(message);
@@ -78,7 +78,7 @@ namespace Backend.Game
                 m_moving = false;
                 this.pos = enemy.pos;
                 SActionMove message = new SActionMove();
-                message.id = id;
+                message.targetID = entityID;
                 message.pos = enemy.pos;
                 message.state = MoveState.END;
                 Broundcast(message);

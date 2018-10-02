@@ -35,8 +35,8 @@ namespace Backend.Game
 
             UnderHit hit = new UnderHit();
             hit.HP = currentHP;
-            hit.id = enemy.id;
-            hit.source = this.id;
+            hit.sourceID = enemy.entityID;
+            hit.targetID = this.entityID;
             Broundcast(hit);
         }
 

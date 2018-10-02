@@ -48,7 +48,7 @@ public enum MoveState
 public class SActionMove : Message
 {
     public SActionMove() : base(Command.S_ACTION_MOVE) { }
-    public int id;
+    public int targetID;
     public MoveState state;
     // target is valid when action is ATTACK/MOVE
     // x, y, z is valid when action is MOVE
@@ -68,8 +68,8 @@ public class SActionJump : Message
 public class UnderHit : Message
 {
     public UnderHit() : base(Command.S_BE_HITTED) { }
-    public int id;
-    public int source;
+    public int sourceID;
+    public int targetID;
     public int HP;
 }
 
@@ -85,14 +85,14 @@ public class SActionAttack : Message
 public class SEquipWeapon : Message
 {
     public SEquipWeapon() : base(Command.S_EQUIP_WEAPON) { }
-    public int item;
+    public int itemID;
 }
 
 [Serializable]
 public class SEntityDestory : Message
 {
     public SEntityDestory() : base(Command.S_ENTITY_DESTORY) { }
-    public int id;
+    public int playerID;
 }
 
 [Serializable]
@@ -101,7 +101,7 @@ public class STakeItem : Message
     public STakeItem() : base(Command.S_TAKE_ITEM) { }
     public bool clone;
     public string name;
-    public int itemId;
+    public int itemID;
 }
 
 [Serializable]

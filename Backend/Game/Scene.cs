@@ -56,11 +56,11 @@ namespace Backend.Game
             }
             else if (entity is Sprite)
             {
-                sprites.Add(entity.id, (Sprite)entity);
+                sprites.Add(entity.entityID, (Sprite)entity);
             }
             else if (entity is Item)
             {
-                items.Add(entity.id, (Item)entity);
+                items.Add(entity.entityID, (Item)entity);
             }
             base.AddEntity(entity);
         }
@@ -105,7 +105,7 @@ namespace Backend.Game
 
         void PlayerEnter(Player player)
         {
-            players.Add(player.id, player);
+            players.Add(player.entityID, player);
             player.SendSpawn(player.ToDEntity());
             foreach (KeyValuePair<int, Item> kv in items)
             {
@@ -117,7 +117,7 @@ namespace Backend.Game
             }
             foreach (KeyValuePair<int, Player> kv in players)
             {
-                if (player.id != kv.Value.id)
+                if (player.entityID != kv.Value.entityID)
                 {
                     kv.Value.SendSpawn(kv.Value.ToDEntity());
                     player.SendSpawn(kv.Value.ToDEntity());
@@ -130,9 +130,9 @@ namespace Backend.Game
         void PlayerLeave(Player player)
         {
             SEntityDestory msg = new SEntityDestory();
-            msg.id = player.id;
+            msg.playerID = player.entityID;
             player.Broundcast(msg, true);
-            players.Remove(player.id);
+            players.Remove(player.entityID);
             player.OnLeaveScene(this);
         }
     }

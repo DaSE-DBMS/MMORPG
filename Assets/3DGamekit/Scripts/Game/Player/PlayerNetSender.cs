@@ -29,8 +29,8 @@ namespace Gamekit3D
             CPlayerTake msg = new CPlayerTake();
             msg.byName = weaponEntity.canClone;
             msg.targetName = weapon.name;
-            msg.playerId = m_entity.id;
-            msg.targetId = weaponEntity.id;
+            msg.playerId = m_entity.entityID;
+            msg.targetId = weaponEntity.entityID;
             MyNetwork.instance.Send(msg);
         }
 
@@ -80,21 +80,21 @@ namespace Gamekit3D
         void SendJumpingAction()
         {
             CPlayerJump action = new CPlayerJump();
-            action.player = m_entity.id;
+            action.player = m_entity.entityID;
             MyNetwork.instance.Send(action);
         }
 
         void SendAttackingAction(int targetID = 0)
         {
             CPlayerAttack action = new CPlayerAttack();
-            action.player = m_entity.id;
+            action.player = m_entity.entityID;
             action.target = targetID;
             MyNetwork.instance.Send(action);
         }
 
         void InitMove(CPlayerMove action)
         {
-            action.player = m_entity.id;
+            action.player = m_entity.entityID;
             action.move.x = m_input.MoveInput.x;
             action.move.y = m_input.MoveInput.y;
             action.pos.x = transform.position.x;
@@ -142,7 +142,7 @@ namespace Gamekit3D
             if (damager == null)
                 return;
 
-            m_attackTarget = damager.id;
+            m_attackTarget = damager.entityID;
         }
 
         private void OnTriggerExit(Collider other)
@@ -154,7 +154,7 @@ namespace Gamekit3D
             if (damager == null)
                 return;
 
-            if (m_attackTarget == damager.id)
+            if (m_attackTarget == damager.entityID)
                 m_attackTarget = 0;
         }
         void OnTriggerStay(Collider other)

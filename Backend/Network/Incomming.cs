@@ -93,7 +93,7 @@ namespace Backend.Network
             Player player = (Player)World.Instance().GetEntity(request.player);
             player.pos = request.pos;
             SActionMove response = new SActionMove();
-            response.id = request.player;
+            response.targetID = request.player;
             response.state = request.state;
             response.pos = request.pos;
             response.rot = request.rot;

@@ -70,10 +70,10 @@ namespace Gamekit3D.Network
                 GameObject.Destroy(go);
                 return null;
             }
-            entity.id = entityID;
-            if (!networkEntities.ContainsKey(entity.id))
+            entity.entityID = entityID;
+            if (!networkEntities.ContainsKey(entity.entityID))
             {
-                networkEntities.Add(entity.id, entity);
+                networkEntities.Add(entity.entityID, entity);
             }
             return go;
         }
@@ -95,15 +95,15 @@ namespace Gamekit3D.Network
             GameObject go = null;
             if (msg.entity.type == (int)EntityType.PLAYER)
             {
-                go = CloneGameObject(msg.entity.name, msg.entity.id);
+                go = CloneGameObject(msg.entity.name, msg.entity.entityID);
             }
             else if (networkObjects.TryGetValue(msg.entity.name, out go))
             {
                 NetworkEntity entity = go.GetComponent<NetworkEntity>();
-                entity.id = msg.entity.id;
-                if (!networkEntities.ContainsKey(entity.id))
+                entity.entityID = msg.entity.entityID;
+                if (!networkEntities.ContainsKey(entity.entityID))
                 {
-                    networkEntities.Add(entity.id, entity);
+                    networkEntities.Add(entity.entityID, entity);
                 }
             }
             if (go == null)
@@ -176,7 +176,7 @@ namespace Gamekit3D.Network
         private void RecvActionMove(IChannel channel, Message message)
         {
             SActionMove msg = (SActionMove)message;
-            NetworkEntity self = networkEntities[msg.id];
+            NetworkEntity self = networkEntities[msg.targetID];
             if (self.creatureBehavior == null)
                 return;
 
@@ -205,8 +205,8 @@ namespace Gamekit3D.Network
         private void RecvBeHit(IChannel channel, Message message)
         {
             UnderHit msg = (UnderHit)message;
-            NetworkEntity self = networkEntities[msg.id];
-            NetworkEntity source = networkEntities[msg.source];
+            NetworkEntity self = networkEntities[msg.sourceID];
+            NetworkEntity source = networkEntities[msg.targetID];
             if (self.creatureBehavior == null || source.creatureBehavior == null)
                 return;
 
@@ -216,7 +216,7 @@ namespace Gamekit3D.Network
         private void RecvEntityDestory(IChannel channel, Message message)
         {
             SEntityDestory msg = (SEntityDestory)message;
-            GameObject go = gameObjects[msg.id];
+            GameObject go = gameObjects[msg.playerID];
             GameObject.Destroy(go);
         }
 
@@ -238,7 +238,7 @@ namespace Gamekit3D.Network
         private void RecvWeaponEquiped(IChannel channel, Message message)
         {
             SEquipWeapon msg = (SEquipWeapon)message;
-            NetworkEntity weapon = networkEntities[msg.item];
+            NetworkEntity weapon = networkEntities[msg.itemID];
             thisPlayer.EquipWeapon(weapon);
         }
 
@@ -248,14 +248,14 @@ namespace Gamekit3D.Network
             NetworkEntity item;
             if (msg.clone)
             {
-                GameObject go = CloneGameObject(msg.name, msg.itemId);
+                GameObject go = CloneGameObject(msg.name, msg.itemID);
                 if (go == null)
                     return;
-                item = networkEntities[msg.itemId];
+                item = networkEntities[msg.itemID];
             }
             else
             {
-                item = networkEntities[msg.itemId];
+                item = networkEntities[msg.itemID];
             }
             thisPlayer.TakeItem(item);
         }

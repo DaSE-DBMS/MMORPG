@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Common;
+
+
 
 namespace Common
 {
@@ -75,7 +78,7 @@ namespace Common
         {
 
             public int type;
-            public int id;
+            public int entityID;
             public string name;
             public int currentHP;
             public int maxHP;

@@ -41,12 +41,12 @@ namespace Backend.Game
                 Entity parent = entity.Parent;
                 if (parent != null)
                 {
-                    parent.RemoveEntity(entity.id, out entity);
+                    parent.RemoveEntity(entity.entityID, out entity);
                 }
             }
             else
             {
-                Trace.WriteLine(string.Format("cannot find entity {0}", entity.id));
+                Trace.WriteLine(string.Format("cannot find entity {0}", entity.entityID));
             }
             return ret;
         }

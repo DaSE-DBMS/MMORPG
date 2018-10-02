@@ -44,7 +44,7 @@ namespace Backend.Network
 
         private void RecvConnectionClose(IChannel channel)
         {
-            World.Instance().RemoveEntity(((Entity)channel.GetContent()).id);
+            World.Instance().RemoveEntity(((Entity)channel.GetContent()).entityID);
         }
 
         private void LoadAssets()

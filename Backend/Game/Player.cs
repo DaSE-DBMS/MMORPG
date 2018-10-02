@@ -68,7 +68,7 @@ namespace Backend.Game
         {
             SEntitySpawn msg = new SEntitySpawn();
             msg.entity = entity;
-            msg.isMine = entity.id == id;
+            msg.isMine = entity.entityID == entityID;
             connection.Send(msg);
         }
 
@@ -92,14 +92,14 @@ namespace Backend.Game
                 if (target == null)
                     return;
                 msgTake.clone = true;
-                msgTake.itemId = clone.id;
+                msgTake.itemID = clone.entityID;
                 msgTake.name = clone.name;
                 target = (Item)clone;
             }
             else
             {
                 msgTake.clone = false;
-                msgTake.itemId = target.id;
+                msgTake.itemID = target.entityID;
                 msgTake.name = target.name;
             }
 
@@ -123,7 +123,7 @@ namespace Backend.Game
 
             m_weapon = weapon;
             SEquipWeapon msgEquip = new SEquipWeapon();
-            msgEquip.item = weapon.id;
+            msgEquip.itemID = weapon.entityID;
             connection.Send(msgEquip);
         }
     }
