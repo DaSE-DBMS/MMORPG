@@ -43,19 +43,24 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
-    public bool JumpInput
+    public bool IsJumpInput
     {
         get { return m_Jump && !playerControllerInputBlocked && !m_ExternalInputBlocked; }
     }
 
-    public bool Attack
+    public bool IsAttackInput
     {
         get { return m_Attack && !playerControllerInputBlocked && !m_ExternalInputBlocked; }
     }
 
-    public bool Pause
+    public bool IsPause
     {
         get { return m_Pause; }
+    }
+
+    public bool IsMoveInput
+    {
+        get { return !Mathf.Approximately(MoveInput.sqrMagnitude, 0f); }
     }
 
     protected bool Move

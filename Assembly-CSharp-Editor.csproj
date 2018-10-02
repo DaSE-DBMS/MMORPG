@@ -150,7 +150,6 @@
     <Compile Include="Assets\3DGamekit\Scripts\Game\Localization\Editor\PhraseDrawer.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Localization\Editor\TranslatedPhrasesEditor.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Localization\Editor\TranslatorEditor.cs" />
-    <Compile Include="Assets\3DGamekit\Scripts\Game\Player\Editor\CheckpointGroupEditor.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Player\Editor\PlayerControllerEditor.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Timeline\AudioSnapshot\Editor\AudioSnapshotDrawer.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Timeline\CutsceneScriptControl\Editor\CutsceneScriptControlDrawer.cs" />

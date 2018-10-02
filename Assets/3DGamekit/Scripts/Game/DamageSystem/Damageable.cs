@@ -12,7 +12,7 @@ namespace Gamekit3D
 
         public int maxHitPoints;
         [Tooltip("Time that this gameObject is invulnerable for, after receiving damage.")]
-        public float invulnerabiltyTime;
+        public int invulnerabiltyTime;
 
 
         [Tooltip("The angle from the which that damageable is hitable. Always in the world XZ plane, with the forward being rotate by hitForwardRoation")]

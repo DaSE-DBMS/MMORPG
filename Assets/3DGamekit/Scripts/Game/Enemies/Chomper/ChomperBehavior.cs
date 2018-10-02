@@ -53,6 +53,14 @@ namespace Gamekit3D
 
         private Animator m_Animator;
         private bool m_ground = true;
+
+        private NetworkEntity m_entity;
+
+        void Awake()
+        {
+            m_entity = GetComponent<NetworkEntity>();
+            m_entity.creatureBehavior = this;
+        }
         protected void OnEnable()
         {
             //m_Controller = GetComponentInChildren<EnemyController>();

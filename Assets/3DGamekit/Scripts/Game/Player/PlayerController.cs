@@ -15,6 +15,9 @@ namespace Gamekit3D
         protected static PlayerController s_Instance;
         public static PlayerController instance { get { return s_Instance; } }
 
+        public bool IsReadyToJump { get { return m_ReadyToJump; } }
+        public bool CanAttack { get { return canAttack && isMine; } }
+
         public bool respawning { get { return m_Respawning; } }
         public bool isMine = false;
         public float maxForwardSpeed = 8f;        // How fast Ellen can run.
@@ -248,9 +251,9 @@ namespace Gamekit3D
         {
             if (isMine)
             {
-                m_attacking = m_Input.Attack;
+                m_attacking = m_Input.IsAttackInput;
                 m_moving = IsMoveInput;
-                m_jumping = m_Input.JumpInput;
+                m_jumping = m_Input.IsJumpInput;
                 m_movement.Set(m_Input.MoveInput.x, m_Input.MoveInput.y);
                 UpdateInputBlocking();
             }
@@ -267,7 +270,7 @@ namespace Gamekit3D
                 m_Animator.SetTrigger(m_HashMeleeAttack);
                 if (isMine)
                 {
-                    SendAttackingAction();
+                    //SendAttackingAction();
                 }
             }
 
@@ -398,7 +401,7 @@ namespace Gamekit3D
                     // ... then override the previously set vertical speed and make sure she cannot jump again.
                     if (isMine)
                     {
-                        SendJumpingAction();
+                        //SendJumpingAction();
                     }
                     m_VerticalSpeed = jumpSpeed;
                     m_IsGrounded = false;
@@ -609,6 +612,7 @@ namespace Gamekit3D
         // Called each physics step (so long as the Animator component is set to Animate Physics) after FixedUpdate to override root motion.
         void OnAnimatorMove()
         {
+            /*
             if (isMine)
             {
                 if (m_moving && m_moveStep == 0)
@@ -623,7 +627,7 @@ namespace Gamekit3D
                 {
                     SendMovingEnd();
                 }
-            }
+            }*/
 
             Vector3 movement;
 
@@ -872,7 +876,7 @@ namespace Gamekit3D
             m_Respawning = true;
             m_Damageable.isInvulnerable = true;
         }
-
+        /*
         void SendJumpingAction()
         {
             CPlayerJump action = new CPlayerJump();
@@ -927,23 +931,7 @@ namespace Gamekit3D
             InitMove(action);
             MyNetwork.instance.Send(action);
             m_moveStep = 0;
-        }
-        public void PlayerWantTakeWeapon(GameObject weapon)
-        {
-            if (canAttack)
-                return;
-
-            NetworkEntity weaponEntity = weapon.GetComponent<NetworkEntity>();
-            if (weaponEntity == null)
-                return;
-
-            CPlayerTake msg = new CPlayerTake();
-            msg.byName = weaponEntity.canClone;
-            msg.targetName = weapon.name;
-            msg.playerId = m_entity.id;
-            msg.targetId = weaponEntity.id;
-            MyNetwork.instance.Send(msg);
-        }
+        }*/
 
         public void EquipWeapon(NetworkEntity weapon)
         {
@@ -967,7 +955,7 @@ namespace Gamekit3D
         {
             item.gameObject.transform.SetParent(this.gameObject.transform);
         }
-
+        /*
         private void OnTriggerStay(Collider other)
         {
             if (!(isMine && canAttack && m_attacking))
@@ -981,7 +969,6 @@ namespace Gamekit3D
                 return;
 
             SendAttackingAction(damager.id);
-
         }
 
         private void OnCollisionStay(Collision other)
@@ -998,5 +985,6 @@ namespace Gamekit3D
 
             SendAttackingAction(damager.id);
         }
+        */
     }
 }

@@ -1281,8 +1281,8 @@ GameObject:
   - component: {fileID: 95449222272042074}
   - component: {fileID: 114290622220327500}
   - component: {fileID: 114700785457422906}
-  - component: {fileID: 114675004760664532}
   - component: {fileID: 114510813362303408}
+  - component: {fileID: 135061097617921490}
   m_Layer: 23
   m_Name: Chomper
   m_TagString: Untagged
@@ -4089,19 +4089,6 @@ MonoBehaviour:
   overrides: []
   playing: 0
   canPlay: 0
---- !u!114 &114675004760664532
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1722084123150156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d32f0c6aab55ea44db2c54319aefe5d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ragdollPrefab: {fileID: 1751530482674952, guid: e9582d2bf7627a5478f06709df5f184c,
-    type: 2}
 --- !u!114 &114700785457422906
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4309,6 +4296,18 @@ MonoBehaviour:
   overrides: []
   playing: 0
   canPlay: 0
+--- !u!135 &135061097617921490
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1722084123150156}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!137 &137622137432771028
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

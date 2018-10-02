@@ -96,55 +96,67 @@ namespace Gamekit3D.Network
 
         private void RecvEntitySpawn(IChannel channel, Message message)
         {
-            SEntitySpawn m = (SEntitySpawn)message;
+            SEntitySpawn msg = (SEntitySpawn)message;
             GameObject go = null;
-            if (m.entity.type == (int)EntityType.PLAYER)
+            if (msg.entity.type == (int)EntityType.PLAYER)
             {
-                go = CloneGameObject(m.entity.name, m.entity.id);
+                go = CloneGameObject(msg.entity.name, msg.entity.id);
             }
-            else if (networkObjects.TryGetValue(m.entity.name, out go))
+            else if (networkObjects.TryGetValue(msg.entity.name, out go))
             {
-                go.GetComponent<NetworkEntity>().id = m.entity.id;
+                NetworkEntity entity = go.GetComponent<NetworkEntity>();
+                entity.id = msg.entity.id;
+                if (!networkEntities.ContainsKey(entity.id))
+                {
+                    networkEntities.Add(entity.id, entity);
+                }
             }
             if (go == null)
             {
                 return;
             }
             // Do not use transform.position.Set(x, y, z)
-            go.transform.position = new Vector3(m.entity.pos.x, m.entity.pos.y, m.entity.pos.z);
-            go.transform.rotation = new Quaternion(m.entity.rot.x, m.entity.rot.y, m.entity.rot.z, m.entity.rot.w);
-            if (!m.entity.forClone)
+            go.transform.position = new Vector3(msg.entity.pos.x, msg.entity.pos.y, msg.entity.pos.z);
+            go.transform.rotation = new Quaternion(msg.entity.rot.x, msg.entity.rot.y, msg.entity.rot.z, msg.entity.rot.w);
+            if (!msg.entity.forClone)
             {
                 go.SetActive(true);
             }
-            Damageable damageable = go.GetComponent<Damageable>();
-            if (damageable == null)
-            {
-                return;
-            }
 
-            damageable.currentHitPoints = m.entity.HP;
-            damageable.maxHitPoints = m.entity.maxHP;
-
-
-            // if this creature is a player ... TODO type test
-            PlayerController controller = go.GetComponent<PlayerController>();
-            PlayerInput input = go.GetComponent<PlayerInput>();
-            if (controller == null || input == null)
+            if (msg.entity.type == (int)EntityType.PLAYER
+                || msg.entity.type == (int)EntityType.SPRITE)
             {
-                return;
-            }
+                Damageable damageable = go.GetComponent<Damageable>();
+                if (damageable == null)
+                {
+                    return;
+                }
 
-            if (m.isMine && m.entity.type == (int)EntityType.PLAYER)
-            {
-                thisPlayer = controller;
-                channel.SetContent(go);
-                controller.InitLocalPlayer();
-            }
-            else
-            {
-                damageable.enabled = false;
-                input.enabled = false;
+                damageable.currentHitPoints = msg.entity.currentHP;
+                damageable.maxHitPoints = msg.entity.maxHP;
+                if (msg.entity.type == (int)EntityType.PLAYER)
+                {
+                    PlayerController controller = go.GetComponent<PlayerController>();
+                    PlayerInput input = go.GetComponent<PlayerInput>();
+                    PlayerNetSender sender = go.GetComponent<PlayerNetSender>();
+                    if (controller == null || input == null || sender == null)
+                    {
+                        return;
+                    }
+
+                    if (msg.isMine)
+                    {
+                        thisPlayer = controller;
+                        channel.SetContent(go);
+                        controller.InitLocalPlayer();
+                    }
+                    else
+                    {
+                        damageable.enabled = false;
+                        input.enabled = false;
+                        sender.enabled = false;
+                    }
+                }
             }
         }
 
@@ -203,7 +215,7 @@ namespace Gamekit3D.Network
 
         private void RecvBeHit(IChannel channel, Message message)
         {
-            BeHit msg = (BeHit)message;
+            UnderHit msg = (UnderHit)message;
             NetworkEntity self = networkEntities[msg.id];
             NetworkEntity source = networkEntities[msg.source];
             if (self.creatureBehavior == null || source.creatureBehavior == null)

@@ -10,7 +10,7 @@ namespace Backend.Game
         private int attackTarget;
         private float targetDistance;
         private Queue<V3> steps = new Queue<V3>();
-
+        bool m_moving = true;
         public void EnemyNear(Creature creature)
         {
             float dis = Distance(creature);
@@ -24,14 +24,14 @@ namespace Backend.Game
 
         override public void BeHit(Creature creature)
         {
-            update = true;
-            if (hitPoints <= 0)
+            if (currentHP <= 0)
             {
                 return;
             }
+            update = true;
             base.BeHit(creature);
             EnemyNear(creature);
-            if (hitPoints == 0)
+            if (currentHP == 0)
             {// DEAD
 
             }
@@ -52,38 +52,37 @@ namespace Backend.Game
                 return;
             }
             float diff = Math.Abs(distance - targetDistance);
-            if (diff > 50 || steps.Count == 0)
+            if (diff > 3 || steps.Count == 0)
             {
                 steps.Clear();
                 FindPath(enemy, steps);
             }
 
-            if (steps != null && steps.Count > 0)
+            if (steps.Count > 0)
             {
                 V3 pos = steps.Dequeue();
+                this.pos = pos;
                 SActionMove message = new SActionMove();
+                message.id = id;
                 message.pos = pos;
+                message.state = m_moving ? MoveState.STEP : MoveState.BEGIN;
+                Broundcast(message);
+                m_moving = true;
+                if (steps.Count == 0)
+                {
+                    steps.Enqueue(enemy.pos);
+                }
             }
-        }
-
-        override public DEntity ToDEntity()
-        {
-            DEntity entity = base.ToDEntity();
-            entity.HP = hitPoints;
-            entity.maxHP = maxHitPoints;
-            entity.level = level;
-            entity.speed = speed;
-            return entity;
-        }
-
-        override public void FromDEntity(DEntity entity)
-        {
-            hitPoints = entity.HP;
-            maxHitPoints = entity.maxHP;
-            level = entity.level;
-            speed = entity.speed;
-            aggressive = entity.aggressive;
-            base.FromDEntity(entity);
+            else if (m_moving)
+            {
+                m_moving = false;
+                this.pos = enemy.pos;
+                SActionMove message = new SActionMove();
+                message.id = id;
+                message.pos = enemy.pos;
+                message.state = MoveState.END;
+                Broundcast(message);
+            }
         }
     }
 }

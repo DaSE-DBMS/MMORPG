@@ -18,6 +18,7 @@ namespace Gamekit3D.Network
         public EntityType entityType;
         public int id;
         public bool canClone = false;
+
         public void BuildTree()
         {
             parent = transform.parent == null ? null : transform.parent.GetComponent<NetworkEntity>();
@@ -51,8 +52,9 @@ namespace Gamekit3D.Network
             Damageable damageable = GetComponent<Damageable>();
             if (damageable != null)
             {
-                entity.maxHP = damageable.maxHitPoints;
-                entity.HP = damageable.currentHitPoints;
+                entity.currentHP = entity.maxHP = damageable.maxHitPoints;
+                entity.invTime = damageable.invulnerabiltyTime;
+                entity.hitAngle = damageable.hitAngle;
             }
             entity.type = (int)entityType;
             foreach (NetworkEntity child in children)
@@ -65,7 +67,6 @@ namespace Gamekit3D.Network
         }
         void Awake()
         {
-            BuildTree();
         }
 
         // Use this for initialization

@@ -39,7 +39,7 @@ namespace Backend.Game
             bool ret = entities.Remove(id, out entity);
             if (ret)
             {
-                Entity parent = entity.GetParent();
+                Entity parent = entity.Parent;
                 if (parent != null)
                 {
                     parent.RemoveEntity(entity.id, out entity);

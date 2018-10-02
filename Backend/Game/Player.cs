@@ -24,21 +24,12 @@ namespace Backend.Game
         override public DEntity ToDEntity()
         {
             DEntity entity = base.ToDEntity();
-            entity.HP = hitPoints;
-            entity.maxHP = maxHitPoints;
-            entity.level = level;
-            entity.speed = speed;
             return entity;
         }
 
         override public void FromDEntity(DEntity entity)
         {
             scene = "Level1";
-            pos = entity.pos;
-            rot = entity.rot;
-            hitPoints = entity.HP;
-            maxHitPoints = entity.maxHP;
-            level = 1;
             name = "Ellen";
             base.FromDEntity(entity);
         }

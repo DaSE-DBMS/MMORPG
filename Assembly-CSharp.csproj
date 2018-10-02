@@ -254,10 +254,9 @@
     <Compile Include="Assets\3DGamekit\Scripts\Game\Localization\TranslatedPhrases.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Localization\TranslatedText.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Localization\Translator.cs" />
-    <Compile Include="Assets\3DGamekit\Scripts\Game\Player\Checkpoint.cs" />
-    <Compile Include="Assets\3DGamekit\Scripts\Game\Player\CheckpointGroup.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Player\PlayerController.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Player\PlayerInput.cs" />
+    <Compile Include="Assets\3DGamekit\Scripts\Game\Player\PlayerNetSender.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Player\RespawnPlayer.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Player\StateMachineBehaviour\EllenRespawnEffect.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Player\StateMachineBehaviour\EllenSetTargetableSMB.cs" />

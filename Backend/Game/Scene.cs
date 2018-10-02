@@ -93,7 +93,7 @@ namespace Backend.Game
 
         public override void Update()
         {
-            foreach (KeyValuePair<int, Entity> kv in children)
+            foreach (KeyValuePair<int, Entity> kv in Children)
             {
                 if (kv.Value.update)
                 {

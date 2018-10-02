@@ -60,7 +60,7 @@ namespace Gamekit3D
 
         void Update()
         {
-            if (PlayerInput.Instance != null && PlayerInput.Instance.Pause)
+            if (PlayerInput.Instance != null && PlayerInput.Instance.IsPause)
             {
                 SwitchPauseState();
             }

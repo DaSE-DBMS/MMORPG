@@ -64,9 +64,10 @@ public class SActionJump : Message
     public int id;
 }
 
-public class BeHit : Message
+[Serializable]
+public class UnderHit : Message
 {
-    public BeHit() : base(Command.S_BE_HITTED) { }
+    public UnderHit() : base(Command.S_BE_HITTED) { }
     public int id;
     public int source;
     public int HP;

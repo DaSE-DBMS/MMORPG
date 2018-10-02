@@ -23,12 +23,12 @@ namespace Gamekit3D
         protected virtual void ExecuteOnEnter(Collider other)
         {
 
-            PlayerController controller = other.GetComponent<PlayerController>();
-            if (controller == null)
+            PlayerNetSender sender = other.GetComponent<PlayerNetSender>();
+            if (sender == null)
             {
                 return;
             }
-            controller.PlayerWantTakeWeapon(weapon);
+            sender.PlayerWantTakeWeapon(weapon);
             OnEnter.Invoke();
         }
 

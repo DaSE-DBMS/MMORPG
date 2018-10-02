@@ -1974,9 +1974,10 @@ GameObject:
   - component: {fileID: 114327062588579118}
   - component: {fileID: 114988718089299472}
   - component: {fileID: 114281108900433406}
+  - component: {fileID: 114071295577211862}
   m_Layer: 9
   m_Name: Ellen
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4847,6 +4848,20 @@ MonoBehaviour:
       - {fileID: 0}
   playing: 0
   canPlay: 0
+--- !u!114 &114071295577211862
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1991219941496362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc6f2b3178cfce64d99b20ef1eeafa30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damagedLayers:
+    serializedVersion: 2
+    m_Bits: 8388608
 --- !u!114 &114094828976615078
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -8,29 +8,27 @@ namespace Backend.Game
 {
     public class Entity : MyObject
     {
-        EntityType entityType;
         private static int sequence = 1;
-        private int parent = 0;
-        public Dictionary<int, Entity> children = new Dictionary<int, Entity>();
+
+        public EntityType type;
         public int id;
         public V3 pos;
         public V4 rot;
-        public Vector3d vector3d = new Vector3d();
         public bool forClone;
         public string name;
         public bool update = false;
 
+        private int parent = 0;
         private Point3d m_pos = new Point3d();
+        private Dictionary<int, Entity> m_children = new Dictionary<int, Entity>();
+
+        public Dictionary<int, Entity> Children { get { return m_children; } }
+        public Entity Parent { get { return World.Instance().GetEntity(parent); } }
 
         public Entity()
         {
             id = sequence++;
             World.Instance().AddEntity(id, this);
-        }
-
-        public Entity GetParent()
-        {
-            return World.Instance().GetEntity(parent);
         }
 
         ~Entity()
@@ -41,12 +39,12 @@ namespace Backend.Game
         virtual public void AddEntity(Entity entity)
         {
             entity.parent = this.id;
-            children.Add(entity.id, entity);
+            Children.Add(entity.id, entity);
         }
 
         virtual public bool RemoveEntity(int id, out Entity entity)
         {
-            bool ret = children.Remove(id, out entity);
+            bool ret = Children.Remove(id, out entity);
             if (ret)
             {
                 entity.parent = 0;
@@ -56,7 +54,7 @@ namespace Backend.Game
 
         virtual public bool FindEntity(int id, out Entity entity)
         {
-            return children.TryGetValue(id, out entity);
+            return Children.TryGetValue(id, out entity);
         }
 
         virtual public void Update()
@@ -82,7 +80,7 @@ namespace Backend.Game
             entity.pos = pos;
             entity.rot = rot;
             entity.forClone = forClone;
-            entity.type = (int)entityType;
+            entity.type = (int)type;
             return entity;
         }
 
@@ -93,7 +91,7 @@ namespace Backend.Game
             pos = entity.pos;
             rot = entity.rot;
             forClone = entity.forClone;
-            entityType = (EntityType)entity.type;
+            type = (EntityType)entity.type;
         }
 
         virtual public void Broundcast(Message message, bool exclude = false)
@@ -103,7 +101,7 @@ namespace Backend.Game
 
         public Scene GetScene()
         {
-            Entity parent = GetParent();
+            Entity parent = Parent;
             if (parent != null)
             {
                 if (parent.GetType() == typeof(Scene))

@@ -77,8 +77,10 @@ namespace Common
             public int type;
             public int id;
             public string name;
-            public int HP;
+            public int currentHP;
             public int maxHP;
+            public float invTime; // invulnerabilty time, second
+            public float hitAngle;
             public int level;
             public int speed;
             public bool aggressive;
