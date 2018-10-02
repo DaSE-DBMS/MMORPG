@@ -1,6 +1,6 @@
 ﻿/*
  * message send from Backend to Frontend
- * if you are changing this file, mind that you should rebuild both Frontend and Backend later
+ * if you are changing this file, mind to rebuild both Frontend and Backend later
  */
 
 using System;

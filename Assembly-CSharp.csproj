@@ -160,6 +160,7 @@
     <Compile Include="Assets\3DGamekit\Packages\SceneManagement\Runtime\ScreenFader.cs" />
     <Compile Include="Assets\3DGamekit\Packages\SceneManagement\Runtime\TransitionPoint.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Common\BEMessage.cs" />
+    <Compile Include="Assets\3DGamekit\Scripts\Common\Command.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Common\Delegate.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Common\FEMessage.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Common\IChannel.cs" />
@@ -316,7 +317,6 @@
     <Compile Include="Assets\3DGamekit\Scripts\Game\Weapon\TimeEffect.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Weapon\WeaponTake.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\Client.cs" />
-    <Compile Include="Assets\3DGamekit\Scripts\Network\Command.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\IAttackable.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\IClient.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\ICreatureBehavior.cs" />

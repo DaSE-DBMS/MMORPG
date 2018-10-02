@@ -1,10 +1,13 @@
-﻿using System;
+﻿/*
+ * assets data exported for backend ..
+ * if you are changing this file, mind to re-export asset
+ * using Unity Editor and execute "Tools" --- "Export Assets" to export
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Common;
-
-
 
 namespace Common
 {
@@ -76,13 +79,12 @@ namespace Common
         [Serializable]
         public class DEntity
         {
-
             public int type;
             public int entityID;
             public string name;
             public int currentHP;
             public int maxHP;
-            public float invTime; // invulnerabilty time, second
+            public float invTime; // invulnerabilty time, second unit
             public float hitAngle;
             public int level;
             public int speed;
