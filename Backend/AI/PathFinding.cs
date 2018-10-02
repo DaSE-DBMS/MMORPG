@@ -8,8 +8,6 @@ namespace Backend.AI
 {
     public class PathFinding
     {
-        string m_path;
-
         RTree.RTree<MeshElement> m_rtree = new RTree.RTree<MeshElement>();
         Dictionary<int, MeshElement> m_meshDict = new Dictionary<int, MeshElement>();
 

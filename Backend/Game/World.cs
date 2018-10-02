@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Common.Data;
+using System.Diagnostics;
 
 namespace Backend.Game
 {
@@ -9,7 +10,9 @@ namespace Backend.Game
 
         private Dictionary<string, Scene> scenes = new Dictionary<string, Scene>();
 
-        public Dictionary<string, DEntity> InitialData = new Dictionary<string, DEntity>();
+        private Dictionary<string, DEntity> data = new Dictionary<string, DEntity>();
+
+        public Dictionary<string, DEntity> EntityData { get { return data; } }
 
         public void Tick()
         {
@@ -20,12 +23,8 @@ namespace Backend.Game
         }
         public Entity GetEntity(int id)
         {
-            Entity entity = null;
-            if (entities.TryGetValue(id, out entity))
-            {
-                return entity;
-            }
-            return null;
+            return entities[id];
+
         }
 
         public void AddEntity(int id, Entity entity)
@@ -44,6 +43,10 @@ namespace Backend.Game
                 {
                     parent.RemoveEntity(entity.id, out entity);
                 }
+            }
+            else
+            {
+                Trace.WriteLine(string.Format("cannot find entity {0}", entity.id));
             }
             return ret;
         }
@@ -97,7 +100,7 @@ namespace Backend.Game
         static public Entity CreateEntityByName(string name)
         {
             DEntity dentity;
-            if (!World.Instance().InitialData.TryGetValue(name, out dentity))
+            if (!World.Instance().EntityData.TryGetValue(name, out dentity))
             {
                 return null;
             }

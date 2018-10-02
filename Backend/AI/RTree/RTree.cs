@@ -293,7 +293,7 @@ namespace RTree
 
                 if (!n.isLeaf())
                 {
-                    Debug.WriteLine($"searching Node<T> {n.nodeId}, from index {startIndex}");
+                    //Debug.WriteLine($"searching Node<T> {n.nodeId}, from index {startIndex}");
                     bool contains = false;
                     for (int i = startIndex; i < n.entryCount; i++)
                     {
@@ -650,7 +650,7 @@ namespace RTree
 #if DEBUG
             float newArea = n.mbr.area() + newNode.mbr.area();
             float percentageIncrease = (100 * (newArea - initialArea)) / initialArea;
-            Debug.WriteLine($"Node { n.nodeId} split. New area increased by {percentageIncrease}%");
+            //Debug.WriteLine($"Node { n.nodeId} split. New area increased by {percentageIncrease}%");
 #endif
 
             return newNode;
@@ -677,7 +677,7 @@ namespace RTree
             // the new rectangle aswell.
             n.mbr.add(newRect);
 
-            Debug.WriteLine($"pickSeeds(): NodeId = {n.nodeId}, newRect = {newRect}");
+            //Debug.WriteLine($"pickSeeds(): NodeId = {n.nodeId}, newRect = {newRect}");
 
             for (int d = 0; d < Rectangle.DIMENSIONS; d++)
             {

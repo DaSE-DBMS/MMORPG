@@ -113,8 +113,6 @@ namespace Gamekit3D
         Vector2 m_movement = new Vector2();
         //Vector3 m_position = new Vector3();
         //Quaternion m_rotation = new Quaternion();
-        public LayerMask damagedLayers;
-        int m_moveStep = 0;
         NetworkEntity m_entity;
 
         protected bool IsMoveInput

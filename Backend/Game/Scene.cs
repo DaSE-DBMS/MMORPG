@@ -19,7 +19,7 @@ namespace Backend.Game
             {
                 if (e.forClone)
                 {
-                    World.Instance().InitialData.TryAdd(e.name, e);
+                    World.Instance().EntityData.TryAdd(e.name, e);
                 }
                 Entity entity = World.CreateEntity(e);
                 if (entity != null)

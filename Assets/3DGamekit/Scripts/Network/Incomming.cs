@@ -57,12 +57,7 @@ namespace Gamekit3D.Network
 
         public GameObject CloneGameObject(string name, int entityID)
         {
-            GameObject go;
-            bool found = networkObjects.TryGetValue(name, out go);
-            if (!found)
-            {
-                return null;
-            }
+            GameObject go = networkObjects[name];
             return CloneGameObject(go, entityID);
         }
 
@@ -164,13 +159,7 @@ namespace Gamekit3D.Network
         {
             SActionAttack msg = (SActionAttack)message;
             NetworkEntity self = networkEntities[msg.id];
-            if (self.creatureBehavior == null)
-                return;
-
             NetworkEntity target = networkEntities[msg.target];
-            if (target.creatureBehavior == null)
-                return;
-
             self.creatureBehavior.ActionAttack(target.creatureBehavior);
         }
 
@@ -227,11 +216,8 @@ namespace Gamekit3D.Network
         private void RecvEntityDestory(IChannel channel, Message message)
         {
             SEntityDestory msg = (SEntityDestory)message;
-            GameObject go;
-            if (gameObjects.TryGetValue(msg.id, out go))
-            {
-                GameObject.Destroy(go);
-            }
+            GameObject go = gameObjects[msg.id];
+            GameObject.Destroy(go);
         }
 
         private void RecvExit(IChannel channel, Message message)

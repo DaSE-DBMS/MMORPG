@@ -289,7 +289,7 @@ namespace RTree
             for (int i = 0; i < DIMENSIONS; i++)
             {
                 distanceSquared += Math.Max(r.min[i], r.max[i]);
-#warning possible didn't convert properly
+                //#warning possible didn't convert properly
                 //distanceSquared += Math.Max(distanceSquared(i, r.min[i]), distanceSquared(i, r.max[i]));
             }
 
@@ -363,7 +363,7 @@ namespace RTree
                 return false;
 
             for (int i = 0; i < a1.Length; i++)
-                if (a1[i] != a2[i])
+                if (Math.Abs(a1[i] - a2[i]) > float.Epsilon) // if (a1[i] != a2[i])
                     return false;
             return true;
         }
@@ -380,7 +380,7 @@ namespace RTree
             if (obj.GetType() == typeof(Rectangle))
             {
                 Rectangle r = (Rectangle)obj;
-#warning possible didn't convert properly
+                //#warning possible didn't convert properly
                 if (CompareArrays(r.min, min) && CompareArrays(r.max, max))
                 {
                     equals = true;

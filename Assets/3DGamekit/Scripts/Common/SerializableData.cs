@@ -115,11 +115,15 @@ namespace Common
         }
 
         [Serializable]
-        public struct ServerConfig
+        public struct BackendConf
         {
-            int port;
-            string asset;
+            public string host;
+            public short port;
+            public string assestPath;
+            public List<string> scenes;
         }
+
+
     }
 }
 

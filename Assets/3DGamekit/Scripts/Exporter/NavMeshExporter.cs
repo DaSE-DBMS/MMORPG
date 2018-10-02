@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine.SceneManagement;
 using UnityEngine;
@@ -18,12 +19,26 @@ public class NavMeshExporter : MonoBehaviour
         DSceneAsset asset = new DSceneAsset();
         NavMeshToAsset(asset);
         EntitiesToAsset(asset);
-        using (StreamWriter sw = new StreamWriter(Application.dataPath + "/navmesh/" + asset.scene + ".xml"))
+        using (StreamWriter sw = new StreamWriter(Application.dataPath + "/assets/" + asset.scene + ".asset"))
         {
             XmlSerializer serializer = new XmlSerializer(typeof(DSceneAsset));
             serializer.Serialize(sw, asset);
+            Debug.Log("Export：" + asset.scene + ".asset");
         }
-        Debug.Log("导出完成：" + asset.scene);
+
+        using (StreamWriter sw = new StreamWriter(Application.dataPath + "/assets/backend.conf"))
+        {
+            BackendConf conf = new BackendConf();
+            conf.host = "0.0.0.0";
+            conf.port = 7777;
+            conf.assestPath = Application.dataPath + "/assets/";
+            conf.scenes = new List<string>();
+            conf.scenes.Add("Level1.asset");
+            XmlSerializer serializer = new XmlSerializer(typeof(BackendConf));
+            serializer.Serialize(sw, conf);
+            Debug.Log("Export：backend.conf");
+        }
+
         AssetDatabase.Refresh();
     }
 

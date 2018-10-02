@@ -47,7 +47,7 @@ namespace Backend.Network
                 listener.BeginAccept(
                         new AsyncCallback(AcceptCallback),
                         listener);
-                //Console.WriteLine("Waiting for a connection...");
+                Console.WriteLine("Backend start up and waiting for a connection on port {0}...", port);
                 while (true)
                 {
                     // Set the event to nonsignaled state.
@@ -102,8 +102,15 @@ namespace Backend.Network
                 }
                 return true;
             }
+            catch (KeyNotFoundException e)
+            {
+                Trace.WriteLine(string.Format("catch KeyNotFoundException {0} when calling invoke", e.ToString()));
+                return false;
+            }
             catch (SystemException e)
             {// Catch what exception ????
+
+                Debug.WriteLine(string.Format("catch SystemException {0} when calling invoke", e.ToString()));
                 return false;
             }
 

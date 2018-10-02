@@ -38,7 +38,7 @@ namespace Gamekit3D
         public bool fixCamera = false;
         private string m_inputXAxisName;
         private string m_inputYAxisName;
-        bool m_updateFix = false;
+        //bool m_updateFix = false;
         void Reset()
         {
             Transform keyboardAndMouseCameraTransform = transform.Find("KeyboardAndMouseFreeLookRig");

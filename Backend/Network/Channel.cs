@@ -174,7 +174,7 @@ namespace Backend.Network
                               new AsyncCallback(ReadCallback), channel);
                 }
             }
-            catch (SystemException ex)
+            catch (SystemException)
             {
                 channel.OnClose();
                 channel.Socket.Close();
@@ -200,7 +200,7 @@ namespace Backend.Network
                 channel.workSocket.BeginSend(stream.GetBuffer(), 0, (int)stream.Length, 0,
                     new AsyncCallback(SendCallback), channel);
             }
-            catch (SystemException ex)
+            catch (SystemException)
             {
                 channel.OnClose();
                 channel.workSocket.Shutdown(SocketShutdown.Both);

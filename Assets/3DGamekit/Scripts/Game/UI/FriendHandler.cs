@@ -6,7 +6,6 @@ public class FriendHandler : MonoBehaviour
 {
     public GameObject friendInfo;
 
-    bool m_init = false;
     private void Awake()
     {
         if (friendInfo == null)
@@ -18,7 +17,6 @@ public class FriendHandler : MonoBehaviour
             GameObject cloned = GameObject.Instantiate(friendInfo);
             cloned.transform.SetParent(transform, false);
         }
-        m_init = true;
     }
     // Use this for initialization
     void Start()

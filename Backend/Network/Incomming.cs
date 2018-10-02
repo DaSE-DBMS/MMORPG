@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Diagnostics;
 using Backend.Game;
 using Common.Data;
 using Backend.AI;
@@ -40,12 +40,7 @@ namespace Backend.Network
             response.token = request.user;
             channel.Send(response);
             Player player = new Player(channel);
-            DEntity dentity;
-            // TODO .. read from database if exists
-            if (!World.Instance().InitialData.TryGetValue("Ellen", out dentity))
-            {
-                return;
-            }
+            DEntity dentity = World.Instance().EntityData["Ellen"];
             player.FromDEntity(dentity);
             player.forClone = false;
 
@@ -57,13 +52,7 @@ namespace Backend.Network
             CEnterSceneDone request = (CEnterSceneDone)message;
             SEntitySpawn response = new SEntitySpawn();
             Player player = (Player)channel.GetContent();
-            if (player == null)
-                return;
-
             Scene scene = World.Instance().GetScene(player.scene);
-            if (scene == null)
-                return;
-
             // add the player to the scene
             player.Spawn();
             scene.AddEntity(player);
@@ -73,10 +62,6 @@ namespace Backend.Network
         {
             CPlayerJump request = (CPlayerJump)message;
             Player player = (Player)World.Instance().GetEntity(request.player);
-            if (player == null)
-            {
-                return;
-            }
             SActionJump response = new SActionJump();
             response.id = request.player;
             player.Broundcast(response);
@@ -86,19 +71,16 @@ namespace Backend.Network
         {
             CPlayerAttack request = (CPlayerAttack)message;
             Player player = (Player)World.Instance().GetEntity(request.player);
-            if (player == null)
-                return;
-
-            Entity target = World.Instance().GetEntity(request.target);
-            if (target == null)
-                return;
-
-
-            if (target is Sprite)
+            if (request.target != 0)
             {
-                Sprite sprite = (Sprite)target;
-                sprite.BeHit(player);
+                Entity target = World.Instance().GetEntity(request.target);
+                if (target is Sprite)
+                {
+                    Sprite sprite = (Sprite)target;
+                    sprite.BeHit(player);
+                }
             }
+
             SActionAttack response = new SActionAttack();
             response.id = request.player;
             response.target = request.target;
@@ -109,10 +91,6 @@ namespace Backend.Network
         {
             CPlayerMove request = (CPlayerMove)message;
             Player player = (Player)World.Instance().GetEntity(request.player);
-            if (player == null)
-            {
-                return;
-            }
             player.pos = request.pos;
             SActionMove response = new SActionMove();
             response.id = request.player;
@@ -148,7 +126,10 @@ namespace Backend.Network
 
             Entity target = World.Instance().GetEntity(request.targetId);
             if (target == null || !(target is Item))
+            {
+                Trace.WriteLine("cannot find target entity");
                 return;
+            }
 
             Item item = (Item)target;
             player.TakeItem(item);

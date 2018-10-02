@@ -3,6 +3,7 @@ using System.IO;
 using Backend.Game;
 using Backend.AI;
 using Common.Data;
+using System.Diagnostics;
 
 namespace Backend.Network
 {
@@ -12,11 +13,13 @@ namespace Backend.Network
         private Incomming incomming;
         private string ip;
         private short port;
+        private BackendConf conf;
 
-        public GameServer(string ip, short port)
+        public GameServer(BackendConf conf)
         {
-            this.ip = ip;
-            this.port = port;
+            this.conf = conf;
+            ip = conf.host;
+            port = conf.port;
         }
 
         public void StartUp()
@@ -46,14 +49,11 @@ namespace Backend.Network
 
         private void LoadAssets()
         {
-            for (int i = 0; i < 1; i++)
+            foreach (string sceneName in conf.scenes)
             {// foreach scene assets, TODO
                 XmlSerializer serializer = new XmlSerializer(typeof(DSceneAsset));
-
-                StreamReader reader = new StreamReader("E:/Users/ybbh/workspace/MMORPG/Assets/navmesh/Level1.xml");
-
+                StreamReader reader = new StreamReader(conf.assestPath + "/" + sceneName);
                 DSceneAsset asset = (DSceneAsset)serializer.Deserialize(reader);
-
                 World.Instance().LoadScene(asset);
             }
         }

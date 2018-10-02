@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Collections.Generic;
 using System.IO;
+using System.Diagnostics;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Gamekit3D.Network
@@ -68,7 +69,7 @@ namespace Gamekit3D.Network
                 {
                     onClose.Invoke(this);
                 }
-                catch (SystemException e)
+                catch (SystemException)
                 {
 
                 }
@@ -128,19 +129,26 @@ namespace Gamekit3D.Network
                 {// finish read a message, deserialize message to a class, invoke message receive callback
                     stream.Seek(0, SeekOrigin.Begin);
                     Message msg = (Message)formatter.Deserialize(stream);
-                    MessageDelegate @delegate;
-                    bool ok = messageDelegate.TryGetValue(command, out @delegate);
+                    try
+                    {
+                        MessageDelegate @delegate = messageDelegate[command];
+                        @delegate.Invoke(this, msg);
+                    }
+                    catch (KeyNotFoundException e)
+                    {
+                        Trace.WriteLine(string.Format("catch KeyNotFoundException {0} when calling invoke", e.ToString()));
+                    }
+                    catch (SystemException)
+                    {
+
+                    }
+                    // clear the receive strean and reset receive state
                     stream.Seek(0, SeekOrigin.End);
                     stream.Position = 0;
                     offset = 0;
                     command = Command.NONE;
                     readSize = 0;
                     unreadSize = 4;
-                    if (ok)
-                    {
-                        @delegate.Invoke(this, msg);
-                    }
-                    // clear the receive strean and reset receive state
                 }
             }
         }

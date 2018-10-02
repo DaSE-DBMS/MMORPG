@@ -363,7 +363,6 @@
     <None Include="Assets\3DGamekit\Shaders\UnityStandardParticles.cginc" />
     <None Include="Assets\3DGamekit\Shaders\Alien.shader" />
     <None Include="Assets\3DGamekit\Packages\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Mobile.shader" />
-    <None Include="Assets\navmesh\Level1.xml" />
     <None Include="Assets\3DGamekit\Packages\TextMesh Pro\Resources\Shaders\TMP_SDF Overlay.shader" />
     <None Include="Assets\3DGamekit\Shaders\WaterX.shader" />
     <None Include="Assets\3DGamekit\Shaders\Firefly.shader" />
