@@ -8,8 +8,9 @@ namespace Backend.Game
         public IChannel connection;
         public string user;
         public string token;
-        private Item m_weapon;
+        private Weapon m_weapon;
 
+        public Weapon Weapon { get { return m_weapon; } }
         public Player(IChannel channel)
         {
             connection = channel;
@@ -121,11 +122,21 @@ namespace Backend.Game
                 return;
 
             m_weapon = weapon;
+            SendEquipWeapon(this);
+        }
+
+        public bool IsEquipedWeapon()
+        {
+            return m_weapon != null;
+        }
+
+        public void SendEquipWeapon(Player player)
+        {
             SEquipWeapon msgEquip = new SEquipWeapon();
-            msgEquip.playerID = this.entityID;
-            msgEquip.itemName = weapon.name;
-            msgEquip.itemID = weapon.entityID;
-            Broundcast(msgEquip);
+            msgEquip.playerID = player.entityID;
+            msgEquip.itemName = player.m_weapon.name;
+            msgEquip.itemID = player.m_weapon.entityID;
+            connection.Send(msgEquip);
         }
     }
 }

@@ -117,6 +117,10 @@ namespace Backend.Game
         {
             players.Add(player.entityID, player);
             player.SendSpawn(player.ToDEntity());
+            if (player.IsEquipedWeapon())
+            {
+                player.SendEquipWeapon(player);
+            }
             foreach (KeyValuePair<int, Item> kv in items)
             {
                 player.SendSpawn(kv.Value.ToDEntity());
@@ -132,7 +136,16 @@ namespace Backend.Game
                     // tell other players my spawning
                     kv.Value.SendSpawn(player.ToDEntity());
                     // tell me other players' spawning
+                    if (player.IsEquipedWeapon())
+                    {
+                        kv.Value.SendEquipWeapon(player);
+                    }
+
                     player.SendSpawn(kv.Value.ToDEntity());
+                    if (kv.Value.IsEquipedWeapon())
+                    {
+                        player.SendEquipWeapon(kv.Value);
+                    }
                 }
 
             }
