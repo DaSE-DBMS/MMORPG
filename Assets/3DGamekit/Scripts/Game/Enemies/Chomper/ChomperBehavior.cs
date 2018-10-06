@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Gamekit3D
 {
     [DefaultExecutionOrder(100)]
-    public class ChomperBehavior : MonoBehaviour, IMessageReceiver, ICreatureBehavior
+    public class ChomperBehavior : MonoBehaviour, IMessageReceiver
     {
         public static readonly int hashInPursuit = Animator.StringToHash("InPursuit");
         public static readonly int hashAttack = Animator.StringToHash("Attack");
@@ -54,13 +54,7 @@ namespace Gamekit3D
         private Animator m_Animator;
         private bool m_ground = true;
 
-        private NetworkEntity m_entity;
 
-        void Awake()
-        {
-            m_entity = GetComponent<NetworkEntity>();
-            m_entity.creatureBehavior = this;
-        }
         protected void OnEnable()
         {
             //m_Controller = GetComponentInChildren<EnemyController>();
@@ -311,51 +305,6 @@ namespace Gamekit3D
             m_Animator.SetTrigger(hashHit);
 
             hitAudio.PlayRandomClip();
-        }
-
-        public void ActionJump()
-        {
-            // Chomper can't jump
-        }
-
-        public void ActionAttack(ICreatureBehavior target)
-        {
-        }
-
-        public void ActionMoveBegin(V2 move,
-            V3 pos,
-            V4 rot)
-        {
-            //m_moving = true;
-            //m_movement.Set(0f, 0f);
-        }
-
-        public void ActionMoveStep(
-            V2 move,
-            V3 pos,
-            V4 rot)
-        {
-            //m_moving = true;
-            //m_movement.Set(move.x, move.y);
-            Vector3 position = new Vector3(pos.x, pos.y, pos.z);
-            Quaternion rotation = new Quaternion(rot.x, rot.y, rot.z, rot.w);
-            transform.position = position;
-            transform.rotation = rotation;
-        }
-
-        public void ActionMoveEnd(V2 move,
-            V3 pos,
-            V4 rot)
-        {
-            Vector3 position = new Vector3(pos.x, pos.y, pos.z);
-            transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * 10.0f);
-            //m_movement.Set(0f, 0f);
-            //m_moving = false;
-        }
-
-        public Vector3 GetPosition()
-        {
-            return transform.position;
         }
 
 #if UNITY_EDITOR

@@ -15,9 +15,9 @@ namespace Backend.Game
             connection = channel;
             channel.SetContent(this);
         }
-        override public void BeHit(Creature creature)
+        override public void UnderAttack(Creature creature)
         {
-            base.BeHit(creature);
+            base.UnderAttack(creature);
         }
 
         override public DEntity ToDEntity()
@@ -65,7 +65,7 @@ namespace Backend.Game
 
         public void SendSpawn(DEntity entity)
         {
-            SEntitySpawn msg = new SEntitySpawn();
+            SSpawn msg = new SSpawn();
             msg.entity = entity;
             msg.isMine = entity.entityID == entityID;
             connection.Send(msg);
@@ -82,7 +82,7 @@ namespace Backend.Game
 
         public void TakeItem(Item target)
         {
-            STakeItem msgTake = new STakeItem();
+            SPlayerTakeItem msgTake = new SPlayerTakeItem();
 
             if (target.forClone)
             {
@@ -122,8 +122,10 @@ namespace Backend.Game
 
             m_weapon = weapon;
             SEquipWeapon msgEquip = new SEquipWeapon();
+            msgEquip.playerID = this.entityID;
+            msgEquip.itemName = weapon.name;
             msgEquip.itemID = weapon.entityID;
-            connection.Send(msgEquip);
+            Broundcast(msgEquip);
         }
     }
 }

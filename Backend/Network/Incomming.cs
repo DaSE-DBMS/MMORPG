@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Backend.Game;
 using Common;
 using Common.Data;
+using GeometRi;
 
 namespace Backend.Network
 {
@@ -48,7 +49,7 @@ namespace Backend.Network
         private void RecvEnterSceneDone(IChannel channel, Message message)
         {
             CEnterSceneDone request = (CEnterSceneDone)message;
-            SEntitySpawn response = new SEntitySpawn();
+            SSpawn response = new SSpawn();
             Player player = (Player)channel.GetContent();
             Scene scene = World.Instance().GetScene(player.scene);
             // add the player to the scene
@@ -60,8 +61,8 @@ namespace Backend.Network
         {
             CPlayerJump request = (CPlayerJump)message;
             Player player = (Player)World.Instance().GetEntity(request.player);
-            SActionJump response = new SActionJump();
-            response.id = request.player;
+            SJump response = new SJump();
+            response.ID = request.player;
             player.Broundcast(response);
         }
 
@@ -75,23 +76,24 @@ namespace Backend.Network
                 if (target is Sprite)
                 {
                     Sprite sprite = (Sprite)target;
-                    sprite.BeHit(player);
+                    // player  attack the sprite
+                    sprite.UnderAttack(player);
+                    player.Attack(sprite);
                 }
             }
-
-            SActionAttack response = new SActionAttack();
-            response.id = request.player;
-            response.target = request.target;
-            player.Broundcast(response);
+            else
+            {
+                player.Attack(null);
+            }
         }
 
         private void RecvPlayerMove(IChannel channel, Message message)
         {
             CPlayerMove request = (CPlayerMove)message;
             Player player = (Player)World.Instance().GetEntity(request.player);
-            player.pos = request.pos;
-            SActionMove response = new SActionMove();
-            response.id = request.player;
+            player.SetPosition(request.pos);
+            SMove response = new SMove();
+            response.ID = request.player;
             response.state = request.state;
             response.pos = request.pos;
             response.rot = request.rot;
@@ -103,15 +105,18 @@ namespace Backend.Network
         {
             CPathFinding request = (CPathFinding)message;
             Player player = (Player)channel.GetContent();
-            V3 start = player.pos;
-            V3 end = request.pos;
-            Queue<V3> path = new Queue<V3>();
-            if (player.GetScene().FindPath(start, end, path))
+            V3 start = player.GetPosition();
+            Point3d end = new Point3d((float)request.pos.x,
+                (float)request.pos.y,
+                (float)request.pos.z);
+            LinkedList<Point3d> path = new LinkedList<Point3d>();
+            if (player.GetScene().FindPath(player.Position, end, path))
             {
                 SPathFinding response = new SPathFinding();
-                foreach (V3 v in path)
+                foreach (Point3d point in path)
                 {
-                    response.path.Add(v);
+                    V3 v3 = new V3((float)point.X, (float)point.Y, (float)point.Z);
+                    response.path.Add(v3);
                 }
                 channel.Send(response);
             }

@@ -92,22 +92,18 @@ namespace Backend.AI
             m_rtree.Add(element.bounding, element);
         }
 
-        public bool FindPath(V3 start, V3 end, Queue<V3> path)
+        public bool FindPath(Point3d start, Point3d end, LinkedList<Point3d> path)
         {
             bool ret = false;
-            RTree.Point point = new RTree.Point(end.x, end.y, end.z);
+            path.Clear();
+            RTree.Point point = new RTree.Point((float)end.X, (float)end.Y, (float)end.Z);
             List<MeshElement> list = m_rtree.Nearest(point, 10.0f);
             MeshElement nearest = null;
-
-            Point3d s = new Point3d();
-            s.X = end.x;
-            s.Y = end.y;
-            s.Z = end.z;
             float minDis = float.MaxValue;
 
             foreach (MeshElement e in list)
             {
-                float dis = (float)e.triangle.Centroid.DistanceTo(s);
+                float dis = (float)e.triangle.Centroid.DistanceTo(end);
                 if (dis < minDis)
                 {
                     nearest = e;
@@ -119,20 +115,16 @@ namespace Backend.AI
             {
                 return false;
             }
-            ret = FindPath(nearest, start, path);
+            ret = FindPath(nearest, start, end, path);
             ClearState();
             return ret;
         }
 
 
-        bool FindPath(MeshElement start, V3 pos, Queue<V3> path)
+        bool FindPath(MeshElement start, Point3d startPos, Point3d endPos, LinkedList<Point3d> path)
         {
-            Point3d end = new Point3d();
             Point3d currentPos = start.triangle.Centroid.Copy();
-            end.X = pos.x;
-            end.Y = pos.y;
-            end.Z = pos.z;
-            float distance = CostEstimate(currentPos, end);
+            float distance = Distance(startPos, endPos);
             Step step = new Step(start);
             step.costS2C = 0;
             step.costS2E = distance;
@@ -150,10 +142,10 @@ namespace Backend.AI
                 m_openSorted.Remove(currentStep);
                 m_open.Remove(id);
                 MeshElement element = currentStep.element;
-                if (TriangleContainPoint(element.triangle, end))
+                if (TriangleContainPoint(element.triangle, endPos))
                 {
                     // Success ...
-                    ConstructPath(currentStep, path);
+                    ConstructPath(currentStep, endPos, path);
                     return true;
                 }
                 m_close.Add(id);
@@ -169,7 +161,7 @@ namespace Backend.AI
                     }
 
                     // start position to this neighbor piece cost
-                    float costS2C = currentStep.costS2C + Distance(neighbor.triangle.Centroid, end);
+                    float costS2C = currentStep.costS2C + Distance(neighbor.triangle.Centroid, endPos);
                     if (m_open.ContainsKey(neighbor.meshId))
                     {
                         Step s = m_open.GetValueOrDefault(neighbor.meshId);
@@ -186,7 +178,7 @@ namespace Backend.AI
                     {
                         Step nextStep = new Step(neighbor);
                         nextStep.costS2C = costS2C;
-                        nextStep.costS2E = costS2C + CostEstimate(neighbor.triangle.Centroid, end);
+                        nextStep.costS2E = costS2C + CostEstimate(startPos, neighbor.triangle.Centroid, endPos);
                         m_open.Add(neighbor.meshId, nextStep);
                         m_openSorted.Add(nextStep);
                         nextStep.prev = currentStep;
@@ -196,24 +188,25 @@ namespace Backend.AI
             return false;
         }
 
-        void ConstructPath(Step lastStep, Queue<V3> path)
+        void ConstructPath(Step lastStep, Point3d target, LinkedList<Point3d> path)
         {
             Step step = lastStep;
             while (step.prev != null)
             {
-                Point3d point = step.element.triangle.Centroid;
-                V3 pos = new V3();
-                pos.x = (float)point.X;
-                pos.y = (float)point.Y;
-                pos.z = (float)point.Z;
-                path.Enqueue(pos);
+                path.AddFirst(step.element.triangle.Centroid);
                 step = step.prev;
             }
+            // add the last position to the list tail
+            Point3d lastPos = target.ProjectionTo(new Plane3d(
+                lastStep.element.triangle.A,
+                lastStep.element.triangle.B,
+                lastStep.element.triangle.C));
+            path.AddLast(lastPos);
         }
 
-        float CostEstimate(Point3d p1, Point3d p2)
+        float CostEstimate(Point3d start, Point3d pass, Point3d end)
         {
-            float distance = (float)p1.DistanceTo(p2);
+            float distance = (float)pass.DistanceTo(end);
             return distance;
         }
 

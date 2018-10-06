@@ -7,6 +7,8 @@ namespace Backend.Game
 {
     class World : Singleton<World>
     {
+        public const float DeltaTime = 0.5f;
+
         private Dictionary<int, Entity> entities = new Dictionary<int, Entity>();
 
         private Dictionary<string, Scene> scenes = new Dictionary<string, Scene>();

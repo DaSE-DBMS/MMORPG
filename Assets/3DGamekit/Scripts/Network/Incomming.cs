@@ -26,14 +26,16 @@ namespace Gamekit3D.Network
 
         public void RegisterAll()
         {
-            register.Register(Command.S_PLAYER_ENTER, RecvEnter);
-            register.Register(Command.S_ENTITY_SPAWN, RecvEntitySpawn);
-            register.Register(Command.S_ACTION_ATTACK, RecvActionAttack);
-            register.Register(Command.S_ACTION_JUMP, RecvActionJump);
-            register.Register(Command.S_ACTION_MOVE, RecvActionMove);
+            register.Register(Command.S_PLAYER_ENTER, RecvPlayerEnter);
+            register.Register(Command.S_SPAWN, RecvSpawn);
+            register.Register(Command.S_ATTACK, RecvAttack);
+            register.Register(Command.S_JUMP, RecvJump);
+            register.Register(Command.S_MOVE, RecvMove);
             register.Register(Command.S_ENTITY_DESTORY, RecvEntityDestory);
-            register.Register(Command.S_EQUIP_WEAPON, RecvWeaponEquiped);
-            register.Register(Command.S_TAKE_ITEM, RecvTakeItem);
+            register.Register(Command.S_EQUIP_WEAPON, RecvEquipWeapon);
+            register.Register(Command.S_PLAYER_TAKE_ITEM, RecvTakeItem);
+            register.Register(Command.S_UNDER_ATTACK, RecvUnderAttack);
+            register.Register(Command.S_DIE, RecvDie);
             // DEBUG ...
             register.Register(Command.S_PATH_FINDING, RecvPathFinding);
         }
@@ -79,7 +81,7 @@ namespace Gamekit3D.Network
             return go;
         }
         // message receive callback
-        private void RecvEnter(IChannel channel, Message message)
+        private void RecvPlayerEnter(IChannel channel, Message message)
         {
             if (debug)
             {// ignore enter scene message when debug mode
@@ -90,9 +92,9 @@ namespace Gamekit3D.Network
             SceneManager.LoadSceneAsync("Level1");
         }
 
-        private void RecvEntitySpawn(IChannel channel, Message message)
+        private void RecvSpawn(IChannel channel, Message message)
         {
-            SEntitySpawn msg = (SEntitySpawn)message;
+            SSpawn msg = (SSpawn)message;
             GameObject go = null;
             if (msg.entity.type == (int)EntityType.PLAYER)
             {
@@ -156,28 +158,35 @@ namespace Gamekit3D.Network
             }
         }
 
-        private void RecvActionAttack(IChannel channel, Message message)
+        private void RecvAttack(IChannel channel, Message message)
         {
-            SActionAttack msg = (SActionAttack)message;
-            NetworkEntity self = networkEntities[msg.id];
-            NetworkEntity target = networkEntities[msg.target];
-            self.creatureBehavior.ActionAttack(target.creatureBehavior);
+            SAttack msg = (SAttack)message;
+            NetworkEntity source = networkEntities[msg.ID];
+            if (msg.targetID != 0)
+            {
+                NetworkEntity target = networkEntities[msg.targetID];
+                source.creatureBehavior.Attack(target.creatureBehavior);
+            }
+            else
+            {
+                source.creatureBehavior.Attack(null);
+            }
         }
 
-        private void RecvActionJump(IChannel channel, Message message)
+        private void RecvJump(IChannel channel, Message message)
         {
-            SActionJump msg = (SActionJump)message;
-            NetworkEntity self = networkEntities[msg.id];
+            SJump msg = (SJump)message;
+            NetworkEntity self = networkEntities[msg.ID];
             if (self.creatureBehavior == null)
                 return;
 
-            self.creatureBehavior.ActionJump();
+            self.creatureBehavior.Jump();
         }
 
-        private void RecvActionMove(IChannel channel, Message message)
+        private void RecvMove(IChannel channel, Message message)
         {
-            SActionMove msg = (SActionMove)message;
-            NetworkEntity self = networkEntities[msg.id];
+            SMove msg = (SMove)message;
+            NetworkEntity self = networkEntities[msg.ID];
             if (self.creatureBehavior == null)
                 return;
 
@@ -185,17 +194,17 @@ namespace Gamekit3D.Network
             {
                 case MoveState.BEGIN:
                     {
-                        self.creatureBehavior.ActionMoveBegin(msg.move, msg.pos, msg.rot);
+                        self.creatureBehavior.MoveBegin(msg.move, msg.pos, msg.rot);
                         break;
                     }
                 case MoveState.STEP:
                     {
-                        self.creatureBehavior.ActionMoveStep(msg.move, msg.pos, msg.rot);
+                        self.creatureBehavior.MoveStep(msg.move, msg.pos, msg.rot);
                     }
                     break;
                 case MoveState.END:
                     {
-                        self.creatureBehavior.ActionMoveEnd(msg.move, msg.pos, msg.rot);
+                        self.creatureBehavior.MoveEnd(msg.move, msg.pos, msg.rot);
                     }
                     break;
                 default:
@@ -203,21 +212,28 @@ namespace Gamekit3D.Network
             }
         }
 
-        private void RecvBeHit(IChannel channel, Message message)
+        private void RecvUnderAttack(IChannel channel, Message message)
         {
-            UnderHit msg = (UnderHit)message;
-            NetworkEntity self = networkEntities[msg.sourceID];
-            NetworkEntity source = networkEntities[msg.targetID];
-            if (self.creatureBehavior == null || source.creatureBehavior == null)
+            SUnderAttack msg = (SUnderAttack)message;
+
+            NetworkEntity target = networkEntities[msg.ID];
+            NetworkEntity source = null;
+            if (msg.sourceID != 0)
+            {
+                source = networkEntities[msg.sourceID];
+            }
+
+            if (source.creatureBehavior == null || target.creatureBehavior == null)
                 return;
 
-            self.creatureBehavior.ReHited(msg.HP, source.creatureBehavior);
+            target.creatureBehavior.UnderAttack(msg.HP, source.creatureBehavior);
+
         }
 
         private void RecvEntityDestory(IChannel channel, Message message)
         {
             SEntityDestory msg = (SEntityDestory)message;
-            GameObject go = gameObjects[msg.playerID];
+            GameObject go = gameObjects[msg.entityID];
             GameObject.Destroy(go);
         }
 
@@ -236,16 +252,35 @@ namespace Gamekit3D.Network
             }
         }
 
-        private void RecvWeaponEquiped(IChannel channel, Message message)
+        private void RecvEquipWeapon(IChannel channel, Message message)
         {
             SEquipWeapon msg = (SEquipWeapon)message;
-            NetworkEntity weapon = networkEntities[msg.itemID];
-            thisPlayer.EquipWeapon(weapon);
+            NetworkEntity player = networkEntities[msg.playerID];
+            PlayerController controller = player.gameObject.GetComponent<PlayerController>();
+            if (controller == null)
+                return;
+
+            NetworkEntity weapon;
+            if (networkEntities.ContainsKey(msg.itemID))
+            {
+                weapon = networkEntities[msg.itemID];
+            }
+            else
+            {
+                GameObject go = CloneGameObject(msg.itemName, msg.itemID);
+                weapon = go.GetComponent<NetworkEntity>();
+                if (weapon == null)
+                    return;
+
+                controller.TakeItem(weapon);
+            }
+
+            controller.EquipWeapon(weapon);
         }
 
         private void RecvTakeItem(IChannel channel, Message message)
         {
-            STakeItem msg = (STakeItem)message;
+            SPlayerTakeItem msg = (SPlayerTakeItem)message;
             NetworkEntity item;
             if (msg.clone)
             {
@@ -259,6 +294,11 @@ namespace Gamekit3D.Network
                 item = networkEntities[msg.itemID];
             }
             thisPlayer.TakeItem(item);
+        }
+
+        private void RecvDie(IChannel channel, Message message)
+        {
+            SDie msg = (SDie)message;
         }
     }
 }

@@ -177,8 +177,6 @@
     <Compile Include="Assets\3DGamekit\Scripts\Effects\SimulateParticleSystem.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Effects\SunSkybox.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Effects\WaterRipple.cs" />
-    <Compile Include="Assets\3DGamekit\Scripts\Exporter\NavMeshExporter.cs" />
-    <Compile Include="Assets\3DGamekit\Scripts\Exporter\PathTest.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Audio\AudioPlayerOnEnable.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Audio\MixerSliderLink.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Audio\RandomAudioPlayer.cs" />

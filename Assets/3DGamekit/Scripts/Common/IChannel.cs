@@ -5,9 +5,9 @@ namespace Common
 {
     public interface IChannel
     {
-        void SetContent(Object content);
+        void SetContent(object content);
 
-        Object GetContent();
+        object GetContent();
 
         void Send(Message msg);
 

@@ -2,35 +2,53 @@
 using System.Collections.Generic;
 using Common;
 using Common.Data;
-
+using GeometRi;
 namespace Backend.Game
 {
     public class Sprite : Creature
     {
+        enum SearchEnemyState
+        {
+            IDLE,
+            CHASING_ENEMY,
+            BACK_TO_HOME
+        }
 
-        private int attackTarget;
-        private float targetDistance;
-        private Queue<V3> steps = new Queue<V3>();
-        bool m_moving = true;
+        // for sprite search path
+        private SearchEnemyState m_searchEnemyState = SearchEnemyState.IDLE;
+        private int m_targetID;
+        private LinkedList<Point3d> m_routeSteps = new LinkedList<Point3d>();
+        // target position when I find my path to it last time
+        private Point3d m_targetPos = new Point3d();
+        private Point3d m_spawnPoint = new Point3d();
+        private Point3d m_nextPos = new Point3d();
+        DateTime m_lastMoveTS = DateTime.UnixEpoch;
+
+        const float DistanceEpsilon = 0.1f;
+        const float LongDistance = 100;
+
+
         public void EnemyNear(Creature creature)
         {
-            float dis = Distance(creature);
-            if (dis > 3)
+            if (Position.DistanceTo(creature.Position) > 3.0)
             {
                 return;
             }
-            targetDistance = dis;
-            attackTarget = creature.entityID;
+            m_targetPos = creature.Position;
+            m_targetID = creature.entityID;
+            FindPath(creature, m_routeSteps);
+            m_searchEnemyState = SearchEnemyState.CHASING_ENEMY;
+            m_nextPos = this.Position;
         }
 
-        override public void BeHit(Creature creature)
+        override public void UnderAttack(Creature creature)
         {
             if (currentHP <= 0)
             {
                 return;
             }
-            update = true;
-            base.BeHit(creature);
+            UpdateActive = true;
+            base.UnderAttack(creature);
             EnemyNear(creature);
             if (currentHP == 0)
             {// DEAD
@@ -40,50 +58,123 @@ namespace Backend.Game
 
         public override void Update()
         {
-            if (attackTarget == 0)
-                return;
-
-            Creature enemy = (Creature)World.Instance().GetEntity(attackTarget);
-            if (enemy == null)
-                return;
-
-            float distance = Distance(enemy);
-            if (distance > 100)
+            SearchEnemy();
+        }
+        private void SearchEnemy()
+        {
+            if (m_searchEnemyState == SearchEnemyState.IDLE)
             {
+                //UpdateActive = false;
                 return;
             }
-            float diff = Math.Abs(distance - targetDistance);
-            if (diff > 3 || steps.Count == 0)
+            else if (m_searchEnemyState == SearchEnemyState.CHASING_ENEMY)
             {
-                steps.Clear();
-                FindPath(enemy, steps);
-            }
-
-            if (steps.Count > 0)
-            {
-                V3 pos = steps.Dequeue();
-                this.pos = pos;
-                SActionMove message = new SActionMove();
-                message.id = entityID;
-                message.pos = pos;
-                message.state = m_moving ? MoveState.STEP : MoveState.BEGIN;
-                Broundcast(message);
-                m_moving = true;
-                if (steps.Count == 0)
+                this.Position = m_nextPos;
+                Creature target = (Creature)World.Instance().GetEntity(m_targetID);
+                Point3d targetPos = target.Position;
+                float distance = (float)Position.DistanceTo(targetPos);
+                if (distance > LongDistance)
                 {
-                    steps.Enqueue(enemy.pos);
+                    // too far away, I cannot catch up my enemy, so I give up
+                    StartBackToSpawnPoint();
+                    return;
+                }
+                else if (distance < DistanceEpsilon)
+                {
+                    // reach the destination
+                    SendActionMove(MoveState.END, this.Position, this.Position);
+                    return;
+                }
+
+                if (targetPos.DistanceTo(m_targetPos) > DistanceEpsilon)
+                {
+                    // the target is moving
+                    //the route I found last time was behind the time...
+                    ReFindPath(m_searchEnemyState, targetPos);
+                    return;
                 }
             }
-            else if (m_moving)
+
+            /*m_nextPos = m_routeSteps.First.Value;
+            double walkDis = (double)speed * (double)(DateTime.Now - m_lastMoveTS).TotalMilliseconds / 1000.0f;
+            if (walkDis < Position.DistanceTo(m_nextPos))
             {
-                m_moving = false;
-                this.pos = enemy.pos;
-                SActionMove message = new SActionMove();
-                message.id = entityID;
-                message.pos = enemy.pos;
-                message.state = MoveState.END;
-                Broundcast(message);
+                // I had walked some steps last frames,
+                // but my speed was too slow to walk such a long way in one frame time
+                //return;
+            }*/
+
+            if (m_routeSteps.Count == 0)
+            {
+                Point3d position = m_searchEnemyState == SearchEnemyState.BACK_TO_HOME ?
+                    m_spawnPoint : this.Position;
+                SendActionMove(MoveState.END, position, position);
             }
+            else
+            {
+                m_nextPos = m_routeSteps.First.Value;
+                m_routeSteps.RemoveFirst();
+                SendActionMove(MoveState.STEP, this.Position, m_nextPos);
+            }
+        }
+
+        private void ReFindPath(SearchEnemyState state, Point3d target)
+        {
+            if (!FindPath(target, m_routeSteps))
+            {
+                // cannot find a way , something was wrong ???
+                // fly to spawn point
+                if (state == SearchEnemyState.BACK_TO_HOME)
+                {
+                    // cannot find a way , something was wrong ???
+                    // fly to spawn point
+                    SendActionMove(MoveState.END, this.Position, this.Position);
+                }
+                else
+                {
+                    StartBackToSpawnPoint();
+                }
+                return;
+            }
+            else
+            {
+                m_targetPos = target;
+                m_nextPos = m_routeSteps.First.Value;
+                m_routeSteps.RemoveFirst();
+                SendActionMove(MoveState.BEGIN, this.Position, m_nextPos);
+            }
+        }
+
+        private void StartBackToSpawnPoint()
+        {
+            m_searchEnemyState = SearchEnemyState.BACK_TO_HOME;
+            m_targetID = 0;
+            ReFindPath(SearchEnemyState.BACK_TO_HOME, m_spawnPoint);
+        }
+
+        public override void Spawn()
+        {
+            m_spawnPoint = Position;
+        }
+
+        private void SendActionMove(MoveState state, Point3d movement, Point3d position)
+        {
+            if (state == MoveState.END)
+            {
+                m_routeSteps.Clear();
+                // attack enemy if current search enemy state is CHASING_ENEMY...
+                if (m_searchEnemyState == SearchEnemyState.BACK_TO_HOME)
+                {
+                    m_searchEnemyState = SearchEnemyState.IDLE;
+                }
+            }
+            m_lastMoveTS = DateTime.Now;
+            SMove message = new SMove();
+            message.ID = entityID;
+            message.move = Entity.Point3dToV3(movement);
+            message.pos = Entity.Point3dToV3(position);
+            message.state = state;
+            Broundcast(message);
         }
     }
 }

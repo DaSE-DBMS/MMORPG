@@ -6,6 +6,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Runtime.Serialization.Formatters.Binary;
 using Common;
+using UnityEngine;
 
 namespace Gamekit3D.Network
 {
@@ -33,14 +34,14 @@ namespace Gamekit3D.Network
 
         private BinaryFormatter formatter = new BinaryFormatter();
 
-        private Object player;
+        private object player;
 
-        public void SetContent(Object content)
+        public void SetContent(object content)
         {
             player = content;
         }
 
-        public Object GetContent()
+        public object GetContent()
         {
             return player;
         }
@@ -167,14 +168,21 @@ namespace Gamekit3D.Network
         {
             IPAddress ipAddress = IPAddress.Parse(ip);
             IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
+            try
+            {
+                // Create a TCP/IP socket.
+                socket = new Socket(ipAddress.AddressFamily,
+                    SocketType.Stream, ProtocolType.Tcp);
 
-            // Create a TCP/IP socket.
-            socket = new Socket(ipAddress.AddressFamily,
-                SocketType.Stream, ProtocolType.Tcp);
-
-            // Connect to the remote endpoint.
-            socket.Connect(remoteEP);
-            socket.Blocking = false;
+                // Connect to the remote endpoint.
+                socket.Connect(remoteEP);
+                socket.Blocking = false;
+            }
+            catch (SocketException ex)
+            {
+                UnityEngine.Debug.Log(ex.Message);
+                Application.Quit();
+            }
         }
 
         public void Close()

@@ -2,6 +2,7 @@
 using Common;
 using Common.Data;
 using Backend.AI;
+using GeometRi;
 
 namespace Backend.Game
 {
@@ -28,9 +29,17 @@ namespace Backend.Game
                     AddEntity(entity);
                 }
             }
+            foreach (KeyValuePair<int, Sprite> kv in sprites)
+            {
+                kv.Value.Spawn();
+            }
+            foreach (KeyValuePair<int, Item> kv in items)
+            {
+                kv.Value.Spawn();
+            }
         }
 
-        public bool FindPath(V3 start, V3 end, Queue<V3> steps)
+        public bool FindPath(Point3d start, Point3d end, LinkedList<Point3d> steps)
         {
             return path.FindPath(start, end, steps);
         }
@@ -96,7 +105,7 @@ namespace Backend.Game
         {
             foreach (KeyValuePair<int, Entity> kv in Children)
             {
-                if (kv.Value.update)
+                if (kv.Value.UpdateActive)
                 {
                     kv.Value.Update();
                 }
@@ -120,7 +129,9 @@ namespace Backend.Game
             {
                 if (player.entityID != kv.Value.entityID)
                 {
-                    kv.Value.SendSpawn(kv.Value.ToDEntity());
+                    // tell other players my spawning
+                    kv.Value.SendSpawn(player.ToDEntity());
+                    // tell me other players' spawning
                     player.SendSpawn(kv.Value.ToDEntity());
                 }
 
@@ -131,7 +142,7 @@ namespace Backend.Game
         void PlayerLeave(Player player)
         {
             SEntityDestory msg = new SEntityDestory();
-            msg.playerID = player.entityID;
+            msg.entityID = player.entityID;
             player.Broundcast(msg, true);
             players.Remove(player.entityID);
             player.OnLeaveScene(this);

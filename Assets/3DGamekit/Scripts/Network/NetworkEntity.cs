@@ -55,6 +55,7 @@ namespace Gamekit3D.Network
             {
                 entity.currentHP = entity.maxHP = damageable.maxHitPoints;
                 entity.invTime = damageable.invulnerabiltyTime;
+                entity.speed = damageable.maxSpeed;
                 entity.hitAngle = damageable.hitAngle;
             }
             entity.type = (int)entityType;

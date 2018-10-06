@@ -13,13 +13,6 @@ namespace Gamekit3D
 
             m_MonoBehaviour.FindTarget();
 
-            if (m_MonoBehaviour.controller.navmeshAgent.pathStatus == NavMeshPathStatus.PathPartial
-                || m_MonoBehaviour.controller.navmeshAgent.pathStatus == NavMeshPathStatus.PathInvalid)
-            {
-                m_MonoBehaviour.StopPursuit();
-                return;
-            }
-
             if (m_MonoBehaviour.target == null || m_MonoBehaviour.target.respawning)
             {//if the target was lost or is respawning, we stop the pursit
                 m_MonoBehaviour.StopPursuit();

@@ -24,13 +24,6 @@ namespace Gamekit3D
 
             m_MonoBehaviour.FindTarget();
 
-            if (m_MonoBehaviour.controller.navmeshAgent.pathStatus == NavMeshPathStatus.PathPartial
-                || m_MonoBehaviour.controller.navmeshAgent.pathStatus == NavMeshPathStatus.PathInvalid)
-            {
-                m_MonoBehaviour.StopPursuit();
-                return;
-            }
-
             if (m_MonoBehaviour.target != null)
             {
                 Vector3 targetPos = m_MonoBehaviour.target.transform.position;

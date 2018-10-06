@@ -141,6 +141,7 @@
     <Compile Include="Assets\3DGamekit\Scripts\Editor\CheckpointEditor.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Editor\ExportTerrain.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Editor\FilterLOD.cs" />
+    <Compile Include="Assets\3DGamekit\Scripts\Editor\NavMeshExporter.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Editor\NewSceneCreator.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Camera\Editor\LayerCullDistancesEditor.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Core\Editor\AddObjectiveSubEditor.cs" />

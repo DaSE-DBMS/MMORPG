@@ -5,23 +5,25 @@ namespace Gamekit3D.Network
 {
     public interface ICreatureBehavior
     {
-        void ReHited(int HP, ICreatureBehavior source);
+        void UnderAttack(int HP, ICreatureBehavior source);
 
-        void ActionJump();
+        void Jump();
 
-        void ActionAttack(ICreatureBehavior target);
+        void Attack(ICreatureBehavior target);
 
-        void ActionMoveBegin(
-            V2 move,
+        void Die();
+
+        void MoveBegin(
+            V3 move,
             V3 pos,
             V4 rot);
 
-        void ActionMoveStep(
-            V2 move,
+        void MoveStep(
+            V3 move,
             V3 pos,
             V4 rot);
 
-        void ActionMoveEnd(V2 move,
+        void MoveEnd(V3 move,
             V3 pos,
             V4 rot);
 

@@ -18,7 +18,7 @@ namespace Gamekit3D
             EnemyController baseController = GetComponent<EnemyController>();
 
             RigidbodyDelayedForce t = ragdollInstance.AddComponent<RigidbodyDelayedForce>();
-            t.forceToAdd = baseController.externalForce;
+            //t.forceToAdd = baseController.externalForce;
 
             Transform ragdollCurrent = ragdollInstance.transform;
             Transform current = transform;

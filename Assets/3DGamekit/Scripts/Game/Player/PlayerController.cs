@@ -769,16 +769,20 @@ namespace Gamekit3D
                     break;
             }
         }
-        public void ActionMoveBegin(V2 move,
+        public void MoveBegin(V3 move,
             V3 pos,
             V4 rot)
         {
             m_moving = true;
             m_movement.Set(0f, 0f);
+            Vector3 position = new Vector3(pos.x, pos.y, pos.z);
+            Quaternion rotation = new Quaternion(rot.x, rot.y, rot.z, rot.w);
+            transform.position = position;
+            transform.rotation = rotation;
         }
 
-        public void ActionMoveStep(
-            V2 move,
+        public void MoveStep(
+            V3 move,
             V3 pos,
             V4 rot)
         {
@@ -790,27 +794,29 @@ namespace Gamekit3D
             transform.rotation = rotation;
         }
 
-        public void ActionMoveEnd(V2 move,
+        public void MoveEnd(V3 move,
             V3 pos,
             V4 rot)
         {
             Vector3 position = new Vector3(pos.x, pos.y, pos.z);
-            transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * 10.0f);
+            Quaternion rotation = new Quaternion(rot.x, rot.y, rot.z, rot.w);
+            transform.position = position;
+            transform.rotation = rotation;
             m_movement.Set(0f, 0f);
             m_moving = false;
         }
 
-        public void ActionAttack(ICreatureBehavior target)
+        public void Attack(ICreatureBehavior target)
         {
             m_attacking = true;
         }
 
-        public void ActionJump()
+        public void Jump()
         {
             m_jumping = true;
         }
 
-        public void ReHited(int HP, ICreatureBehavior source)
+        public void UnderAttack(int HP, ICreatureBehavior source)
         {
             m_Animator.SetTrigger(m_HashHurt);
 
@@ -839,6 +845,10 @@ namespace Gamekit3D
             return transform.position;
         }
 
+        public void Die()
+        {
+
+        }
         // Called by OnReceiveMessage.
         void Damaged(Damageable.DamageMessage damageMessage)
         {

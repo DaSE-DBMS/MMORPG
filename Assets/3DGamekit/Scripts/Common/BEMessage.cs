@@ -19,25 +19,9 @@ namespace Common
 
 
     [Serializable]
-    public class SItemSpawn : Message
+    public class SSpawn : Message
     {
-        public SItemSpawn() : base(Command.S_ENTITY_SPAWN) { }
-        public int id;
-        public float positionX;
-        public float positionY;
-        public float positionZ;
-        public float rotationX;
-        public float rotationY;
-        public float rotationZ;
-        public float rotationW;
-        public string objectName;
-    }
-
-
-    [Serializable]
-    public class SEntitySpawn : Message
-    {
-        public SEntitySpawn() : base(Command.S_ENTITY_SPAWN) { }
+        public SSpawn() : base(Command.S_SPAWN) { }
         public bool isMine;
         public DEntity entity;
     }
@@ -47,65 +31,65 @@ namespace Common
     {
         BEGIN,
         STEP,
-        END,
-        //Add your user defined message type after
+        END
     }
 
     [Serializable]
-    public class SActionMove : Message
+    public class SMove : Message
     {
-        public SActionMove() : base(Command.S_ACTION_MOVE) { }
-        public int id;
+        public SMove() : base(Command.S_MOVE) { }
+        public int ID;
         public MoveState state;
-        // target is valid when action is ATTACK/MOVE
-        // x, y, z is valid when action is MOVE
-        public V2 move;
+        public V3 move;
         public V3 pos;
         public V4 rot;
     }
 
     [Serializable]
-    public class SActionJump : Message
+    public class SJump : Message
     {
-        public SActionJump() : base(Command.S_ACTION_JUMP) { }
-        public int id;
+        public SJump() : base(Command.S_JUMP) { }
+        public int ID;
     }
 
     [Serializable]
-    public class UnderHit : Message
+    public class SUnderAttack : Message
     {
-        public UnderHit() : base(Command.S_BE_HITTED) { }
+        public SUnderAttack() : base(Command.S_UNDER_ATTACK) { }
+        public int ID;
         public int sourceID;
-        public int targetID;
         public int HP;
     }
 
     [Serializable]
-    public class SActionAttack : Message
+    public class SAttack : Message
     {
-        public SActionAttack() : base(Command.S_ACTION_ATTACK) { }
-        public int id;
-        public int target;
+        public SAttack() : base(Command.S_ATTACK) { }
+        public int ID;
+        public int targetID;
     }
 
     [Serializable]
     public class SEquipWeapon : Message
     {
         public SEquipWeapon() : base(Command.S_EQUIP_WEAPON) { }
+        public int playerID;
+        public string itemName;
         public int itemID;
+
     }
 
     [Serializable]
     public class SEntityDestory : Message
     {
         public SEntityDestory() : base(Command.S_ENTITY_DESTORY) { }
-        public int playerID;
+        public int entityID;
     }
 
     [Serializable]
-    public class STakeItem : Message
+    public class SPlayerTakeItem : Message
     {
-        public STakeItem() : base(Command.S_TAKE_ITEM) { }
+        public SPlayerTakeItem() : base(Command.S_PLAYER_TAKE_ITEM) { }
         public bool clone;
         public string name;
         public int itemID;
@@ -127,5 +111,13 @@ namespace Common
         }
 
         public List<V3> path;
+    }
+
+    [Serializable]
+    public class SDie : Message
+    {
+        public SDie() : base(Command.S_DIE)
+        { }
+        public int ID;
     }
 }

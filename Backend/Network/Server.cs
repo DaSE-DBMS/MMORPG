@@ -26,8 +26,8 @@ namespace Backend.Network
 
         public BlockingCollection<CompleteEvent> CompleteQueue { get { return completeQueue; } }
 
-        public const int DeltaTime = 500;
-        public int m_millisecondsElapsed = DeltaTime;
+
+        public int m_millisecondsElapsed = (int)(World.DeltaTime * 1000.0f);
         public Server()
         {
         }
@@ -64,7 +64,7 @@ namespace Backend.Network
                     if (m_millisecondsElapsed <= 0)
                     {
                         World.Instance().Tick();
-                        m_millisecondsElapsed = DeltaTime;
+                        m_millisecondsElapsed = (int)(World.DeltaTime * 1000);
                     }
                 }
 

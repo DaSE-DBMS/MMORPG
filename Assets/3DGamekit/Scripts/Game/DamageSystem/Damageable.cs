@@ -14,6 +14,8 @@ namespace Gamekit3D
         [Tooltip("Time that this gameObject is invulnerable for, after receiving damage.")]
         public int invulnerabiltyTime;
 
+        [Tooltip("The max speed of this object, for backend")]
+        public int maxSpeed;
 
         [Tooltip("The angle from the which that damageable is hitable. Always in the world XZ plane, with the forward being rotate by hitForwardRoation")]
         [Range(0.0f, 360.0f)]
