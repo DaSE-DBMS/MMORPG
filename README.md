@@ -4,13 +4,13 @@
 
 # How to Start
 
-#### 安装Unity3d
+#### [安装Unity3d](https://store.unity.com/cn)
 
-#### 安装Visual Studio
+#### [安装Visual Studio](https://visualstudio.microsoft.com/)
 
 #### 安装依赖
 
-Backend用到了GeometRi，一个用于空间计算的library。进入项目目录:
+Backend用到了[GeometRi](https://github.com/RiSearcher/GeometRi.CSharp)，一个用于空间计算的library。进入项目目录:
 
 ```
 dotnet add backend package GeometRi --version 1.3.5.3
@@ -26,6 +26,8 @@ dotnet add backend package GeometRi --version 1.3.5.3
 解压资源文件到 *MMORPG\Assets\3DGamekit* 目录下
 
 #### 使用VS Build Backend
+
+#### 启动Backend
 
 #### 使用Unity3d Editor执行, 或build成APP执行
 
