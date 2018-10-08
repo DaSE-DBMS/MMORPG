@@ -38,6 +38,16 @@ dotnet add backend package GeometRi --version 1.3.5.3
 
 #### 启动Backend
 
+更改配置文件backend.conf，<assetPath>改成自己的配置
+（在MMORPG/Assets/assets下，这个文件夹存的是从客户端导出的一些信息, 每个场景的阻档点，精灵出生点坐标等）
+
+启动Backend.exe，命令行参数为配置文件路径
+
+```
+backend.exe [path_to_backend.conf]
+```
+
+
 #### 使用Unity3d Editor执行, 或build成APP执行
 
 
