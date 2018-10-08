@@ -15,10 +15,11 @@ Backend用到了[GeometRi](https://github.com/RiSearcher/GeometRi.CSharp)，一�
 ```
 dotnet add backend package GeometRi --version 1.3.5.3
 ```
-#### [下载资源文件](x)  
+#### [下载资源文件](https://pan.baidu.com/s/1_zfj01ArOnEsB0a8nQh8Ug)  
 
 提取码
 ```
+vo3t
 ```
 
 资源文件中包括字体，3D模型，图片，音乐等资源
