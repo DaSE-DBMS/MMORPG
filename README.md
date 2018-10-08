@@ -1,6 +1,6 @@
 # Welcome
 
-这个项目主要来源于Unity Asset Store上的[3d-game-kit](https://assetstore.unity.com/packages/essentials/tutorial-projects/3d-game-kit-115747)。主要变更是为其增加了个后端服务器，使它变成了一个网络游戏，现阶段功能还不完整。
+这个项目来源于Unity Asset Store上的[3d-game-kit](https://assetstore.unity.com/packages/essentials/tutorial-projects/3d-game-kit-115747)。主要变更是为其增加了个后端服务器，使它变成了一个网络游戏，现阶段功能还不完整。
 
 # How to Start
 
@@ -8,14 +8,14 @@
 
 #### [安装Visual Studio](https://visualstudio.microsoft.com/)
 
-#### 安装依赖
+#### 安装依赖库
 
 Backend用到了[GeometRi](https://github.com/RiSearcher/GeometRi.CSharp)，一个用于空间计算的library。进入项目目录:
 
 ```
 dotnet add backend package GeometRi --version 1.3.5.3
 ```
-#### [下载资源文件](https://pan.baidu.com/s/1_zfj01ArOnEsB0a8nQh8Ug)  
+#### [下载资源](https://pan.baidu.com/s/1_zfj01ArOnEsB0a8nQh8Ug)  
 
 提取码
 ```
