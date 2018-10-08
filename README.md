@@ -8,13 +8,6 @@
 
 #### [安装Visual Studio](https://visualstudio.microsoft.com/)
 
-#### 安装依赖库
-
-Backend用到了[GeometRi](https://github.com/RiSearcher/GeometRi.CSharp)，一个用于空间计算的library。进入项目目录:
-
-```
-dotnet add backend package GeometRi --version 1.3.5.3
-```
 #### [下载资源](https://pan.baidu.com/s/1_zfj01ArOnEsB0a8nQh8Ug)  
 
 提取码
@@ -25,6 +18,21 @@ vo3t
 资源文件中包括字体，3D模型，图片，音乐等资源
 
 解压资源文件到 *MMORPG\Assets\3DGamekit* 目录下
+
+
+#### 使用Unity Editor导入项目
+
+启动Unity Editor， PROJECT --> OPEN --> 选择项目顶层目录MMORPG  
+
+Unity Editor会在MMORPG文件夹下创建Library文件夹，存放依赖的库文件，也会重新导入资源文件
+
+#### 安装依赖库
+
+Backend用到了[GeometRi](https://github.com/RiSearcher/GeometRi.CSharp)，一个用于空间计算的library。进入项目目录:
+
+```
+dotnet add backend package GeometRi --version 1.3.5.3
+```
 
 #### 使用VS Build Backend
 
