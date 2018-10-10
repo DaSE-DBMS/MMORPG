@@ -38,17 +38,21 @@ dotnet add backend package GeometRi --version 1.3.5.3
 
 #### 启动Backend
 
-更改配置文件backend.conf，<assetPath>改成自己的配置
+- 更改配置文件backend.conf，<assetPath>改成自己的配置
 （在MMORPG/Assets/assets下，这个文件夹存的是从客户端导出的一些信息, 每个场景的阻档点，精灵出生点坐标等）
-
-启动Backend.exe，命令行参数为配置文件路径
-
+- 打开MMORPG.sln,发布bakcend项目（配置中将路径修改为自己的配置）
+- 将backend设为启动项目，在VS中启动Backend.exe，命令行参数为配置文件路径
 ```
 backend.exe [path_to_backend.conf]
 ```
-
+backend.exe运行大致如下：
+>Backend start up and waiting for a connection on port 7777...
 
 #### 使用Unity3d Editor执行, 或build成APP执行
+- 选择场景：打开scene-level1/...
+- 点击上方小三角，进入调试
+
+#### 任务可以wsad 移动，左键点击进行攻击
 
 
 # __Roadmap__
