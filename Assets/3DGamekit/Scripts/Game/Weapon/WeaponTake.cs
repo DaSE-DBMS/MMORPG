@@ -23,7 +23,7 @@ namespace Gamekit3D
         protected virtual void ExecuteOnEnter(Collider other)
         {
 
-            PlayerNetSender sender = other.GetComponent<PlayerNetSender>();
+            PlayerMyController sender = other.GetComponent<PlayerMyController>();
             if (sender == null)
             {
                 return;

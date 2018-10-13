@@ -135,9 +135,8 @@ namespace Gamekit3D.Network
                 if (msg.entity.type == (int)EntityType.PLAYER)
                 {
                     PlayerController controller = go.GetComponent<PlayerController>();
-                    PlayerInput input = go.GetComponent<PlayerInput>();
-                    PlayerNetSender sender = go.GetComponent<PlayerNetSender>();
-                    if (controller == null || input == null || sender == null)
+                    PlayerMyController mine = go.GetComponent<PlayerMyController>();
+                    if (controller == null || mine == null)
                     {
                         return;
                     }
@@ -151,8 +150,7 @@ namespace Gamekit3D.Network
                     else
                     {
                         damageable.enabled = false;
-                        input.enabled = false;
-                        sender.enabled = false;
+                        mine.enabled = false;
                     }
                 }
             }

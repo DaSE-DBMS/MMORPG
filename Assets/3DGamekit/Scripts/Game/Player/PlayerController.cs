@@ -51,7 +51,7 @@ namespace Gamekit3D
         protected float m_DesiredForwardSpeed;         // How fast Ellen aims be going along the ground based on input.
         protected float m_ForwardSpeed;                // How fast Ellen is currently going along the ground.
         protected float m_VerticalSpeed;               // How fast Ellen is currently moving up or down.
-        protected PlayerInput m_Input;                 // Reference used to determine how Ellen should move.
+        protected PlayerMyController m_myController;                 // Reference used to determine how Ellen should move.
         protected CharacterController m_CharCtrl;      // Reference used to actually move Ellen.
         protected Animator m_Animator;                 // Reference used to make decisions based on Ellen's current animation and to set parameters.
         protected Material m_CurrentWalkingSurface;    // Reference used to make decisions about audio.
@@ -111,14 +111,13 @@ namespace Gamekit3D
         bool m_jumping = false;
         bool m_attacking = false;
         bool m_moving = false;
+        int m_moveStep = 0;
         Vector2 m_movement = new Vector2();
-        //Vector3 m_position = new Vector3();
-        //Quaternion m_rotation = new Quaternion();
         NetworkEntity m_entity;
 
         protected bool IsMoveInput
         {
-            get { return !Mathf.Approximately(m_Input.MoveInput.sqrMagnitude, 0f); }
+            get { return !Mathf.Approximately(m_myController.MoveInput.sqrMagnitude, 0f); }
         }
 
         public void SetCanAttack(bool canAttack)
@@ -176,7 +175,7 @@ namespace Gamekit3D
                 cameraSettings.follow = transform;
                 cameraSettings.lookAt = transform.Find("HeadTarget");
             }
-            m_Input = GetComponent<PlayerInput>();
+            m_myController = GetComponent<PlayerMyController>();
 
             s_Instance = this;
         }
@@ -260,10 +259,10 @@ namespace Gamekit3D
         {
             if (isMine)
             {
-                m_attacking = m_Input.IsAttackInput;
+                m_attacking = m_myController.IsAttackInput;
                 m_moving = IsMoveInput;
-                m_jumping = m_Input.IsJumpInput;
-                m_movement.Set(m_Input.MoveInput.x, m_Input.MoveInput.y);
+                m_jumping = m_myController.IsJumpInput;
+                m_movement.Set(m_myController.MoveInput.x, m_myController.MoveInput.y);
                 UpdateInputBlocking();
             }
 
@@ -279,7 +278,7 @@ namespace Gamekit3D
                 m_Animator.SetTrigger(m_HashMeleeAttack);
                 if (isMine)
                 {
-                    //SendAttackingAction();
+                    m_myController.SendAttackingAction();
                 }
             }
 
@@ -337,7 +336,7 @@ namespace Gamekit3D
         {
             bool inputBlocked = m_CurrentStateInfo.tagHash == m_HashBlockInput && !m_IsAnimatorTransitioning;
             inputBlocked |= m_NextStateInfo.tagHash == m_HashBlockInput;
-            m_Input.playerControllerInputBlocked = inputBlocked;
+            m_myController.playerControllerInputBlocked = inputBlocked;
         }
 
         // Called after the animator state has been cached to determine whether or not the staff should be active or not.
@@ -410,8 +409,7 @@ namespace Gamekit3D
                     // ... then override the previously set vertical speed and make sure she cannot jump again.
                     if (isMine)
                     {
-                        //SendJumpingAction();
-                        m_sendJumping++;
+                        m_myController.SendJumpingAction();
                     }
                     m_VerticalSpeed = jumpSpeed;
                     m_IsGrounded = false;
@@ -622,22 +620,22 @@ namespace Gamekit3D
         // Called each physics step (so long as the Animator component is set to Animate Physics) after FixedUpdate to override root motion.
         void OnAnimatorMove()
         {
-            /*
+
             if (isMine)
             {
                 if (m_moving && m_moveStep == 0)
                 {
-                    SendMovingBegin();
+                    m_myController.SendMovingBegin();
                 }
-                else if (m_moving && m_moveStep > 0)
+                else if (m_moving && m_moveStep++ > 0)
                 {
-                    SendMovingStep();
+                    m_myController.SendMovingStep();
                 }
                 else if (!m_moving && m_moveStep != 0)
                 {
-                    SendMovingEnd();
+                    m_myController.SendMovingEnd();
                 }
-            }*/
+            }
 
             Vector3 movement;
 

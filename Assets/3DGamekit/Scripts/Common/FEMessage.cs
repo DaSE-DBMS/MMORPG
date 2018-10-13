@@ -39,7 +39,7 @@ namespace Common
         // x, y, z is valid when action is MOVE
         public int player;
         public MoveState state;
-        public V2 move;
+        public V3 move;
         public V3 pos;
         public V4 rot;
     }

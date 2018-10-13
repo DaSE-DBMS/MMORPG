@@ -60,7 +60,7 @@ namespace Gamekit3D
 
         void Update()
         {
-            if (PlayerInput.Instance != null && PlayerInput.Instance.IsPause)
+            if (PlayerMyController.Instance != null && PlayerMyController.Instance.IsPause)
             {
                 SwitchPauseState();
             }
@@ -93,9 +93,9 @@ namespace Gamekit3D
                 CameraShake.Stop ();
 
             if (m_InPause)
-                PlayerInput.Instance.GainControl();
+                PlayerMyController.Instance.GainControl();
             else
-                PlayerInput.Instance.ReleaseControl();
+                PlayerMyController.Instance.ReleaseControl();
 
             Time.timeScale = m_InPause ? 1 : 0;
 

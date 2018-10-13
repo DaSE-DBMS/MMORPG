@@ -97,6 +97,7 @@ namespace Backend.Network
             response.state = request.state;
             response.pos = request.pos;
             response.rot = request.rot;
+            response.move = request.move;
             response.state = request.state;
             player.Broadcast(response);
         }
