@@ -65,6 +65,7 @@ namespace Gamekit3D
         //protected Checkpoint m_CurrentCheckpoint;      // Reference used to reset Ellen to the correct position on respawn.
         protected bool m_Respawning;                   // Whether Ellen is currently respawning.
         protected float m_IdleTimer;                   // Used to count up to Ellen considering a random idle.
+        protected int m_sendJumping = 0;
 
         // These constants are used to ensure Ellen moves and behaves properly.
         // It is advised you don't change them without fully understanding what they do in code.
@@ -123,6 +124,16 @@ namespace Gamekit3D
         public void SetCanAttack(bool canAttack)
         {
             this.canAttack = canAttack;
+        }
+
+        public bool SendJump
+        {
+            get
+            {
+                bool ret;
+                m_sendJumping = (ret = m_sendJumping > 0) ? --m_sendJumping : 0;
+                return ret;
+            }
         }
 
         // Called automatically by Unity when the script is first added to a gameobject or is reset from the context menu.
@@ -400,6 +411,7 @@ namespace Gamekit3D
                     if (isMine)
                     {
                         //SendJumpingAction();
+                        m_sendJumping++;
                     }
                     m_VerticalSpeed = jumpSpeed;
                     m_IsGrounded = false;
@@ -889,7 +901,7 @@ namespace Gamekit3D
         {
             CPlayerJump action = new CPlayerJump();
             action.player = m_entity.id;
-            MyNetwork.instance.Send(action);
+            MyNetwork.Send(action);
         }
 
         void SendAttackingAction(int targetID = 0)
@@ -897,7 +909,7 @@ namespace Gamekit3D
             CPlayerAttack action = new CPlayerAttack();
             action.player = m_entity.id;
             action.target = targetID;
-            MyNetwork.instance.Send(action);
+            MyNetwork.Send(action);
         }
 
         void InitMove(CPlayerMove action)
@@ -919,7 +931,7 @@ namespace Gamekit3D
             CPlayerMove action = new CPlayerMove();
             action.state = MoveState.BEGIN;
             InitMove(action);
-            MyNetwork.instance.Send(action);
+            MyNetwork.Send(action);
             m_moveStep++;
         }
 
@@ -928,7 +940,7 @@ namespace Gamekit3D
             CPlayerMove action = new CPlayerMove();
             action.state = MoveState.STEP;
             InitMove(action);
-            MyNetwork.instance.Send(action);
+            MyNetwork.Send(action);
             m_moveStep++;
         }
 
@@ -937,7 +949,7 @@ namespace Gamekit3D
             CPlayerMove action = new CPlayerMove();
             action.state = MoveState.END;
             InitMove(action);
-            MyNetwork.instance.Send(action);
+            MyNetwork.Send(action);
             m_moveStep = 0;
         }*/
 

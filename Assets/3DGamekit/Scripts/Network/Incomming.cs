@@ -239,7 +239,7 @@ namespace Gamekit3D.Network
 
         private void RecvExit(IChannel channel, Message message)
         {
-            MyNetwork.instance.Close();
+            MyNetwork.Close();
         }
 
         private void RecvPathFinding(IChannel channel, Message message)

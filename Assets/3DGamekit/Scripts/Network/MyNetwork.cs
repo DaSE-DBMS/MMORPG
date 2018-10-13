@@ -4,10 +4,8 @@ using Common;
 
 namespace Gamekit3D.Network
 {
-
     public class MyNetwork : MonoBehaviour
     {
-        public static MyNetwork instance;
         static private Incomming incomming = new Incomming(Client.Instance());
         static private bool connected = false;
 
@@ -25,7 +23,6 @@ namespace Gamekit3D.Network
 
         void Awake()
         {
-            instance = this;
             if (autoConnect)
             {
                 Connect(address, port);
@@ -44,7 +41,7 @@ namespace Gamekit3D.Network
         }
 
         // Use this for initialization
-        public void Connect(string ip, short port)
+        static public void Connect(string ip, short port)
         {
             if (!connected)
             { // exactly connect once
@@ -57,21 +54,21 @@ namespace Gamekit3D.Network
             }
         }
 
-        public void Send(Message message)
+        static public void Send(Message message)
         {
             Client.Instance().Send(message);
         }
-        public void Register(Command command, MessageDelegate @delegate)
+        static public void Register(Command command, MessageDelegate @delegate)
         {
             Client.Instance().Register(command, @delegate);
         }
 
-        public void Close()
+        static public void Close()
         {
             Client.Instance().Close();
         }
 
-        private void RecvSceneLoaded(Scene scene, LoadSceneMode mode)
+        static private void RecvSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             incomming.InitNetworkEntity();
             CEnterSceneDone message = new CEnterSceneDone();

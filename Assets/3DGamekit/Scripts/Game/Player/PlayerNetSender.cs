@@ -32,7 +32,7 @@ namespace Gamekit3D
             msg.targetName = weapon.name;
             msg.playerId = m_entity.entityID;
             msg.targetId = weaponEntity.entityID;
-            MyNetwork.instance.Send(msg);
+            MyNetwork.Send(msg);
         }
 
         private void Awake()
@@ -72,7 +72,7 @@ namespace Gamekit3D
             {
                 //m_attackTarget = 0;
             }
-            if (m_controller.IsReadyToJump && m_input.IsJumpInput)
+            if (m_controller.SendJump)
             {
                 SendJumpingAction();
             }
@@ -82,7 +82,7 @@ namespace Gamekit3D
         {
             CPlayerJump action = new CPlayerJump();
             action.player = m_entity.entityID;
-            MyNetwork.instance.Send(action);
+            MyNetwork.Send(action);
         }
 
         void SendAttackingAction(int targetID = 0)
@@ -90,7 +90,7 @@ namespace Gamekit3D
             CPlayerAttack action = new CPlayerAttack();
             action.player = m_entity.entityID;
             action.target = targetID;
-            MyNetwork.instance.Send(action);
+            MyNetwork.Send(action);
         }
 
         void InitMove(CPlayerMove action)
@@ -112,7 +112,7 @@ namespace Gamekit3D
             CPlayerMove action = new CPlayerMove();
             action.state = MoveState.BEGIN;
             InitMove(action);
-            MyNetwork.instance.Send(action);
+            MyNetwork.Send(action);
             m_moveStep++;
         }
 
@@ -121,7 +121,7 @@ namespace Gamekit3D
             CPlayerMove action = new CPlayerMove();
             action.state = MoveState.STEP;
             InitMove(action);
-            MyNetwork.instance.Send(action);
+            MyNetwork.Send(action);
             m_moveStep++;
         }
 
@@ -130,7 +130,7 @@ namespace Gamekit3D
             CPlayerMove action = new CPlayerMove();
             action.state = MoveState.END;
             InitMove(action);
-            MyNetwork.instance.Send(action);
+            MyNetwork.Send(action);
             m_moveStep = 0;
         }
 
