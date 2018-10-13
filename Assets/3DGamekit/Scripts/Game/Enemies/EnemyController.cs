@@ -10,7 +10,6 @@ namespace Gamekit3D
 {
     //this assure it's runned before any behaviour that may use it, as the animator need to be fecthed
     [DefaultExecutionOrder(-1)]
-    [RequireComponent(typeof(NavMeshAgent))]
     public class EnemyController : MonoBehaviour, ICreatureBehavior
     {
         public bool interpolateTurning = false;
