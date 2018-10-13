@@ -89,7 +89,7 @@ namespace Backend.Game
             }
         }
 
-        public void Broundcast(Message message, Scene scene, Entity centre, float radius, int exclude)
+        public void Broadcast(Message message, Scene scene, Entity centre, float radius, int exclude)
         {
             foreach (KeyValuePair<int, Player> p in scene.Players)
             {

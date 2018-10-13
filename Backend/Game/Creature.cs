@@ -39,7 +39,7 @@ namespace Backend.Game
             SAttack attack = new SAttack();
             attack.ID = this.entityID;
             attack.targetID = enemy != null ? enemy.entityID : 0;
-            Broundcast(attack);
+            Broadcast(attack);
         }
 
         // the enemy is null if not exists one
@@ -63,7 +63,7 @@ namespace Backend.Game
             hit.HP = currentHP;
             hit.sourceID = enemy != null ? enemy.entityID : 0;
             hit.ID = this.entityID;
-            Broundcast(hit);
+            Broadcast(hit);
         }
 
         virtual public void Die()
@@ -72,7 +72,7 @@ namespace Backend.Game
             UpdateActive = false;
             SDie die = new SDie();
             die.ID = this.entityID;
-            Broundcast(die);
+            Broadcast(die);
         }
 
         override public DEntity ToDEntity()

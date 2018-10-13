@@ -156,7 +156,7 @@ namespace Backend.Game
         {
             SEntityDestory msg = new SEntityDestory();
             msg.entityID = player.entityID;
-            player.Broundcast(msg, true);
+            player.Broadcast(msg, true);
             players.Remove(player.entityID);
             player.OnLeaveScene(this);
         }

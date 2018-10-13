@@ -63,7 +63,7 @@ namespace Backend.Network
             Player player = (Player)World.Instance().GetEntity(request.player);
             SJump response = new SJump();
             response.ID = request.player;
-            player.Broundcast(response);
+            player.Broadcast(response);
         }
 
         private void RecvPlayerAttack(IChannel channel, Message message)
@@ -98,7 +98,7 @@ namespace Backend.Network
             response.pos = request.pos;
             response.rot = request.rot;
             response.state = request.state;
-            player.Broundcast(response);
+            player.Broadcast(response);
         }
 
         private void RecvPathFinding(IChannel channel, Message message)

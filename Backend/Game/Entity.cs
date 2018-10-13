@@ -92,9 +92,9 @@ namespace Backend.Game
         }
 
 
-        virtual public void Broundcast(Message message, bool exclude = false)
+        virtual public void Broadcast(Message message, bool exclude = false)
         {
-            World.Instance().Broundcast(message, GetScene(), this, 100, exclude ? entityID : 0);
+            World.Instance().Broadcast(message, GetScene(), this, 100, exclude ? entityID : 0);
         }
 
         public Scene GetScene()
@@ -140,11 +140,11 @@ namespace Backend.Game
             spawn.isMine = false;
             if (entityType != EntityType.PLAYER)
             {
-                Broundcast(spawn);
+                Broadcast(spawn);
             }
             else
             {
-                Broundcast(spawn, true);
+                Broadcast(spawn, true);
                 Player player = (Player)this;
                 player.connection.Send(spawn);
             }

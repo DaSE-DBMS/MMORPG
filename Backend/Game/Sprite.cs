@@ -174,7 +174,7 @@ namespace Backend.Game
             message.move = Entity.Point3dToV3(movement);
             message.pos = Entity.Point3dToV3(position);
             message.state = state;
-            Broundcast(message);
+            Broadcast(message);
         }
     }
 }

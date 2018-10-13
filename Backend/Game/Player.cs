@@ -122,7 +122,12 @@ namespace Backend.Game
                 return;
 
             m_weapon = weapon;
-            SendEquipWeapon(this);
+            SEquipWeapon msgEquip = new SEquipWeapon();
+            msgEquip.playerID = this.entityID;
+            msgEquip.itemName = this.m_weapon.name;
+            msgEquip.itemID = this.m_weapon.entityID;
+
+            Broadcast(msgEquip);
         }
 
         public bool IsEquipedWeapon()
