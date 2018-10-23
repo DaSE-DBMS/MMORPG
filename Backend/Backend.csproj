@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Assembly-CSharp.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Game\Item.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -26,6 +22,10 @@
     <PackageReference Include="GeometRi" Version="1.3.5.3" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="System.Spatial" Version="5.8.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Frontend\Assembly-CSharp.csproj" />
   </ItemGroup>
 
 </Project>

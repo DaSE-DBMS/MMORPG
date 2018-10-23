@@ -17,14 +17,45 @@ vo3t
 
 资源文件中包括字体，3D模型，图片，音乐等资源
 
-解压资源文件到 *MMORPG\Assets\3DGamekit* 目录下
+#### 目录结构
+```
+MMORPG
+  |-- Backend                                            服务端
+        |-- Backend.sln                                  服务端解决方案文件
+        |-- Backend.csproj
+        |-- ....
+  |-- Frontend                                           客户端, Unity工程，可以用Unity Editor打开
+        |-- Assets
+            |-- 3DGamekit
+                  |-- Art                                资源文件，包括字体，3D模型，图片，音乐等资源
+                  |-- Scripts                            C#代码
+                  |-- ....
+            |-- BEAssets                                 从客户端导出的一些信息，供后端使用， 每个场景的阻档点，精灵出生点坐标等
+            |-- ....
+        |-- Library
+        |-- obj                                          客户端解决方案文件
+        |-- Packages
+        |-- Frontend.sln                                 
+        |-- Assembly-CSharp-Editor.csproj
+        |-- Assembly-CSharp.csproj
+        |-- NavMeshComponents.csproj
+        |-- SimpleSFXRuntime.csproj
+        |-- Skybox3DRuntime.csproj
+        |-- WorldBuildingRuntime.csproj
+        |-- ....
+  |-- MMORPG.sln  
+  |-- ....
+
+```
+#### 解压资源
+解压资源文件Art.zip到 *MMORPG\Frontend\Assets\3DGamekit* 目录下
 
 
 #### 使用Unity Editor导入项目
 
-启动Unity Editor， PROJECT --> OPEN --> 选择项目顶层目录MMORPG  
+启动Unity Editor， PROJECT --> OPEN --> 选择项目目录MMORPG\Frontend  
 
-Unity Editor会在MMORPG文件夹下创建Library文件夹，存放依赖的库文件，也会重新导入资源文件
+Unity Editor会在MMORPG\Frontend文件夹下创建Library文件夹，存放依赖的库文件，也会重新导入资源文件
 
 #### 安装依赖库
 
@@ -39,7 +70,7 @@ dotnet add backend package GeometRi --version 1.3.5.3
 #### 启动Backend
 
 - 更改配置文件backend.conf，<assetPath>改成自己的配置
-（在MMORPG/Assets/assets下，这个文件夹存的是从客户端导出的一些信息, 每个场景的阻档点，精灵出生点坐标等）
+（在MMORPG/Frontend/Assets/assets下，这个文件夹存的是从客户端导出的一些信息, 每个场景的阻档点，精灵出生点坐标等）
 - 打开MMORPG.sln,发布bakcend项目（配置中将路径修改为自己的配置）
 - 将backend设为启动项目，在VS中启动Backend.exe，命令行参数为配置文件路径
 ```
