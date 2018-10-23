@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Common;
-using Common.Data;
 using Backend.AI;
 using GeometRi;
 
@@ -154,7 +153,7 @@ namespace Backend.Game
 
         void PlayerLeave(Player player)
         {
-            SEntityDestory msg = new SEntityDestory();
+            SEntityDestroy msg = new SEntityDestroy();
             msg.entityID = player.entityID;
             player.Broadcast(msg, true);
             players.Remove(player.entityID);

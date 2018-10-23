@@ -1,5 +1,4 @@
 ﻿using Common;
-using Common.Data;
 
 namespace Backend.Game
 {
@@ -83,7 +82,7 @@ namespace Backend.Game
 
         public void TakeItem(Item target)
         {
-            SPlayerTakeItem msgTake = new SPlayerTakeItem();
+            SPlayerTake msgTake = new SPlayerTake();
 
             if (target.forClone)
             {

@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 //using UnityEngine.AI;
 using System.Xml.Serialization;
-using Common.Data;
+using Common;
 using Gamekit3D.Network;
 
 //navmesh导出数据

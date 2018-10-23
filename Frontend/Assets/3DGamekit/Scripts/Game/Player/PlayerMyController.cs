@@ -4,7 +4,6 @@ using System.Collections;
 using Gamekit3D.Network;
 using System.Collections.Generic;
 using Common;
-using Common.Data;
 
 
 namespace Gamekit3D

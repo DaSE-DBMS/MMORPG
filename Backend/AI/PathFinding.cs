@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.Data;
+using Common;
 using GeometRi;
 using System.Spatial;
 
@@ -55,7 +55,7 @@ namespace Backend.AI
 
         public void LoadNavMesh(DNavM mesh)
         {
-            foreach (Common.Data.DTngl tr in mesh.list)
+            foreach (Common.DTngl tr in mesh.list)
             {
                 MeshElement me = new MeshElement(tr.p);
                 AddElement(me);

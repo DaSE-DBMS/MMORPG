@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Common;
-using Common.Data;
 namespace Gamekit3D.Network
 {
 

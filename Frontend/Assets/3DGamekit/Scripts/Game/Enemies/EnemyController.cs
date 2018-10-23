@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.AI;
 using Gamekit3D.Network;
-using Common.Data;
+using Common;
 
 namespace Gamekit3D
 {

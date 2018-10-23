@@ -6,7 +6,7 @@ namespace Gamekit3D.Network
 {
     public class MyNetwork : MonoBehaviour
     {
-        static private Incomming incomming = new Incomming(Client.Instance());
+        static private Incoming incomming = new Incoming(Client.Instance());
         static private bool connected = false;
 
         [Tooltip("auto connect to localhost")]
@@ -71,7 +71,7 @@ namespace Gamekit3D.Network
         static private void RecvSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             incomming.InitNetworkEntity();
-            CEnterSceneDone message = new CEnterSceneDone();
+            CPlayerEnter message = new CPlayerEnter();
             Client.Instance().Send(message);
         }
     }

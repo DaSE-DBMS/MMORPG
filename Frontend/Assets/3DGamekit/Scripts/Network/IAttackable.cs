@@ -1,4 +1,4 @@
-﻿using Common.Data;
+﻿using Common;
 
 namespace Gamekit3D.Network
 {

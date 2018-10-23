@@ -3,7 +3,7 @@ using Gamekit3D;
 using System.Collections;
 using Gamekit3D.Network;
 using System.Collections.Generic;
-using Common.Data;
+using Common;
 
 namespace Gamekit3D
 {

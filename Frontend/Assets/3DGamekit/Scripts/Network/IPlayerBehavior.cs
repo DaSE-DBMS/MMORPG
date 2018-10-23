@@ -1,4 +1,4 @@
-﻿using Common.Data;
+﻿using Common;
 using UnityEngine;
 
 namespace Gamekit3D.Network

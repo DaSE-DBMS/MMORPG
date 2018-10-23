@@ -2,14 +2,13 @@
 using System.IO;
 using Backend.Game;
 using Common;
-using Common.Data;
 
 namespace Backend.Network
 {
     public class GameServer : IRegister
     {
         private Server server;
-        private Incomming incomming;
+        private Incoming incomming;
         private string ip;
         private short port;
         private BackendConf conf;
@@ -24,7 +23,7 @@ namespace Backend.Network
         public void StartUp()
         {
             server = new Server();
-            incomming = new Incomming(this);
+            incomming = new Incoming(this);
 
             // register message callback sink
             server.RegisterClose(RecvConnectionClose);
