@@ -11,6 +11,6 @@ namespace Common
 
         void Send(Message msg);
 
-        void OnClose();
+        void Close();
     }
 }

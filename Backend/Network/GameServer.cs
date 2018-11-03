@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using System.IO;
+using System.Net.Sockets;
 using Backend.Game;
 using Common;
 
@@ -26,7 +27,7 @@ namespace Backend.Network
             incomming = new Incoming(this);
 
             // register message callback sink
-            server.RegisterClose(RecvConnectionClose);
+            server.RegisterClose(OnConnectionClose);
 
             // load assets before create game world and receive client connections
             LoadAssets();
@@ -40,9 +41,11 @@ namespace Backend.Network
             server.RegisterMessageRecv(command, @delegate);
         }
 
-        private void RecvConnectionClose(IChannel channel)
+        private void OnConnectionClose(IChannel channel)
         {
             World.Instance().RemoveEntity(((Entity)channel.GetContent()).entityID);
+            ((Channel)channel).workSocket.Shutdown(SocketShutdown.Both);
+
         }
 
         private void LoadAssets()

@@ -70,21 +70,17 @@ namespace Backend.Network
             Channel.Send(this, msg);
         }
 
-        public void OnClose()
+        public void Close()
         {
             if (onClose != null)
             {
                 foreach (ChannelDelegate @d in onClose)
                 {
-                    try
-                    {
-                        d.Invoke(this);
-                    }
-                    catch (SystemException)
-                    {
-                        // TODO ... handle invoke fail
-                    }
-
+                    CompleteEvent e = new CompleteEvent();
+                    e.@delegate = @d;
+                    e.channel = this;
+                    e.message = null;
+                    msgQueue.Add(e);
                 }
             }
         }
@@ -122,8 +118,7 @@ namespace Backend.Network
                 int bytesRead = handler.EndReceive(ar);
                 if (bytesRead <= 0)
                 {
-                    channel.OnClose();
-                    channel.Socket.Close();
+                    channel.Close();
                     return;
                 }
                 if (channel.headerFin)
@@ -177,10 +172,7 @@ namespace Backend.Network
             }
             catch (SystemException)
             {
-                channel.OnClose();
-                channel.Socket.Close();
-                // remove the player from the scene ...
-                // TODO...
+                channel.Close();
             }
         }
 
@@ -203,8 +195,7 @@ namespace Backend.Network
             }
             catch (SystemException)
             {
-                channel.OnClose();
-                channel.workSocket.Shutdown(SocketShutdown.Both);
+                channel.Close();
             }
         }
 
@@ -221,15 +212,13 @@ namespace Backend.Network
                 int bytesSent = handler.EndSend(ar);
                 if (bytesSent < 0)
                 {
-                    channel.OnClose();
-                    channel.workSocket.Shutdown(SocketShutdown.Both);
+                    channel.Close();
                 }
                 //Console.WriteLine("Sent {0} bytes.", bytesSent);
             }
             catch (SocketException)
             {
-                channel.OnClose();
-                channel.workSocket.Shutdown(SocketShutdown.Both);
+                channel.Close();
             }
         }
     }

@@ -62,7 +62,7 @@ namespace Gamekit3D.Network
                 new AsyncCallback(SendCallback), socket);
         }
 
-        public void OnClose()
+        public void Close()
         {
             if (onClose != null)
             {
@@ -75,6 +75,7 @@ namespace Gamekit3D.Network
 
                 }
             }
+            socket.Shutdown(SocketShutdown.Both);
         }
         public void RecvMessage()
         {
@@ -183,11 +184,6 @@ namespace Gamekit3D.Network
                 UnityEngine.Debug.Log(ex.Message);
                 Application.Quit();
             }
-        }
-
-        public void Close()
-        {
-            socket.Shutdown(SocketShutdown.Both);
         }
 
         private static void SendCallback(IAsyncResult ar)
