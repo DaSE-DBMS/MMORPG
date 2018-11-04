@@ -36,8 +36,8 @@ namespace Backend.Game
                 return;
 
             SAttack attack = new SAttack();
-            attack.ID = this.entityID;
-            attack.targetID = enemy != null ? enemy.entityID : 0;
+            attack.ID = this.entityId;
+            attack.targetID = enemy != null ? enemy.entityId : 0;
             Broadcast(attack);
         }
 
@@ -60,8 +60,8 @@ namespace Backend.Game
 
             SUnderAttack hit = new SUnderAttack();
             hit.HP = currentHP;
-            hit.sourceID = enemy != null ? enemy.entityID : 0;
-            hit.ID = this.entityID;
+            hit.sourceID = enemy != null ? enemy.entityId : 0;
+            hit.ID = this.entityId;
             Broadcast(hit);
         }
 
@@ -70,7 +70,7 @@ namespace Backend.Game
             currentHP = 0;
             UpdateActive = false;
             SDie die = new SDie();
-            die.ID = this.entityID;
+            die.ID = this.entityId;
             Broadcast(die);
         }
 

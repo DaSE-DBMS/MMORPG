@@ -23,7 +23,7 @@ namespace Gamekit3D.Network
 
         private const int BufferSize = 1024;
 
-        private Byte[] buffer = new Byte[1024];
+        private Byte[] buffer = new Byte[BufferSize];
         private int offset = 0;
 
         private MemoryStream stream = new MemoryStream();

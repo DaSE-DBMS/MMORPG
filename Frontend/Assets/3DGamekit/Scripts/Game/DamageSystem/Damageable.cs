@@ -103,7 +103,7 @@ namespace Gamekit3D
             else
                 OnReceiveDamage.Invoke();
 
-            var messageType = currentHitPoints <= 0 ? DamageMsgType.DEAD : DamageMsgType.DAMAGED;
+            var messageType = currentHitPoints <= 0 ? MsgType.DEAD : MsgType.DAMAGED;
 
             for (var i = 0; i < onDamageMessageReceivers.Count; ++i)
             {

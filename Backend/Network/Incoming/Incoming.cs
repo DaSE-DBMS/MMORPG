@@ -19,7 +19,7 @@ namespace Backend.Network
             register.Register(Command.C_PLAYER_JUMP, RecvPlayerJump);
             register.Register(Command.C_PLAYER_ATTACK, RecvPlayerAttack);
             register.Register(Command.C_PLAYER_TAKE, RecvPlayerTake);
-
+            register.Register(Command.C_POSITION_REVISE, RecvPositionRevise);
 
             // DEBUG ..
             register.Register(Command.C_FIND_PATH, RecvFindPath);

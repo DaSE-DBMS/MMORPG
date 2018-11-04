@@ -10,6 +10,9 @@ namespace Gamekit3D
 {
     public class PlayerMyController : MonoBehaviour
     {
+        public PlayerController Controller { get { return m_controller; } }
+        public NetworkEntity Entity { get { return m_entity; } }
+
         public LayerMask damagedLayers;
         public static PlayerMyController Instance
         {
@@ -50,14 +53,24 @@ namespace Gamekit3D
             }
         }
 
-        public bool IsJumpInput
+        public bool IsJumping
         {
             get { return m_Jump && !playerControllerInputBlocked && !m_ExternalInputBlocked; }
         }
 
-        public bool IsAttackInput
+        public bool IsAttacking
         {
             get { return m_Attack && !playerControllerInputBlocked && !m_ExternalInputBlocked; }
+        }
+
+        public bool IsMoving
+        {
+            get
+            {
+                return (m_lastPosition.sqrMagnitude > 0.001
+                    && (m_lastPosition - transform.position).sqrMagnitude > 0.0001f)
+                  || IsMoveInput;
+            }
         }
 
         public bool IsPause
@@ -80,15 +93,11 @@ namespace Gamekit3D
 
         const float k_AttackInputDuration = 0.03f;
 
+        Vector3 m_lastPosition = Vector3.zero;
         void Awake()
         {
             m_AttackInputWait = new WaitForSeconds(k_AttackInputDuration);
             s_Instance = this;
-            //if (s_Instance == null)
-            //    s_Instance = this;
-            //else if (s_Instance != this)
-            //    throw new UnityException("There cannot be more than one PlayerMine script.  The instances are " + s_Instance.name + " and " + name + ".");
-
             m_entity = GetComponent<NetworkEntity>();
             m_controller = GetComponent<PlayerController>();
         }
@@ -109,6 +118,8 @@ namespace Gamekit3D
             }
 
             m_Pause = Input.GetButtonDown("Pause");
+
+            m_lastPosition = transform.position;
         }
 
         IEnumerator AttackWait()
@@ -147,29 +158,29 @@ namespace Gamekit3D
             CPlayerTake msg = new CPlayerTake();
             msg.byName = weaponEntity.canClone;
             msg.targetName = weapon.name;
-            msg.playerId = m_entity.entityID;
-            msg.targetId = weaponEntity.entityID;
+            msg.playerId = m_entity.entityId;
+            msg.targetId = weaponEntity.entityId;
             MyNetwork.Send(msg);
         }
 
         public void SendJumpingAction()
         {
             CPlayerJump action = new CPlayerJump();
-            action.player = m_entity.entityID;
+            action.player = m_entity.entityId;
             MyNetwork.Send(action);
         }
 
         public void SendAttackingAction()
         {
             CPlayerAttack action = new CPlayerAttack();
-            action.player = m_entity.entityID;
+            action.player = m_entity.entityId;
             action.target = m_attackTarget;
             MyNetwork.Send(action);
         }
 
         void InitMove(CPlayerMove action)
         {
-            action.player = m_entity.entityID;
+            action.player = m_entity.entityId;
             action.move.x = MoveInput.x;
             action.move.y = MoveInput.y;
             action.pos.x = transform.position.x;
@@ -214,7 +225,7 @@ namespace Gamekit3D
             if (damager == null)
                 return;
 
-            m_attackTarget = damager.entityID;
+            m_attackTarget = damager.entityId;
         }
 
         private void OnTriggerExit(Collider other)
@@ -226,7 +237,7 @@ namespace Gamekit3D
             if (damager == null)
                 return;
 
-            if (m_attackTarget == damager.entityID)
+            if (m_attackTarget == damager.entityId)
                 m_attackTarget = 0;
         }
         void OnTriggerStay(Collider other)

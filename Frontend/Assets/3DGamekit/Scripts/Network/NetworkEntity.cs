@@ -14,9 +14,9 @@ namespace Gamekit3D.Network
 
         public NetworkEntity parent;
         public List<NetworkEntity> children = new List<NetworkEntity>();
-
+        public int EntityId { get { return entityId; } }
         public EntityType entityType;
-        public int entityID;
+        public int entityId;
         public bool canClone = false;
 
         public void BuildTree()

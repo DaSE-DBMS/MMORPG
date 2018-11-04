@@ -65,18 +65,18 @@ namespace Backend.Game
             }
             else if (entity is Sprite)
             {
-                sprites.Add(entity.entityID, (Sprite)entity);
+                sprites.Add(entity.entityId, (Sprite)entity);
             }
             else if (entity is Item)
             {
-                items.Add(entity.entityID, (Item)entity);
+                items.Add(entity.entityId, (Item)entity);
             }
             base.AddEntity(entity);
         }
 
         override public bool RemoveEntity(int id, out Entity entity)
         {
-            if (!base.FindEntity(id, out entity))
+            if (!base.FindChildEntity(id, out entity))
             {
                 return false;
             }
@@ -114,7 +114,7 @@ namespace Backend.Game
 
         void PlayerEnter(Player player)
         {
-            players.Add(player.entityID, player);
+            players.Add(player.entityId, player);
             player.SendSpawn(player.ToDEntity());
             if (player.IsEquipedWeapon())
             {
@@ -130,7 +130,7 @@ namespace Backend.Game
             }
             foreach (KeyValuePair<int, Player> kv in players)
             {
-                if (player.entityID != kv.Value.entityID)
+                if (player.entityId != kv.Value.entityId)
                 {
                     // tell other players my spawning
                     kv.Value.SendSpawn(player.ToDEntity());
@@ -154,9 +154,9 @@ namespace Backend.Game
         void PlayerLeave(Player player)
         {
             SEntityDestroy msg = new SEntityDestroy();
-            msg.entityID = player.entityID;
+            msg.entityID = player.entityId;
             player.Broadcast(msg, true);
-            players.Remove(player.entityID);
+            players.Remove(player.entityId);
             player.OnLeaveScene(this);
         }
     }

@@ -31,12 +31,6 @@ namespace Gamekit3D
                 remainingToNextGrunt = Random.Range(minimumIdleGruntTime, maximumIdleGruntTime);
                 m_MonoBehaviour.Grunt();
             }
-
-            m_MonoBehaviour.FindTarget();
-            if (m_MonoBehaviour.target != null)
-            {
-                m_MonoBehaviour.StartPursuit();
-            }
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Backend.Network
             CPlayerMove request = (CPlayerMove)message;
             Player player = (Player)World.Instance().GetEntity(request.player);
             player.SetPosition(request.pos);
-            SMove response = new SMove();
+            SPlayerMove response = new SPlayerMove();
             response.ID = request.player;
             response.state = request.state;
             response.pos = request.pos;

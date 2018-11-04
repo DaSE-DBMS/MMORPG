@@ -9,7 +9,7 @@ namespace Backend.Game
     {
         private static int sequence = 1;
         public EntityType entityType;
-        public int entityID;
+        public int entityId;
 
         private DEntity m_initData; // for reset ...
 
@@ -65,14 +65,14 @@ namespace Backend.Game
 
         public Entity()
         {
-            entityID = sequence++;
-            World.Instance().AddEntity(entityID, this);
+            entityId = sequence++;
+            World.Instance().AddEntity(entityId, this);
         }
 
         virtual public void AddEntity(Entity entity)
         {
-            entity.m_parentID = this.entityID;
-            Children.Add(entity.entityID, entity);
+            entity.m_parentID = this.entityId;
+            Children.Add(entity.entityId, entity);
         }
 
         virtual public bool RemoveEntity(int id, out Entity entity)
@@ -85,7 +85,14 @@ namespace Backend.Game
             return ret;
         }
 
-        virtual public bool FindEntity(int id, out Entity entity)
+        // find entity in children list
+        virtual public Entity GetChildEntity(int id)
+        {
+            return Children[id];
+        }
+
+        // find entity in children list
+        virtual public bool FindChildEntity(int id, out Entity entity)
         {
             return Children.TryGetValue(id, out entity);
         }
@@ -93,7 +100,7 @@ namespace Backend.Game
 
         virtual public void Broadcast(Message message, bool exclude = false)
         {
-            World.Instance().Broadcast(message, GetScene(), this, 100, exclude ? entityID : 0);
+            World.Instance().Broadcast(message, GetScene(), this, 100, exclude ? entityId : 0);
         }
 
         public Scene GetScene()
@@ -152,7 +159,7 @@ namespace Backend.Game
         virtual public DEntity ToDEntity()
         {
             DEntity entity = new DEntity();
-            entity.entityID = entityID;
+            entity.entityID = entityId;
             entity.name = name;
 
             entity.pos.x = (float)m_position.X;

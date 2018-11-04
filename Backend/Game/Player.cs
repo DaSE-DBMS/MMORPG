@@ -67,7 +67,7 @@ namespace Backend.Game
         {
             SSpawn msg = new SSpawn();
             msg.entity = entity;
-            msg.isMine = entity.entityID == entityID;
+            msg.isMine = entity.entityID == entityId;
             connection.Send(msg);
         }
 
@@ -91,14 +91,14 @@ namespace Backend.Game
                 if (target == null)
                     return;
                 msgTake.clone = true;
-                msgTake.itemID = clone.entityID;
+                msgTake.itemID = clone.entityId;
                 msgTake.name = clone.name;
                 target = (Item)clone;
             }
             else
             {
                 msgTake.clone = false;
-                msgTake.itemID = target.entityID;
+                msgTake.itemID = target.entityId;
                 msgTake.name = target.name;
             }
 
@@ -122,9 +122,9 @@ namespace Backend.Game
 
             m_weapon = weapon;
             SEquipWeapon msgEquip = new SEquipWeapon();
-            msgEquip.playerID = this.entityID;
+            msgEquip.playerID = this.entityId;
             msgEquip.itemName = this.m_weapon.name;
-            msgEquip.itemID = this.m_weapon.entityID;
+            msgEquip.itemID = this.m_weapon.entityId;
 
             Broadcast(msgEquip);
         }
@@ -137,9 +137,9 @@ namespace Backend.Game
         public void SendEquipWeapon(Player player)
         {
             SEquipWeapon msgEquip = new SEquipWeapon();
-            msgEquip.playerID = player.entityID;
+            msgEquip.playerID = player.entityId;
             msgEquip.itemName = player.m_weapon.name;
-            msgEquip.itemID = player.m_weapon.entityID;
+            msgEquip.itemID = player.m_weapon.entityId;
             connection.Send(msgEquip);
         }
     }

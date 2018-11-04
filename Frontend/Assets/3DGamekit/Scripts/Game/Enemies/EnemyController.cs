@@ -10,7 +10,7 @@ namespace Gamekit3D
 {
     //this assure it's runned before any behaviour that may use it, as the animator need to be fecthed
     [DefaultExecutionOrder(-1)]
-    public class EnemyController : MonoBehaviour, ICreatureBehavior
+    public class EnemyController : MonoBehaviour, ICreatureBehavior, ISpriteBehavior
     {
         public bool interpolateTurning = false;
         public bool applyAnimationRotation = false;
@@ -33,8 +33,15 @@ namespace Gamekit3D
         private NetworkEntity m_entity;
         private float m_desiredSpeed;
         private float m_currentSpeed;
-        private Queue<Vector3> m_moveSteps = new Queue<Vector3>();
-        private Vector3 m_lastPosition = Vector3.forward;
+        struct MoveMessage
+        {
+            public MsgType message;
+            public Vector3 position;
+        }
+        private Queue<MoveMessage> m_moveMessage = new Queue<MoveMessage>();
+        private IMessageReceiver m_receiver;
+        private int m_targetId = 0;
+        private Vector3 m_destination = Vector3.zero;
         void Awake()
         {
             m_entity = GetComponent<NetworkEntity>();
@@ -47,7 +54,6 @@ namespace Gamekit3D
             m_Animator = GetComponent<Animator>();
             m_Animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
 
-
             m_Rigidbody = GetComponentInChildren<Rigidbody>();
             if (m_Rigidbody == null)
                 m_Rigidbody = gameObject.AddComponent<Rigidbody>();
@@ -56,60 +62,111 @@ namespace Gamekit3D
             m_Rigidbody.useGravity = false;
             m_Rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
             m_Rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+            m_destination = transform.position;
         }
 
         private void FixedUpdate()
         {
             UpdateMovement();
         }
-
-        void UpdateMovement()
+        void PositionRevise()
         {
-            if (m_moveSteps.Count > 0)
+            if (m_targetId != 0 && m_targetId == PlayerMyController.Instance.Entity.entityId)
             {
-                // Adjust the forward speed towards the desired speed.
-                m_currentSpeed = Mathf.MoveTowards(m_currentSpeed, m_desiredSpeed, acceleration * Time.deltaTime);
-
-                Vector3 position = m_moveSteps.Peek();
-
-                float distance = Vector3.Distance(transform.position, position);
-                if (distance < double.Epsilon)
-                {
-                    m_moveSteps.Dequeue();
-                    return;
-                }
-
-                float t = (m_currentSpeed + 0.1f) * Time.deltaTime / distance;
-                if (Mathf.Abs(t - 1.0f) < 0.1 ||
-                    t < 0.1)
-                {
-                    m_moveSteps.Dequeue();
-                }
-                position = Vector3.Lerp(m_lastPosition, position, t);
-                m_lastPosition = position;
-
-                RaycastHit hit;
-                Ray down = new Ray(position + Vector3.up * k_GroundedRayDistance * 0.5f, -Vector3.up);
-                Ray up = new Ray(position + Vector3.up * k_GroundedRayDistance * 0.5f, Vector3.up);
-                if (Physics.Raycast(down, out hit, k_GroundedRayDistance, Physics.AllLayers,
-                    QueryTriggerInteraction.Ignore))
-                {
-                    position = hit.point;
-                }
-                else if (Physics.Raycast(up, out hit, k_GroundedRayDistance, Physics.AllLayers,
-                  QueryTriggerInteraction.Ignore))
-                {
-                    position = hit.point;
-                }
-
-                transform.position = position;
-            }
-            else
-            {
-                m_desiredSpeed = 0;
+                CPositionRevise msg = new CPositionRevise();
+                msg.entityId = m_entity.EntityId;
+                msg.pos.x = transform.position.x;
+                msg.pos.y = transform.position.y;
+                msg.pos.z = transform.position.z;
+                MyNetwork.Send(msg);
             }
         }
 
+
+        void UpdateMovement()
+        {
+            if (m_moveMessage.Count == 0)
+            {
+                m_desiredSpeed = 0;
+                return;
+            }
+
+            // Adjust the forward speed towards the desired speed.
+            m_desiredSpeed = maxSpeed;
+            m_currentSpeed = Mathf.MoveTowards(m_currentSpeed, m_desiredSpeed, acceleration * Time.deltaTime);
+            MoveMessage step = m_moveMessage.Peek();
+            Vector3 position = step.position;
+            float distance = Vector3.Distance(transform.position, position);
+            if (distance < double.Epsilon)
+            {
+                m_moveMessage.Dequeue();
+            }
+            else
+            {
+                if (distance > 3.0f)
+                { // if the distance between current position and next position are not close
+                    transform.LookAt(position);
+                }
+                float t = (m_currentSpeed + 0.1f) * Time.deltaTime / distance;
+                // cannot greater than 1
+                t = t > 1.0f ? 1.0f : t;
+                if (Mathf.Abs(t - 1.0f) < 0.1)
+                { // is nearly next step
+                    m_moveMessage.Dequeue();
+                }
+                position = Vector3.Lerp(transform.position, position, t);
+            }
+
+            if (step.message == MsgType.MOVE)
+            {
+                // prject this position on to ground
+                Vector3 hit = HitGround(position);
+                if ((hit - transform.position).sqrMagnitude > 0.1f)
+                { // not too close, prevent dead loop
+                    position = hit;
+                }
+            }
+
+            DebugUtil.DrawLine(transform.position, position, Color.red);
+            transform.position = position;
+
+            // send to server to revise the sprite position
+            PositionRevise();
+
+            m_receiver.OnReceiveMessage(step.message, this, position);
+            if (step.message == MsgType.END_BACK ||
+                step.message == MsgType.BEGIN_BACK)
+            {
+                // end chase enemy
+                m_targetId = 0;
+            }
+
+        }
+
+        Vector3 HitGround(Vector3 position)
+        {
+            RaycastHit hit;
+            Vector3 p = position + Vector3.up * k_GroundedRayDistance * 0.5f;
+            Ray down = new Ray(p, -Vector3.up);
+            Ray up = new Ray(p, Vector3.up);
+            if (Physics.Raycast(down, out hit, k_GroundedRayDistance, Physics.AllLayers,
+                QueryTriggerInteraction.Ignore))
+            {
+                return hit.point;
+            }
+            else if (Physics.Raycast(up, out hit, k_GroundedRayDistance, Physics.AllLayers,
+              QueryTriggerInteraction.Ignore))
+            {
+                return hit.point;
+            }
+            return position;
+        }
+        // set message receiver
+        // receiver may be ChomperBehavior/GrenadierBehaviour/SpitterBehaviour
+        public void SetReceiver(IMessageReceiver receiver)
+        {
+            m_receiver = receiver;
+        }
         // used to disable position being set by the navmesh agent, for case where we want the animation to move the enemy instead (e.g. Chomper attack)
         public void SetFollowNavmeshAgent(bool follow)
         {
@@ -130,37 +187,58 @@ namespace Gamekit3D
 
         public void Attack(ICreatureBehavior target)
         {
+            m_receiver.OnReceiveMessage(MsgType.ATTACK, this, target);
         }
 
-        public void MoveBegin(V3 start,
-            V3 end,
-            V4 rot)
+        public void BeginChase(Vector3 position, int targetId)
         {
-            m_moveSteps.Clear();
-            Vector3 s = new Vector3(start.x, start.y, start.z);
-            m_moveSteps.Enqueue(s);
+            m_targetId = targetId;
+            m_moveMessage.Clear();
             m_desiredSpeed = maxSpeed;
-            transform.LookAt(s);
+            MoveMessage step;
+            step.position = position;
+            step.message = MsgType.BEGIN_CHASE;
+            m_moveMessage.Enqueue(step);
+            //DebugUtil.DrawLine(position, position + Vector3.up, Color.red);
+            Debug.Log("BeginChase, position=" + position.ToString() + ", target=" + targetId.ToString());
         }
 
-        public void MoveStep(
-            V3 start,
-            V3 pos,
-            V4 rot)
+        public void EndChase(Vector3 position, int targetId)
         {
-            Vector3 s = new Vector3(start.x, start.y, start.z);
-            m_moveSteps.Enqueue(s);
+            m_targetId = targetId;
+            //DebugUtil.DrawLine(position, position + Vector3.up, Color.red);
+            MoveMessage step;
+            step.position = position;
+            step.message = MsgType.END_CHASE;
+            m_moveMessage.Enqueue(step);
+            Debug.Log("EndChase, position=" + position.ToString() + ", target=" + targetId.ToString());
+        }
+
+        public void BeginBack(Vector3 position)
+        {
+            m_moveMessage.Clear();
             m_desiredSpeed = maxSpeed;
-            transform.LookAt(s);
+            MoveMessage step;
+            step.position = position;
+            step.message = MsgType.BEGIN_BACK;
+            m_moveMessage.Enqueue(step);
         }
 
-        public void MoveEnd(
-            V3 move,
-            V3 start,
-            V4 rot)
+        public void EndBack(Vector3 position)
         {
-            Vector3 s = new Vector3(start.x, start.y, start.z);
-            transform.position = s;
+            //DebugUtil.DrawLine(position, position + Vector3.up, Color.red);
+            MoveMessage step;
+            step.position = position;
+            step.message = MsgType.END_BACK;
+            m_moveMessage.Enqueue(step);
+        }
+
+        public void MoveStep(Vector3 position)
+        {
+            MoveMessage step;
+            step.position = position;
+            step.message = MsgType.MOVE;
+            m_moveMessage.Enqueue(step);
         }
 
         public Vector3 GetPosition()

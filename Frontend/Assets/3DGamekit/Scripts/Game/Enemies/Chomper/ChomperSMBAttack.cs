@@ -12,14 +12,6 @@ namespace Gamekit3D
         {
             base.OnSLStateEnter(animator, stateInfo, layerIndex);
 
-            m_MonoBehaviour.controller.SetFollowNavmeshAgent(false);
-
-            m_AttackPosition = m_MonoBehaviour.target.transform.position;
-            Vector3 toTarget = m_AttackPosition - m_MonoBehaviour.transform.position;
-            toTarget.y = 0;
-
-            m_MonoBehaviour.transform.forward = toTarget.normalized;
-
             if (m_MonoBehaviour.attackAudio != null)
                 m_MonoBehaviour.attackAudio.PlayRandomClip();
         }
@@ -30,8 +22,6 @@ namespace Gamekit3D
 
             if (m_MonoBehaviour.attackAudio != null)
                 m_MonoBehaviour.attackAudio.audioSource.Stop();
-
-            m_MonoBehaviour.controller.SetFollowNavmeshAgent(true);
         }
     }
 }

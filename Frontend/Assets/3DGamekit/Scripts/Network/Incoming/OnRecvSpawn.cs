@@ -16,10 +16,10 @@ namespace Gamekit3D.Network
             else if (networkObjects.TryGetValue(msg.entity.name, out go))
             {
                 NetworkEntity entity = go.GetComponent<NetworkEntity>();
-                entity.entityID = msg.entity.entityID;
-                if (!networkEntities.ContainsKey(entity.entityID))
+                entity.entityId = msg.entity.entityID;
+                if (!networkEntities.ContainsKey(entity.entityId))
                 {
-                    networkEntities.Add(entity.entityID, entity);
+                    networkEntities.Add(entity.entityId, entity);
                 }
             }
             if (go == null)

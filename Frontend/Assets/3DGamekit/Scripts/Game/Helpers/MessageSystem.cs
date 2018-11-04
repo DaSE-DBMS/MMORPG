@@ -5,16 +5,23 @@ using UnityEngine;
 namespace Gamekit3D
 {
 
-    public enum DamageMsgType
+    public enum MsgType
     {
         DAMAGED,
         DEAD,
         RESPAWN,
         //Add your user defined message type after
+        BEGIN_CHASE,
+        END_CHASE,
+        BEGIN_BACK,
+        END_BACK,
+        MOVE,
+        ATTACK,
+        HIT
     }
 
     public interface IMessageReceiver
     {
-        void OnReceiveMessage(DamageMsgType type, object sender, object msg);
+        void OnReceiveMessage(MsgType type, object sender, object msg);
     }
 }

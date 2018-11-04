@@ -6,25 +6,25 @@ namespace Backend.Game
 {
     public class Sprite : Creature
     {
-        enum SearchEnemyState
+        enum ChaseState
         {
             IDLE,
             CHASING_ENEMY,
+            ATTACKING,
             BACK_TO_HOME
         }
 
         // for sprite search path
-        private SearchEnemyState m_searchEnemyState = SearchEnemyState.IDLE;
+        private ChaseState m_chaseState = ChaseState.IDLE;
         private int m_targetID;
         private LinkedList<Point3d> m_routeSteps = new LinkedList<Point3d>();
         // target position when I find my path to it last time
         private Point3d m_targetPos = new Point3d();
         private Point3d m_spawnPoint = new Point3d();
-        private Point3d m_nextPos = new Point3d();
         DateTime m_lastMoveTS = DateTime.UnixEpoch;
 
-        const float DistanceEpsilon = 0.1f;
-        const float LongDistance = 100;
+        const float DistanceEpsilon = 3.0f;
+        const float LongDistance = 100.0f;
 
 
         public void EnemyNear(Creature creature)
@@ -34,10 +34,8 @@ namespace Backend.Game
                 return;
             }
             m_targetPos = creature.Position;
-            m_targetID = creature.entityID;
-            FindPath(creature, m_routeSteps);
-            m_searchEnemyState = SearchEnemyState.CHASING_ENEMY;
-            m_nextPos = this.Position;
+            m_targetID = creature.entityId;
+            m_chaseState = ChaseState.CHASING_ENEMY;
         }
 
         override public void UnderAttack(Creature creature)
@@ -57,98 +55,112 @@ namespace Backend.Game
 
         public override void Update()
         {
-            SearchEnemy();
+            ChaseEnemy();
         }
-        private void SearchEnemy()
+        private void ChaseEnemy()
         {
-            if (m_searchEnemyState == SearchEnemyState.IDLE)
+            Creature target = m_targetID == 0 ? null : (Creature)World.Instance().GetEntity(m_targetID);
+            if (m_chaseState == ChaseState.IDLE)
             {
-                //UpdateActive = false;
+                UpdateActive = false;
                 return;
             }
-            else if (m_searchEnemyState == SearchEnemyState.CHASING_ENEMY)
+            else if (m_chaseState == ChaseState.CHASING_ENEMY)
             {
-                this.Position = m_nextPos;
-                Creature target = (Creature)World.Instance().GetEntity(m_targetID);
                 Point3d targetPos = target.Position;
                 float distance = (float)Position.DistanceTo(targetPos);
                 if (distance > LongDistance)
                 {
                     // too far away, I cannot catch up my enemy, so I give up
-                    StartBackToSpawnPoint();
+                    StartBackToHome();
                     return;
                 }
-                else if (distance < DistanceEpsilon)
-                {
-                    // reach the destination
-                    SendActionMove(MoveState.END, this.Position, this.Position);
-                    return;
-                }
-
                 if (targetPos.DistanceTo(m_targetPos) > DistanceEpsilon)
                 {
                     // the target is moving
                     //the route I found last time was behind the time...
-                    ReFindPath(m_searchEnemyState, targetPos);
+                    FindPath(m_chaseState, targetPos);
+                    m_targetPos = targetPos;
+                    SendMove(MoveState.BEGIN, Position, m_targetID);
                     return;
                 }
-            }
 
-            /*m_nextPos = m_routeSteps.First.Value;
-            double walkDis = (double)speed * (double)(DateTime.Now - m_lastMoveTS).TotalMilliseconds / 1000.0f;
-            if (walkDis < Position.DistanceTo(m_nextPos))
-            {
-                // I had walked some steps last frames,
-                // but my speed was too slow to walk such a long way in one frame time
-                //return;
-            }*/
+                if (distance < DistanceEpsilon)
+                {
+                    // reach the destination
+                    m_routeSteps.Clear();
+                }
 
-            if (m_routeSteps.Count == 0)
-            {
-                Point3d position = m_searchEnemyState == SearchEnemyState.BACK_TO_HOME ?
-                    m_spawnPoint : this.Position;
-                SendActionMove(MoveState.END, position, position);
+                if (m_routeSteps.Count == 0)
+                {
+                    this.Position = target.Position;
+                    SendMove(MoveState.END, target.Position, m_targetID);
+                    m_chaseState = ChaseState.ATTACKING;
+                    Attack(target);
+                }
+                else
+                {
+                    Point3d pos = m_routeSteps.First.Value;
+                    m_routeSteps.RemoveFirst();
+                    SendMove(MoveState.STEP, pos, m_targetID);
+                }
             }
-            else
+            else if (m_chaseState == ChaseState.BACK_TO_HOME)
             {
-                m_nextPos = m_routeSteps.First.Value;
-                m_routeSteps.RemoveFirst();
-                SendActionMove(MoveState.STEP, this.Position, m_nextPos);
+                if (m_routeSteps.Count == 0)
+                {
+                    m_chaseState = ChaseState.IDLE;
+                    this.Position = m_spawnPoint;
+                    SendMove(MoveState.END, m_spawnPoint);
+                }
+                else
+                {
+                    Point3d pos = m_routeSteps.First.Value;
+                    m_routeSteps.RemoveFirst();
+                    SendMove(MoveState.STEP, pos);
+                }
+            }
+            else if (m_chaseState == ChaseState.ATTACKING)
+            {
+
+                if (Position.DistanceTo(target.Position) < DistanceEpsilon)
+                {
+                    Attack(target);
+                }
+                else
+                {
+                    m_chaseState = ChaseState.CHASING_ENEMY;
+                    FindPath(ChaseState.CHASING_ENEMY, target.Position);
+                    m_targetPos = target.Position;
+                    SendMove(MoveState.BEGIN, Position, m_targetID);
+                }
             }
         }
 
-        private void ReFindPath(SearchEnemyState state, Point3d target)
+        private void FindPath(ChaseState state, Point3d target)
         {
             if (!FindPath(target, m_routeSteps))
             {
                 // cannot find a way , something was wrong ???
                 // fly to spawn point
-                if (state == SearchEnemyState.BACK_TO_HOME)
+                if (state == ChaseState.BACK_TO_HOME)
                 {
                     // cannot find a way , something was wrong ???
                     // fly to spawn point
-                    SendActionMove(MoveState.END, this.Position, this.Position);
                 }
                 else
                 {
-                    StartBackToSpawnPoint();
+                    StartBackToHome();
                 }
-                return;
-            }
-            else
-            {
-                m_targetPos = target;
-                m_nextPos = m_routeSteps.First.Value;
-                m_routeSteps.RemoveFirst();
-                SendActionMove(MoveState.BEGIN, this.Position, m_nextPos);
             }
         }
 
-        private void StartBackToSpawnPoint()
+        private void StartBackToHome()
         {
-            m_searchEnemyState = SearchEnemyState.BACK_TO_HOME;
+            m_chaseState = ChaseState.BACK_TO_HOME;
             m_targetID = 0;
-            ReFindPath(SearchEnemyState.BACK_TO_HOME, m_spawnPoint);
+            FindPath(ChaseState.BACK_TO_HOME, m_spawnPoint);
+            SendMove(MoveState.BEGIN, Position);
         }
 
         public override void Spawn()
@@ -156,23 +168,14 @@ namespace Backend.Game
             m_spawnPoint = Position;
         }
 
-        private void SendActionMove(MoveState state, Point3d movement, Point3d position)
+        private void SendMove(MoveState state, Point3d position, int targetId = 0)
         {
-            if (state == MoveState.END)
-            {
-                m_routeSteps.Clear();
-                // attack enemy if current search enemy state is CHASING_ENEMY...
-                if (m_searchEnemyState == SearchEnemyState.BACK_TO_HOME)
-                {
-                    m_searchEnemyState = SearchEnemyState.IDLE;
-                }
-            }
             m_lastMoveTS = DateTime.Now;
-            SMove message = new SMove();
-            message.ID = entityID;
-            message.move = Entity.Point3dToV3(movement);
+            SSpriteMove message = new SSpriteMove();
+            message.ID = entityId;
             message.pos = Entity.Point3dToV3(position);
             message.state = state;
+            message.targetId = targetId;
             Broadcast(message);
         }
     }

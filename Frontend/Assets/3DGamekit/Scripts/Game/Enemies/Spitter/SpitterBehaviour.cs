@@ -50,14 +50,14 @@ namespace Gamekit3D
 
         }
 
-        public void OnReceiveMessage(DamageMsgType type, object sender, object msg)
+        public void OnReceiveMessage(MsgType type, object sender, object msg)
         {
             switch (type)
             {
-                case DamageMsgType.DEAD:
+                case MsgType.DEAD:
                     Death((Damageable.DamageMessage)msg);
                     break;
-                case DamageMsgType.DAMAGED:
+                case MsgType.DAMAGED:
                     ApplyDamage((Damageable.DamageMessage)msg);
                     break;
                 default:

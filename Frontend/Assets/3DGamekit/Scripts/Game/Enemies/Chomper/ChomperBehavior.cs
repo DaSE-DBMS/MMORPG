@@ -57,14 +57,16 @@ namespace Gamekit3D
 
         protected void OnEnable()
         {
-            //m_Controller = GetComponentInChildren<EnemyController>();
+            m_Controller = GetComponentInChildren<EnemyController>();
+            m_Controller.SetReceiver(this);
             m_Animator = GetComponent<Animator>();
             originalPosition = transform.position;
 
             meleeWeapon.SetOwner(gameObject);
 
             m_Animator.Play(hashIdleState, 0, Random.value);
-
+            m_Animator.SetBool(hashGrounded, m_ground);
+            m_Animator.SetBool(hashNearBase, true);
             SceneLinkedSMB<ChomperBehavior>.Initialise(m_Animator, this);
         }
 
@@ -99,16 +101,6 @@ namespace Gamekit3D
         {
             if (m_FollowerInstance != null)
                 m_FollowerInstance.distributor.UnregisterFollower(m_FollowerInstance);
-        }
-
-        private void FixedUpdate()
-        {
-            m_Animator.SetBool(hashGrounded, m_ground);
-
-            Vector3 toBase = originalPosition - transform.position;
-            toBase.y = 0;
-
-            m_Animator.SetBool(hashNearBase, toBase.sqrMagnitude < 0.1 * 0.1f);
         }
 
 
@@ -174,23 +166,24 @@ namespace Gamekit3D
 
         public void StartPursuit()
         {
+            m_Animator.SetBool(hashNearBase, false);
+            m_Animator.SetBool(hashInPursuit, true);
             if (m_FollowerInstance != null)
             {
                 m_FollowerInstance.requireSlot = true;
                 RequestTargetPosition();
             }
 
-            m_Animator.SetBool(hashInPursuit, true);
+
         }
 
         public void StopPursuit()
         {
+            m_Animator.SetBool(hashInPursuit, false);
             if (m_FollowerInstance != null)
             {
                 m_FollowerInstance.requireSlot = false;
             }
-
-            m_Animator.SetBool(hashInPursuit, false);
         }
 
         public void RequestTargetPosition()
@@ -205,8 +198,8 @@ namespace Gamekit3D
 
         public void WalkBackToBase()
         {
-            if (m_FollowerInstance != null)
-                m_FollowerInstance.distributor.UnregisterFollower(m_FollowerInstance);
+            //if (m_FollowerInstance != null)
+            //    m_FollowerInstance.distributor.UnregisterFollower(m_FollowerInstance);
             //m_Target = null;
             //StopPursuit();
             //m_Controller.SetTarget(originalPosition);
@@ -215,7 +208,7 @@ namespace Gamekit3D
 
         public void TriggerAttack()
         {
-            m_Animator.SetTrigger(hashAttack);
+            m_Animator.SetBool(hashAttack, true);
         }
 
         public void AttackBegin()
@@ -228,15 +221,34 @@ namespace Gamekit3D
             meleeWeapon.EndAttack();
         }
 
-        public void OnReceiveMessage(DamageMsgType type, object sender, object msg)
+        public void OnReceiveMessage(MsgType type, object sender, object msg)
         {
             switch (type)
             {
-                case DamageMsgType.DEAD:
+                case MsgType.DEAD:
                     Death((Damageable.DamageMessage)msg);
                     break;
-                case DamageMsgType.DAMAGED:
+                case MsgType.DAMAGED:
                     ApplyDamage((Damageable.DamageMessage)msg);
+                    break;
+                case MsgType.BEGIN_CHASE:
+                    StartPursuit();
+                    break;
+                case MsgType.END_CHASE:
+                    break;
+                case MsgType.BEGIN_BACK:
+                    StopPursuit();
+                    break;
+                case MsgType.END_BACK:
+                    m_Animator.SetBool(hashInPursuit, false);
+                    m_Animator.SetBool(hashNearBase, true);
+                    break;
+                case MsgType.MOVE:
+                    break;
+                case MsgType.ATTACK:
+                    TriggerAttack();
+                    break;
+                case MsgType.HIT:
                     break;
                 default:
                     break;

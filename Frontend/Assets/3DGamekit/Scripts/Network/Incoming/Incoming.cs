@@ -24,7 +24,8 @@ namespace Gamekit3D.Network
             register.Register(Command.S_SPAWN, OnRecvSpawn);
             register.Register(Command.S_ATTACK, OnRecvAttack);
             register.Register(Command.S_JUMP, OnRecvJump);
-            register.Register(Command.S_MOVE, OnRecvMove);
+            register.Register(Command.S_PLAYER_MOVE, OnRecvPlayerMove);
+            register.Register(Command.S_SPRITE_MOVE, OnRecvSpriteMove);
             register.Register(Command.S_ENTITY_DESTROY, OnRecvEntityDestory);
             register.Register(Command.S_EQUIP_WEAPON, OnRecvEquipWeapon);
             register.Register(Command.S_PLAYER_TAKE, OnRecvTakeItem);
@@ -67,10 +68,10 @@ namespace Gamekit3D.Network
                 GameObject.Destroy(go);
                 return null;
             }
-            entity.entityID = entityID;
-            if (!networkEntities.ContainsKey(entity.entityID))
+            entity.entityId = entityID;
+            if (!networkEntities.ContainsKey(entity.entityId))
             {
-                networkEntities.Add(entity.entityID, entity);
+                networkEntities.Add(entity.entityId, entity);
             }
             return go;
         }

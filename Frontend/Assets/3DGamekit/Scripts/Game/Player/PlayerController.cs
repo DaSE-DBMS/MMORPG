@@ -259,9 +259,9 @@ namespace Gamekit3D
         {
             if (isMine)
             {
-                m_attacking = m_myController.IsAttackInput;
-                m_moving = IsMoveInput;
-                m_jumping = m_myController.IsJumpInput;
+                m_attacking = m_myController.IsAttacking;
+                m_moving = m_myController.IsMoving;
+                m_jumping = m_myController.IsJumping;
                 m_movement.Set(m_myController.MoveInput.x, m_myController.MoveInput.y);
                 UpdateInputBlocking();
             }
@@ -623,17 +623,24 @@ namespace Gamekit3D
 
             if (isMine)
             {
-                if (m_moving && m_moveStep == 0)
+                if (m_moving)
                 {
-                    m_myController.SendMovingBegin();
+                    if (m_moveStep++ == 0)
+                    {
+                        m_myController.SendMovingBegin();
+                    }
+                    else
+                    {
+                        m_myController.SendMovingStep();
+                    }
                 }
-                else if (m_moving && m_moveStep++ > 0)
+                else
                 {
-                    m_myController.SendMovingStep();
-                }
-                else if (!m_moving && m_moveStep != 0)
-                {
-                    m_myController.SendMovingEnd();
+                    if (m_moveStep != 0)
+                    {
+                        m_moveStep = 0;
+                        m_myController.SendMovingEnd();
+                    }
                 }
             }
 
@@ -761,17 +768,17 @@ namespace Gamekit3D
         }
 
         // Called by Ellen's Damageable when she is hurt.
-        public void OnReceiveMessage(DamageMsgType type, object sender, object data)
+        public void OnReceiveMessage(MsgType type, object sender, object data)
         {
             switch (type)
             {
-                case DamageMsgType.DAMAGED:
+                case MsgType.DAMAGED:
                     {
                         Damageable.DamageMessage damageData = (Damageable.DamageMessage)data;
                         Damaged(damageData);
                     }
                     break;
-                case DamageMsgType.DEAD:
+                case MsgType.DEAD:
                     {
                         Damageable.DamageMessage damageData = (Damageable.DamageMessage)data;
                         Die(damageData);
@@ -779,41 +786,45 @@ namespace Gamekit3D
                     break;
             }
         }
-        public void MoveBegin(V3 move,
-            V3 pos,
-            V4 rot)
+
+        public void MoveBegin(
+            Vector2 move,
+            Vector3 position,
+            Quaternion rotation)
         {
-            m_moving = true;
+            m_moving = isMine ? m_moving : true;
             m_movement.Set(0f, 0f);
-            Vector3 position = new Vector3(pos.x, pos.y, pos.z);
-            Quaternion rotation = new Quaternion(rot.x, rot.y, rot.z, rot.w);
             transform.position = position;
             transform.rotation = rotation;
         }
 
         public void MoveStep(
-            V3 move,
-            V3 pos,
-            V4 rot)
+            Vector2 move,
+            Vector3 position,
+            Quaternion rotation)
         {
-            m_moving = true;
+            m_moving = isMine ? m_moving : true;
             m_movement.Set(move.x, move.y);
-            Vector3 position = new Vector3(pos.x, pos.y, pos.z);
-            Quaternion rotation = new Quaternion(rot.x, rot.y, rot.z, rot.w);
             transform.position = position;
             transform.rotation = rotation;
         }
 
-        public void MoveEnd(V3 move,
-            V3 pos,
-            V4 rot)
+        public void MoveEnd(
+            Vector2 move,
+            Vector3 position,
+            Quaternion rotation)
         {
-            Vector3 position = new Vector3(pos.x, pos.y, pos.z);
-            Quaternion rotation = new Quaternion(rot.x, rot.y, rot.z, rot.w);
             transform.position = position;
             transform.rotation = rotation;
             m_movement.Set(0f, 0f);
-            m_moving = false;
+            m_moving = isMine ? m_moving : false;
+            /*
+            if (isMine)
+            {
+                DebugUtil.DrawLine(position, position + Vector3.up, Color.green);
+            }
+            Debug.Log("PlayerMoveEnd, position=" + position.ToString() + ", rotation=" + rotation.ToString());
+            */
         }
 
         public void Attack(ICreatureBehavior target)
@@ -894,62 +905,6 @@ namespace Gamekit3D
             m_Respawning = true;
             m_Damageable.isInvulnerable = true;
         }
-        /*
-        void SendJumpingAction()
-        {
-            CPlayerJump action = new CPlayerJump();
-            action.player = m_entity.id;
-            MyNetwork.Send(action);
-        }
-
-        void SendAttackingAction(int targetID = 0)
-        {
-            CPlayerAttack action = new CPlayerAttack();
-            action.player = m_entity.id;
-            action.target = targetID;
-            MyNetwork.Send(action);
-        }
-
-        void InitMove(CPlayerMove action)
-        {
-            action.player = m_entity.id;
-            action.move.x = m_Input.MoveInput.x;
-            action.move.y = m_Input.MoveInput.y;
-            action.pos.x = transform.position.x;
-            action.pos.y = transform.position.y;
-            action.pos.z = transform.position.z;
-            action.rot.x = transform.rotation.x;
-            action.rot.y = transform.rotation.y;
-            action.rot.z = transform.rotation.z;
-            action.rot.w = transform.rotation.w;
-        }
-
-        void SendMovingBegin()
-        {
-            CPlayerMove action = new CPlayerMove();
-            action.state = MoveState.BEGIN;
-            InitMove(action);
-            MyNetwork.Send(action);
-            m_moveStep++;
-        }
-
-        void SendMovingStep()
-        {
-            CPlayerMove action = new CPlayerMove();
-            action.state = MoveState.STEP;
-            InitMove(action);
-            MyNetwork.Send(action);
-            m_moveStep++;
-        }
-
-        void SendMovingEnd()
-        {
-            CPlayerMove action = new CPlayerMove();
-            action.state = MoveState.END;
-            InitMove(action);
-            MyNetwork.Send(action);
-            m_moveStep = 0;
-        }*/
 
         public void EquipWeapon(NetworkEntity weapon)
         {
@@ -973,36 +928,5 @@ namespace Gamekit3D
         {
             item.gameObject.transform.SetParent(this.gameObject.transform);
         }
-        /*
-        private void OnTriggerStay(Collider other)
-        {
-            if (!(isMine && canAttack && m_attacking))
-                return;
-
-            if ((damagedLayers.value & 1 << other.gameObject.layer) == 0)
-                return;
-
-            NetworkEntity damager = other.gameObject.GetComponent<NetworkEntity>();
-            if (damager == null)
-                return;
-
-            SendAttackingAction(damager.id);
-        }
-
-        private void OnCollisionStay(Collision other)
-        {
-            if (!(isMine && canAttack && m_attacking))
-                return;
-
-            if ((damagedLayers.value & 1 << other.gameObject.layer) == 0)
-                return;
-
-            NetworkEntity damager = other.gameObject.GetComponent<NetworkEntity>();
-            if (damager == null)
-                return;
-
-            SendAttackingAction(damager.id);
-        }
-        */
     }
 }
