@@ -28,7 +28,8 @@ namespace Gamekit3D
         SerializedProperty m_EmoteDeathPlayerProp;
         SerializedProperty m_EmoteAttackPlayerProp;
         SerializedProperty m_EmoteJumpPlayerProp;
-
+        SerializedProperty m_EmoteLeftHandAttachProp;
+        SerializedProperty m_EmoteRightHandAttachProp;
         GUIContent m_ScriptContent = new GUIContent("Script");
 
         GUIContent m_MaxForwardSpeedContent = new GUIContent("Max Forward Speed", "How fast Ellen can run.");
@@ -47,7 +48,8 @@ namespace Gamekit3D
         GUIContent m_EmoteDeathPlayerContent = new GUIContent("Emote Death Player", "Used to play a random vocal sound when Ellen dies.");
         GUIContent m_EmoteAttackPlayerContent = new GUIContent("Emote Attack Player", "Used to play a random vocal sound when Ellen attacks.");
         GUIContent m_EmoteJumpPlayerContent = new GUIContent("Emote Jump Player", "Used to play a random vocal sound when Ellen jumps.");
-
+        GUIContent m_EmoteLeftHandAttachContent = new GUIContent("Left Hand Attach", "Used to equip weapon on left hand.");
+        GUIContent m_EmoteRightHandAttachContent = new GUIContent("Right Hand Attach", "Used to equip weapon.on right hand.");
         void OnEnable()
         {
             m_ScriptProp = serializedObject.FindProperty("m_Script");
@@ -69,6 +71,8 @@ namespace Gamekit3D
             m_EmoteDeathPlayerProp = serializedObject.FindProperty("emoteDeathPlayer");
             m_EmoteAttackPlayerProp = serializedObject.FindProperty("emoteAttackPlayer");
             m_EmoteJumpPlayerProp = serializedObject.FindProperty("emoteJumpPlayer");
+            m_EmoteLeftHandAttachProp = serializedObject.FindProperty("leftHandAttach");
+            m_EmoteRightHandAttachProp = serializedObject.FindProperty("rightHandAttach");
         }
 
         public override void OnInspectorGUI()
@@ -104,6 +108,8 @@ namespace Gamekit3D
                 EditorGUILayout.PropertyField(m_EmoteDeathPlayerProp, m_EmoteDeathPlayerContent);
                 EditorGUILayout.PropertyField(m_EmoteAttackPlayerProp, m_EmoteAttackPlayerContent);
                 EditorGUILayout.PropertyField(m_EmoteJumpPlayerProp, m_EmoteJumpPlayerContent);
+                EditorGUILayout.PropertyField(m_EmoteLeftHandAttachProp, m_EmoteLeftHandAttachContent);
+                EditorGUILayout.PropertyField(m_EmoteRightHandAttachProp, m_EmoteRightHandAttachContent);
                 EditorGUI.indentLevel--;
             }
 
