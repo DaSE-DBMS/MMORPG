@@ -1,4 +1,6 @@
 ﻿using Common;
+using UnityEngine;
+using System.Collections;
 using UnityEngine.SceneManagement;
 
 namespace Gamekit3D.Network
@@ -7,13 +9,16 @@ namespace Gamekit3D.Network
     {
         private void OnRecvPlayerEnter(IChannel channel, Message message)
         {
-            if (debug)
+            MyNetwork network = GameObject.FindObjectOfType<MyNetwork>();
+            GameStartUp startup = GameObject.FindObjectOfType<GameStartUp>();
+            if (network.gameScene)
             {// ignore enter scene message when debug mode
                 return;
             }
             //Console.WriteLine("Receive Enter...");
             SPlayerEnter enter = (SPlayerEnter)message;
-            SceneManager.LoadSceneAsync("Level1");
+            startup.LoadScene("Level1");
+
         }
     }
 }

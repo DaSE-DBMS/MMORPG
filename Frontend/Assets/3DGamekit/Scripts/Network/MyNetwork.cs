@@ -8,12 +8,8 @@ namespace Gamekit3D.Network
     {
         static private Incoming incomming = new Incoming(Client.Instance());
         static private bool connected = false;
-
         [Tooltip("auto connect to localhost")]
-        public bool autoConnect = false;
-
-        [Tooltip("auto connect to localhost")]
-        public bool debug = false;
+        public bool gameScene = false;
 
         [Tooltip("address")]
         public string address = "127.0.0.1";
@@ -23,12 +19,14 @@ namespace Gamekit3D.Network
 
         void Awake()
         {
-            if (autoConnect)
+            if (gameScene && !connected)
             {
-                Connect(address, port);
+                Connect();
             }
-            //
-            SceneManager.sceneLoaded += RecvSceneLoaded;
+            if (gameScene)
+            {
+                SceneManager.sceneLoaded += RecvSceneLoaded;
+            }
         }
         void Start()
         {
@@ -41,11 +39,11 @@ namespace Gamekit3D.Network
         }
 
         // Use this for initialization
-        static public void Connect(string ip, short port)
+        public void Connect()
         {
             if (!connected)
             { // exactly connect once
-                Client.Instance().Connect(ip, port);
+                Client.Instance().Connect(address, port);
                 CLogin cLogin = new CLogin();
                 cLogin.user = "ybbh";
                 cLogin.password = "123456";

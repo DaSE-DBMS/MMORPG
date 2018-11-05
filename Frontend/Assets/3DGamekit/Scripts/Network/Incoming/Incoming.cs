@@ -10,7 +10,6 @@ namespace Gamekit3D.Network
         private Dictionary<int, GameObject> gameObjects = new Dictionary<int, GameObject>();
         public Dictionary<int, NetworkEntity> networkEntities = new Dictionary<int, NetworkEntity>();
         public PlayerController thisPlayer;
-        bool debug = true;
         IRegister register;
         public Incoming(IRegister register)
         {

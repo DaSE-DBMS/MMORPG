@@ -3950,7 +3950,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: eee661ff082b004488dea60aa9839a1c, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 1
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -4079,7 +4079,7 @@ MonoBehaviour:
   parent: {fileID: 0}
   children: []
   entityType: 1
-  entityID: 0
+  entityId: 0
   canClone: 0
 --- !u!114 &114643955118306876
 MonoBehaviour:

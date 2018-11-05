@@ -706,7 +706,7 @@ MonoBehaviour:
           m_MethodName: PlayOneShot
           m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 8300000, guid: 6b299ed8d39414c719f79a90fef873c9,
+            m_ObjectArgument: {fileID: 8300000, guid: f54170a4d3ac5d640aaa6c1e2989e4d7,
               type: 3}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
             m_IntArgument: 0
@@ -1626,7 +1626,7 @@ MonoBehaviour:
           m_MethodName: PlayOneShot
           m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 8300000, guid: 6b299ed8d39414c719f79a90fef873c9,
+            m_ObjectArgument: {fileID: 8300000, guid: f54170a4d3ac5d640aaa6c1e2989e4d7,
               type: 3}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
             m_IntArgument: 0
@@ -6288,8 +6288,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 228302e6f8f0aed4c92758ff8634346a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoConnect: 0
-  debug: 0
+  gameScene: 0
+  address: 127.0.0.1
+  port: 7777
 --- !u!1 &774907541
 GameObject:
   m_ObjectHideFlags: 0
@@ -8830,7 +8831,7 @@ MonoBehaviour:
           m_MethodName: PlayOneShot
           m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 8300000, guid: 6b299ed8d39414c719f79a90fef873c9,
+            m_ObjectArgument: {fileID: 8300000, guid: f54170a4d3ac5d640aaa6c1e2989e4d7,
               type: 3}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
             m_IntArgument: 0
@@ -9247,7 +9248,7 @@ Prefab:
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
       value: 
-      objectReference: {fileID: 8300000, guid: 141587bd8c30549d18910065667d12c3, type: 3}
+      objectReference: {fileID: 8300000, guid: c9fd576b45f9bad4ea15de96958080b3, type: 3}
     - target: {fileID: 1952037551585386, guid: eb72f36523dcf684f9ca37da45adfa76, type: 2}
       propertyPath: m_Name
       value: StartMenuCanvas
@@ -9374,7 +9375,7 @@ Prefab:
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgument
       value: 
-      objectReference: {fileID: 8300000, guid: dd4831d7f16404eef93a553329551c28, type: 3}
+      objectReference: {fileID: 8300000, guid: de324be12d0a9794796f8519b8b65960, type: 3}
     - target: {fileID: 114707957625037018, guid: eb72f36523dcf684f9ca37da45adfa76,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
@@ -9404,7 +9405,7 @@ Prefab:
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgument
       value: 
-      objectReference: {fileID: 8300000, guid: 45a5ea1fed2ac4325ba2f0415cde6b34, type: 3}
+      objectReference: {fileID: 8300000, guid: fb8882066731a0a4fadad66fe44f6ea1, type: 3}
     - target: {fileID: 114724118554181676, guid: eb72f36523dcf684f9ca37da45adfa76,
         type: 2}
       propertyPath: m_RaycastTarget
@@ -9428,7 +9429,7 @@ Prefab:
     - target: {fileID: 114113160483481408, guid: eb72f36523dcf684f9ca37da45adfa76,
         type: 2}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114108761709197862, guid: eb72f36523dcf684f9ca37da45adfa76,
         type: 2}
@@ -9469,6 +9470,11 @@ Prefab:
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.AudioClip, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114113160483481408, guid: eb72f36523dcf684f9ca37da45adfa76,
+        type: 2}
+      propertyPath: alwaysDisplayMouse
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 50236738518669172, guid: eb72f36523dcf684f9ca37da45adfa76, type: 2}
