@@ -165,7 +165,7 @@ namespace Gamekit3D.Network
             onClose = @delegate;
         }
 
-        public void Connect(string ip, short port)
+        public bool Connect(string ip, short port)
         {
             IPAddress ipAddress = IPAddress.Parse(ip);
             IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
@@ -178,11 +178,12 @@ namespace Gamekit3D.Network
                 // Connect to the remote endpoint.
                 socket.Connect(remoteEP);
                 socket.Blocking = false;
+                return true;
             }
             catch (SocketException ex)
             {
                 UnityEngine.Debug.Log(ex.Message);
-                Application.Quit();
+                return false;
             }
         }
 

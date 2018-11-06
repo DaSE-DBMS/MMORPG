@@ -25,8 +25,7 @@ namespace Backend.Game
         }
         public Entity GetEntity(int id)
         {
-            return entities[id];
-
+            return entities.ContainsKey(id) ? entities[id] : null;
         }
 
         public void AddEntity(int id, Entity entity)

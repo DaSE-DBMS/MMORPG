@@ -28,6 +28,7 @@ namespace Common
 
         CBEGIN,
         C_LOGIN,
+        C_REGISTER,
         C_PLAYER_ENTER,
         C_PLAYER_ATTACK,
         C_PLAYER_JUMP,

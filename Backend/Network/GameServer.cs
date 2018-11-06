@@ -43,7 +43,12 @@ namespace Backend.Network
 
         private void OnConnectionClose(IChannel channel)
         {
-            World.Instance().RemoveEntity(((Entity)channel.GetContent()).entityId);
+            if (channel.GetContent() != null)
+            {
+                Entity entity = (Entity)channel.GetContent();
+                World.Instance().RemoveEntity(entity.entityId);
+            }
+
             ((Channel)channel).workSocket.Shutdown(SocketShutdown.Both);
 
         }

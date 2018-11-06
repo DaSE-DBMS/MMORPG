@@ -182,6 +182,7 @@
     <Compile Include="Assets\3DGamekit\Scripts\Common\FEMessage\CPlayerMove.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Common\FEMessage\CPlayerTake.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Common\FEMessage\CPositionRevisecs.cs" />
+    <Compile Include="Assets\3DGamekit\Scripts\Common\FEMessage\CRegister.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Common\IChannel.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Common\IRegister.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Common\Message.cs" />
@@ -255,9 +256,9 @@
     <Compile Include="Assets\3DGamekit\Scripts\Game\Helpers\BatchProcessor.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Helpers\CameraSettings.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Helpers\FixedUpdateFollow.cs" />
-    <Compile Include="Assets\3DGamekit\Scripts\Game\Helpers\GameStartUp.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Helpers\InspectorHelpMessage.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Helpers\LayerMaskExtensions.cs" />
+    <Compile Include="Assets\3DGamekit\Scripts\Game\Helpers\MessageBox.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Helpers\MessageSystem.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Helpers\ObjectPooler.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\Helpers\ParticleDeactivator.cs" />
@@ -309,6 +310,7 @@
     <Compile Include="Assets\3DGamekit\Scripts\Game\UI\ChatHandler.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\UI\DialogueCanvasController.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\UI\FriendHandler.cs" />
+    <Compile Include="Assets\3DGamekit\Scripts\Game\UI\GameStart.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\UI\GetAllIcons.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\UI\HealthUI.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\UI\KeyUI.cs" />

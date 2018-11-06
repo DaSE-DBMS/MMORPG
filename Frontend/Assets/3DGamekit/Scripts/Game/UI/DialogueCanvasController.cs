@@ -12,28 +12,28 @@ namespace Gamekit3D
 
         protected Coroutine m_DeactivationCoroutine;
 
-        protected readonly int m_HashActivePara = Animator.StringToHash ("Active");
+        protected readonly int m_HashActivePara = Animator.StringToHash("Active");
 
-        IEnumerator SetAnimatorParameterWithDelay (float delay)
+        IEnumerator SetAnimatorParameterWithDelay(float delay)
         {
-            yield return new WaitForSeconds (delay);
+            yield return new WaitForSeconds(delay);
             animator.SetBool(m_HashActivePara, false);
         }
 
-        public void ActivateCanvasWithText (string text)
+        public void ActivateCanvasWithText(string text)
         {
             if (m_DeactivationCoroutine != null)
             {
-                StopCoroutine (m_DeactivationCoroutine);
+                StopCoroutine(m_DeactivationCoroutine);
                 m_DeactivationCoroutine = null;
             }
 
-            gameObject.SetActive (true);
-            animator.SetBool (m_HashActivePara, true);
+            gameObject.SetActive(true);
+            animator.SetBool(m_HashActivePara, true);
             textMeshProUGUI.text = text;
         }
 
-        public void ActivateCanvasWithTranslatedText (string phraseKey)
+        public void ActivateCanvasWithTranslatedText(string phraseKey)
         {
             if (m_DeactivationCoroutine != null)
             {
@@ -46,9 +46,9 @@ namespace Gamekit3D
             textMeshProUGUI.text = Translator.Instance[phraseKey];
         }
 
-        public void DeactivateCanvasWithDelay (float delay)
+        public void DeactivateCanvasWithDelay(float delay)
         {
-            m_DeactivationCoroutine = StartCoroutine (SetAnimatorParameterWithDelay (delay));
+            m_DeactivationCoroutine = StartCoroutine(SetAnimatorParameterWithDelay(delay));
         }
     }
 }

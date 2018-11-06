@@ -6,7 +6,14 @@ namespace Gamekit3D.Network
 {
     public class MyNetwork : MonoBehaviour
     {
+        public const string PORT = "port";
+        public const string HOST = "host";
+
         static private Incoming incomming = new Incoming(Client.Instance());
+
+        static public MyNetwork Instance { get { return m_instance; } }
+
+        static private MyNetwork m_instance;
         static private bool connected = false;
         [Tooltip("auto connect to localhost")]
         public bool gameScene = false;
@@ -19,12 +26,39 @@ namespace Gamekit3D.Network
 
         void Awake()
         {
-            if (gameScene && !connected)
+            m_instance = this;
+            MessageBox.Init();
+            if (!connected)
             {
-                Connect();
+                if (PlayerPrefs.HasKey(HOST) && PlayerPrefs.HasKey(PORT))
+                {
+                    string host = PlayerPrefs.GetString(HOST);
+                    short port = (short)PlayerPrefs.GetInt(PORT);
+                    connected = MyNetwork.Connect(host, port);
+                    if (!connected)
+                    {
+                        MessageBox.Show(string.Format("connect to {0}:{1} fail", host, port));
+                    }
+                }
+            }
+            if (!connected)
+            {
+                string host = this.address;
+                short port = this.port;
+                connected = MyNetwork.Connect(host, port);
+                if (!connected)
+                {
+                    MessageBox.Show(string.Format("connect to {0}:{1} fail", host, port));
+                }
             }
             if (gameScene)
             {
+                if (connected)
+                {
+                    // for debug only ...
+                    CLogin login = new CLogin();
+                    Send(login);
+                }
                 SceneManager.sceneLoaded += RecvSceneLoaded;
             }
         }
@@ -39,17 +73,18 @@ namespace Gamekit3D.Network
         }
 
         // Use this for initialization
-        public void Connect()
+        public bool Connect()
         {
             if (!connected)
             { // exactly connect once
-                Client.Instance().Connect(address, port);
-                CLogin cLogin = new CLogin();
-                cLogin.user = "ybbh";
-                cLogin.password = "123456";
-                Client.Instance().Send(cLogin);
-                connected = true;
+                connected = Client.Instance().Connect(address, port);
             }
+            return connected;
+        }
+
+        static public bool Connect(string host, int port)
+        {
+            return Client.Instance().Connect(host, (short)port);
         }
 
         static public void Send(Message message)

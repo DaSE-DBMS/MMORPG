@@ -14,6 +14,7 @@ namespace Backend.Network
         private void RegisterAll()
         {
             register.Register(Command.C_LOGIN, OnRecvLogin);
+            register.Register(Command.C_REGISTER, OnRecvRegister);
             register.Register(Command.C_PLAYER_ENTER, OnRecvPlayerEnter);
             register.Register(Command.C_PLAYER_MOVE, RecvPlayerMove);
             register.Register(Command.C_PLAYER_JUMP, RecvPlayerJump);

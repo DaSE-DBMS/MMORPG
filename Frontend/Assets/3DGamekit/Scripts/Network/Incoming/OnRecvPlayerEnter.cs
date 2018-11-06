@@ -10,15 +10,14 @@ namespace Gamekit3D.Network
         private void OnRecvPlayerEnter(IChannel channel, Message message)
         {
             MyNetwork network = GameObject.FindObjectOfType<MyNetwork>();
-            GameStartUp startup = GameObject.FindObjectOfType<GameStartUp>();
+            GameStart startup = GameObject.FindObjectOfType<GameStart>();
             if (network.gameScene)
             {// ignore enter scene message when debug mode
                 return;
             }
             //Console.WriteLine("Receive Enter...");
-            SPlayerEnter enter = (SPlayerEnter)message;
-            startup.LoadScene("Level1");
-
+            SPlayerEnter msg = (SPlayerEnter)message;
+            startup.PlayerEnter(msg.scene);
         }
     }
 }

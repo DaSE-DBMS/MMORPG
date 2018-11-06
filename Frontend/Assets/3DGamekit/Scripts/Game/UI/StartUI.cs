@@ -33,7 +33,7 @@ namespace Gamekit3D
                 Cursor.visible = true;
             }
 
-            m_Directors = FindObjectsOfType<PlayableDirector> ();
+            m_Directors = FindObjectsOfType<PlayableDirector>();
         }
 
         public void Quit()
@@ -81,16 +81,16 @@ namespace Gamekit3D
             {
                 if (m_Directors[i].state == PlayState.Playing && !m_InPause)
                 {
-                    m_Directors[i].Pause ();
+                    m_Directors[i].Pause();
                 }
-                else if(m_Directors[i].state == PlayState.Paused && m_InPause)
+                else if (m_Directors[i].state == PlayState.Paused && m_InPause)
                 {
-                    m_Directors[i].Resume ();
+                    m_Directors[i].Resume();
                 }
             }
 
-            if(!m_InPause)
-                CameraShake.Stop ();
+            if (!m_InPause)
+                CameraShake.Stop();
 
             if (m_InPause)
                 PlayerMyController.Instance.GainControl();
