@@ -8,12 +8,9 @@
 
 #### [安装Visual Studio](https://visualstudio.microsoft.com/)
 
-#### [下载资源](https://pan.baidu.com/s/1_zfj01ArOnEsB0a8nQh8Ug)  
+#### [下载资源](https://share.weiyun.com/5nofemx)
 
-提取码
-```
-vo3t
-```
+密码：wkwk6g
 
 资源文件中包括字体，3D模型，图片，音乐等资源
 
