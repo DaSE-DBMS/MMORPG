@@ -13,7 +13,7 @@ namespace Gamekit3D.Network
 
         void Die();
 
-        Vector3 GetPosition();
+        Transform GetTransform();
     }
 }
 

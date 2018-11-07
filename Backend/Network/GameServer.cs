@@ -48,8 +48,8 @@ namespace Backend.Network
                 Entity entity = (Entity)channel.GetContent();
                 World.Instance().RemoveEntity(entity.entityId);
             }
-
-            ((Channel)channel).workSocket.Shutdown(SocketShutdown.Both);
+            channel.Close();
+            ((Channel)channel).Socket.Shutdown(SocketShutdown.Both);
 
         }
 

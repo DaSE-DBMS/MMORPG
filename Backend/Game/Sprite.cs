@@ -20,7 +20,6 @@ namespace Backend.Game
         private LinkedList<Point3d> m_routeSteps = new LinkedList<Point3d>();
         // target position when I find my path to it last time
         private Point3d m_targetPos = new Point3d();
-        private Point3d m_spawnPoint = new Point3d();
         DateTime m_lastMoveTS = DateTime.UnixEpoch;
 
         const float DistanceEpsilon = 3.0f;
@@ -74,80 +73,86 @@ namespace Backend.Game
         private void ChaseEnemy()
         {
             Creature target = m_targetID == 0 ? null : (Creature)World.Instance().GetEntity(m_targetID);
-            if (m_chaseState == ChaseState.IDLE)
+            switch (m_chaseState)
             {
-                UpdateActive = false;
-                return;
-            }
-            else if (m_chaseState == ChaseState.CHASING_ENEMY)
-            {
-                Point3d targetPos = target.Position;
-                float distance = (float)Position.DistanceTo(targetPos);
-                if (distance > LongDistance)
-                {
-                    // too far away, I cannot catch up my enemy, so I give up
-                    StartBackToHome();
+                case ChaseState.IDLE:
+                    {
+                        UpdateActive = false;
+                        return;
+                    }
+                case ChaseState.CHASING_ENEMY:
+                    {
+                        Point3d targetPos = target.Position;
+                        float distance = (float)Position.DistanceTo(targetPos);
+                        if (distance > LongDistance)
+                        {
+                            // too far away, I cannot catch up my enemy, so I give up
+                            StartBackToHome();
+                            return;
+                        }
+                        if (targetPos.DistanceTo(m_targetPos) > DistanceEpsilon)
+                        {
+                            // the target is moving
+                            //the route I found last time was behind the time...
+                            FindPath(m_chaseState, targetPos);
+                            m_targetPos = targetPos;
+                            SendMove(MoveState.BEGIN, Position, m_targetID);
+                            return;
+                        }
+
+                        if (distance < DistanceEpsilon)
+                        {
+                            // reach the destination
+                            m_routeSteps.Clear();
+                        }
+
+                        if (m_routeSteps.Count == 0)
+                        {
+                            this.Position = target.Position;
+                            SendMove(MoveState.END, target.Position, m_targetID);
+                            m_chaseState = ChaseState.ATTACKING;
+                            Attack(target);
+                        }
+                        else
+                        {
+                            Point3d pos = m_routeSteps.First.Value;
+                            m_routeSteps.RemoveFirst();
+                            SendMove(MoveState.STEP, pos, m_targetID);
+                        }
+                    }
                     return;
-                }
-                if (targetPos.DistanceTo(m_targetPos) > DistanceEpsilon)
-                {
-                    // the target is moving
-                    //the route I found last time was behind the time...
-                    FindPath(m_chaseState, targetPos);
-                    m_targetPos = targetPos;
-                    SendMove(MoveState.BEGIN, Position, m_targetID);
+                case ChaseState.BACK_TO_HOME:
+                    {
+                        if (m_routeSteps.Count == 0)
+                        {
+                            m_chaseState = ChaseState.IDLE;
+                            Position = V3ToPoint3d(DefaultData.pos);
+                            SendMove(MoveState.END, Position);
+                        }
+                        else
+                        {
+                            Point3d pos = m_routeSteps.First.Value;
+                            m_routeSteps.RemoveFirst();
+                            SendMove(MoveState.STEP, pos);
+                        }
+                    }
                     return;
-                }
+                case ChaseState.ATTACKING:
+                    {
 
-                if (distance < DistanceEpsilon)
-                {
-                    // reach the destination
-                    m_routeSteps.Clear();
-                }
-
-                if (m_routeSteps.Count == 0)
-                {
-                    this.Position = target.Position;
-                    SendMove(MoveState.END, target.Position, m_targetID);
-                    m_chaseState = ChaseState.ATTACKING;
-                    Attack(target);
-                }
-                else
-                {
-                    Point3d pos = m_routeSteps.First.Value;
-                    m_routeSteps.RemoveFirst();
-                    SendMove(MoveState.STEP, pos, m_targetID);
-                }
-            }
-            else if (m_chaseState == ChaseState.BACK_TO_HOME)
-            {
-                if (m_routeSteps.Count == 0)
-                {
-                    m_chaseState = ChaseState.IDLE;
-                    this.Position = m_spawnPoint;
-                    SendMove(MoveState.END, m_spawnPoint);
-                }
-                else
-                {
-                    Point3d pos = m_routeSteps.First.Value;
-                    m_routeSteps.RemoveFirst();
-                    SendMove(MoveState.STEP, pos);
-                }
-            }
-            else if (m_chaseState == ChaseState.ATTACKING)
-            {
-
-                if (Position.DistanceTo(target.Position) < DistanceEpsilon)
-                {
-                    Attack(target);
-                }
-                else
-                {
-                    m_chaseState = ChaseState.CHASING_ENEMY;
-                    FindPath(ChaseState.CHASING_ENEMY, target.Position);
-                    m_targetPos = target.Position;
-                    SendMove(MoveState.BEGIN, Position, m_targetID);
-                }
+                        if (Position.DistanceTo(target.Position) < DistanceEpsilon)
+                        {
+                            Attack(target);
+                        }
+                        else
+                        {
+                            m_chaseState = ChaseState.CHASING_ENEMY;
+                            FindPath(ChaseState.CHASING_ENEMY, target.Position);
+                            m_targetPos = target.Position;
+                            SendMove(MoveState.BEGIN, Position, m_targetID);
+                        }
+                    }
+                    return;
             }
         }
 
@@ -171,9 +176,10 @@ namespace Backend.Game
 
         private void StartBackToHome()
         {
+            Point3d spawnPoint = V3ToPoint3d(DefaultData.pos);
             m_chaseState = ChaseState.BACK_TO_HOME;
             m_targetID = 0;
-            FindPath(ChaseState.BACK_TO_HOME, m_spawnPoint);
+            FindPath(ChaseState.BACK_TO_HOME, spawnPoint);
             SendMove(MoveState.BEGIN, Position);
         }
 

@@ -26,7 +26,7 @@ namespace Backend.Game
 
         public Dictionary<int, Entity> Children { get { return m_children; } }
         public Entity Parent { get { return World.Instance().GetEntity(m_parentID); } }
-
+        public DEntity DefaultData { get { return m_entityData; } }
         public Point3d Position
         {
             get
@@ -167,9 +167,7 @@ namespace Backend.Game
             entity.entityID = entityId;
             entity.name = name;
 
-            entity.pos.x = (float)m_position.X;
-            entity.pos.y = (float)m_position.Y;
-            entity.pos.z = (float)m_position.Z;
+            entity.pos = Point3dToV3(m_position);
 
             entity.rot.x = (float)m_rotation.X;
             entity.rot.y = (float)m_rotation.Y;
@@ -201,22 +199,6 @@ namespace Backend.Game
 
             forClone = entity.forClone;
             entityType = (EntityType)entity.type;
-        }
-
-
-        public void SetPosition(V3 pos)
-        {
-            m_position.X = pos.x;
-            m_position.Y = pos.y;
-            m_position.Z = pos.z;
-        }
-
-        public void SetRotation(V4 rot)
-        {
-            m_rotation.X = rot.x;
-            m_rotation.Y = rot.y;
-            m_rotation.Z = rot.z;
-            m_rotation.W = rot.w;
         }
 
         public V3 GetPosition()

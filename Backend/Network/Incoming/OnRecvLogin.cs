@@ -21,7 +21,7 @@ namespace Backend.Network
             DEntity dentity = World.Instance().EntityData["Ellen"];
             player.FromDEntity(dentity);
             player.forClone = false;
-            ClientTipInfo(channel, "TODO: get player's attribute from database");
+            //ClientTipInfo(channel, "TODO: get player's attribute from database");
             // player will be added to scene when receive client's CEnterSceneDone message
         }
     }

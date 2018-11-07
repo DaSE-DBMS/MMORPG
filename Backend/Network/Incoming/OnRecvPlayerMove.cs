@@ -9,7 +9,7 @@ namespace Backend.Network
         {
             CPlayerMove request = (CPlayerMove)message;
             Player player = (Player)World.Instance().GetEntity(request.player);
-            player.SetPosition(request.pos);
+            player.Position = Entity.V3ToPoint3d(request.pos);
             SPlayerMove response = new SPlayerMove();
             response.ID = request.player;
             response.state = request.state;

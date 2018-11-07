@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEngine;
@@ -15,11 +15,23 @@ namespace Gamekit3D
         public bool interpolateTurning = false;
         public bool applyAnimationRotation = false;
 
-        public Animator animator { get { return m_Animator; } }
-        public bool grounded { get { return m_Grounded; } }
 
+        struct MoveMessage
+        {
+            public MsgType message;
+            public Vector3 position;
+        }
+
+        public Animator animator { get { return m_Animator; } }
+        public Vector3 externalForce { get { return m_ExternalForce; } }
+        public ICreatureBehavior target { get { return m_target; } }
+        //public NavMeshAgent navmeshAgent { get { return m_NavMeshAgent; } }
+        //public bool followNavmeshAgent { get { return m_FollowNavmeshAgent; } }
+        public bool grounded { get { return m_Grounded; } }
         public float maxSpeed = 0.3f;
         public float acceleration = 20.0f;
+        //protected NavMeshAgent m_NavMeshAgent;
+        //protected bool m_FollowNavmeshAgent;
         protected Animator m_Animator;
         protected bool m_UnderExternalForce;
         protected bool m_ExternalForceAddGravity = true;
@@ -31,17 +43,13 @@ namespace Gamekit3D
         const float k_GroundedRayDistance = .8f;
 
         private NetworkEntity m_entity;
+        private ICreatureBehavior m_target;
         private float m_desiredSpeed;
         private float m_currentSpeed;
         private Damageable m_damageable;
-        struct MoveMessage
-        {
-            public MsgType message;
-            public Vector3 position;
-        }
+
         private Queue<MoveMessage> m_moveMessage = new Queue<MoveMessage>();
         private IMessageReceiver m_receiver;
-        private int m_targetId = 0;
         private Vector3 m_destination = Vector3.zero;
         void Awake()
         {
@@ -53,8 +61,11 @@ namespace Gamekit3D
 
         void OnEnable()
         {
+            //m_NavMeshAgent = GetComponent<NavMeshAgent>();
             m_Animator = GetComponent<Animator>();
             m_Animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
+
+            //m_NavMeshAgent.updatePosition = false;
 
             m_Rigidbody = GetComponentInChildren<Rigidbody>();
             if (m_Rigidbody == null)
@@ -64,26 +75,112 @@ namespace Gamekit3D
             m_Rigidbody.useGravity = false;
             m_Rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
             m_Rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
-            m_destination = transform.position;
+
+            //m_FollowNavmeshAgent = true;
         }
 
         private void FixedUpdate()
         {
-            UpdateMovement();
+
+            //animator.speed = PlayerInput.Instance != null && PlayerInput.Instance.HaveControl() ? 1.0f : 0.0f;
+
+            //CheckGrounded();
+
+            if (m_UnderExternalForce)
+                ForceMovement();
+            else
+                UpdateMovement();
+        }
+
+        void CheckGrounded()
+        {
+            RaycastHit hit;
+            Ray ray = new Ray(transform.position + Vector3.up * k_GroundedRayDistance * 0.5f, -Vector3.up);
+            m_Grounded = Physics.Raycast(ray, out hit, k_GroundedRayDistance, Physics.AllLayers,
+                QueryTriggerInteraction.Ignore);
+        }
+
+        void ForceMovement()
+        {
+            if (m_ExternalForceAddGravity)
+                m_ExternalForce += Physics.gravity * Time.deltaTime;
+
+            RaycastHit hit;
+            Vector3 movement = m_ExternalForce * Time.deltaTime;
+            if (!m_Rigidbody.SweepTest(movement.normalized, out hit, movement.sqrMagnitude))
+            {
+                m_Rigidbody.MovePosition(m_Rigidbody.position + movement);
+            }
+
+            //m_NavMeshAgent.Warp(m_Rigidbody.position);
+        }
+
+        // used to disable position being set by the navmesh agent, for case where we want the animation to move the enemy instead (e.g. Chomper attack)
+        public void SetFollowNavmeshAgent(bool follow)
+        {
+            //if (!follow && m_NavMeshAgent.enabled)
+            //{
+            //    m_NavMeshAgent.ResetPath();
+            //}
+            //else if (follow && !m_NavMeshAgent.enabled)
+            //{
+            //    m_NavMeshAgent.Warp(transform.position);
+            //}
+
+            //m_FollowNavmeshAgent = follow;
+            //m_NavMeshAgent.enabled = follow;
+        }
+
+        public void AddForce(Vector3 force, bool useGravity = true)
+        {
+            //if (m_NavMeshAgent.enabled)
+            //    m_NavMeshAgent.ResetPath();
+
+            m_ExternalForce = force;
+            //m_NavMeshAgent.enabled = false;
+            m_UnderExternalForce = true;
+            m_ExternalForceAddGravity = useGravity;
+        }
+
+        public void ClearForce()
+        {
+            m_UnderExternalForce = false;
+            //m_NavMeshAgent.enabled = true;
+        }
+
+        public void SetForward(Vector3 forward)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(forward);
+
+            if (interpolateTurning)
+            {
+                //targetRotation = Quaternion.RotateTowards(transform.rotation, targetRotation,
+                //    m_NavMeshAgent.angularSpeed * Time.deltaTime);
+            }
+
+            transform.rotation = targetRotation;
+        }
+
+        public void SetTarget(Vector3 position)
+        {
+            //m_NavMeshAgent.destination = position;
         }
         void PositionRevise()
         {
-            if (m_targetId != 0 && m_targetId == PlayerMyController.Instance.Entity.entityId)
+            if (m_target != null && m_target is PlayerController)
             {
-                CPositionRevise msg = new CPositionRevise();
-                msg.entityId = m_entity.EntityId;
-                msg.pos.x = transform.position.x;
-                msg.pos.y = transform.position.y;
-                msg.pos.z = transform.position.z;
-                MyNetwork.Send(msg);
+                PlayerController controller = (PlayerController)(m_target);
+                if (controller.isMine)
+                {
+                    CPositionRevise msg = new CPositionRevise();
+                    msg.entityId = m_entity.EntityId;
+                    msg.pos.x = transform.position.x;
+                    msg.pos.y = transform.position.y;
+                    msg.pos.z = transform.position.z;
+                    MyNetwork.Send(msg);
+                }
             }
         }
-
 
         void UpdateMovement()
         {
@@ -99,25 +196,16 @@ namespace Gamekit3D
             MoveMessage step = m_moveMessage.Peek();
             Vector3 position = step.position;
             float distance = Vector3.Distance(transform.position, position);
-            if (distance < double.Epsilon)
-            {
-                m_moveMessage.Dequeue();
+            if (distance > 3.0f)
+            { // if the distance between current position and next position are not close
+                transform.LookAt(position);
             }
-            else
-            {
-                if (distance > 3.0f)
-                { // if the distance between current position and next position are not close
-                    transform.LookAt(position);
-                }
-                float t = (m_currentSpeed + 0.1f) * Time.deltaTime / distance;
-                // cannot greater than 1
-                t = t > 1.0f ? 1.0f : t;
-                if (Mathf.Abs(t - 1.0f) < 0.1)
-                { // is nearly next step
-                    m_moveMessage.Dequeue();
-                }
-                position = Vector3.Lerp(transform.position, position, t);
-            }
+
+            float t = (distance < float.Epsilon) ? 1.0f : (m_currentSpeed + 0.1f) * Time.deltaTime / distance;
+            // cannot greater than 1
+            t = t > 1.0f ? 1.0f : t;
+
+            position = Vector3.Lerp(transform.position, position, t);
 
             if (step.message == MsgType.MOVE)
             {
@@ -135,14 +223,22 @@ namespace Gamekit3D
             // send to server to revise the sprite position
             PositionRevise();
 
-            m_receiver.OnReceiveMessage(step.message, this, position);
+
             if (step.message == MsgType.END_BACK ||
                 step.message == MsgType.BEGIN_BACK)
             {
                 // end chase enemy
-                m_targetId = 0;
+                m_target = null;
             }
-
+            if (Mathf.Abs(1.0f - t) < 0.001)
+            { // is nearly begin or end position
+                m_receiver.OnReceiveMessage(step.message, this, step.position);
+                m_moveMessage.Dequeue();
+                if (step.message == MsgType.END_CHASE)
+                {
+                    DebugUtil.DrawLine(transform.position, transform.position + Vector3.up, Color.green);
+                }
+            }
         }
 
         Vector3 HitGround(Vector3 position)
@@ -169,18 +265,6 @@ namespace Gamekit3D
         {
             m_receiver = receiver;
         }
-        // used to disable position being set by the navmesh agent, for case where we want the animation to move the enemy instead (e.g. Chomper attack)
-        public void SetFollowNavmeshAgent(bool follow)
-        {
-
-        }
-
-
-        public void SetTarget(Vector3 position)
-        {
-            //m_NavMeshAgent.destination = position;
-        }
-
 
         public void Jump()
         {
@@ -192,28 +276,23 @@ namespace Gamekit3D
             m_receiver.OnReceiveMessage(MsgType.ATTACK, this, target);
         }
 
-        public void BeginChase(Vector3 position, int targetId)
+        public void BeginChase(Vector3 position, ICreatureBehavior target)
         {
-            m_targetId = targetId;
+            m_target = target;
             m_moveMessage.Clear();
             m_desiredSpeed = maxSpeed;
             MoveMessage step;
             step.position = position;
             step.message = MsgType.BEGIN_CHASE;
             m_moveMessage.Enqueue(step);
-            //DebugUtil.DrawLine(position, position + Vector3.up, Color.red);
-            Debug.Log("BeginChase, position=" + position.ToString() + ", target=" + targetId.ToString());
         }
 
-        public void EndChase(Vector3 position, int targetId)
+        public void EndChase(Vector3 position)
         {
-            m_targetId = targetId;
-            //DebugUtil.DrawLine(position, position + Vector3.up, Color.red);
             MoveMessage step;
             step.position = position;
             step.message = MsgType.END_CHASE;
             m_moveMessage.Enqueue(step);
-            Debug.Log("EndChase, position=" + position.ToString() + ", target=" + targetId.ToString());
         }
 
         public void BeginBack(Vector3 position)
@@ -243,9 +322,9 @@ namespace Gamekit3D
             m_moveMessage.Enqueue(step);
         }
 
-        public Vector3 GetPosition()
+        public Transform GetTransform()
         {
-            return transform.position;
+            return transform;
         }
 
         public void BeHit(int decHP, ICreatureBehavior source)

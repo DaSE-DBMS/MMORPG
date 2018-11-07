@@ -15,9 +15,9 @@ namespace Gamekit3D
             //"correct" the attached joint, leading to a deformed/glitched instance
             ragdollInstance.SetActive(false);
 
-            EnemyController baseController = GetComponent<EnemyController>();
+            //EnemyController baseController = GetComponent<EnemyController>();
 
-            RigidbodyDelayedForce t = ragdollInstance.AddComponent<RigidbodyDelayedForce>();
+            //RigidbodyDelayedForce t = ragdollInstance.AddComponent<RigidbodyDelayedForce>();
             //t.forceToAdd = baseController.externalForce;
 
             Transform ragdollCurrent = ragdollInstance.transform;

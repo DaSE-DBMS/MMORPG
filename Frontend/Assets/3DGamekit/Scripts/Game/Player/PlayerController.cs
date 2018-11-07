@@ -843,7 +843,7 @@ namespace Gamekit3D
             m_Animator.SetTrigger(m_HashHurt);
 
             // Find the direction of the damage.
-            Vector3 forward = source.GetPosition() - transform.position;
+            Vector3 forward = source.GetTransform().position - transform.position;
             forward.y = 0f;
 
             Vector3 localHurt = transform.InverseTransformDirection(forward);
@@ -862,9 +862,9 @@ namespace Gamekit3D
             }
         }
 
-        public Vector3 GetPosition()
+        public Transform GetTransform()
         {
-            return transform.position;
+            return transform;
         }
 
         public void Die()

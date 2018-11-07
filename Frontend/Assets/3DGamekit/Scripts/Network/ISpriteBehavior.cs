@@ -5,9 +5,9 @@ namespace Gamekit3D.Network
 {
     public interface ISpriteBehavior
     {
-        void BeginChase(Vector3 position, int targetId);
+        void BeginChase(Vector3 position, ICreatureBehavior target);
 
-        void EndChase(Vector3 position, int targetId);
+        void EndChase(Vector3 position);
 
         void BeginBack(Vector3 position);
 

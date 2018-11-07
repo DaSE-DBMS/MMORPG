@@ -9,9 +9,7 @@ namespace Backend.Network
         {
             CPositionRevise request = (CPositionRevise)message;
             Entity entity = World.Instance().GetEntity(request.entityId);
-            entity.Position.X = request.pos.x;
-            entity.Position.Y = request.pos.y;
-            entity.Position.Z = request.pos.z;
+            entity.Position = Entity.V3ToPoint3d(request.pos);
         }
     }
 }

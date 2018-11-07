@@ -3,7 +3,6 @@ using Gamekit3D.Network;
 using Common;
 using UnityEngine;
 
-
 namespace Gamekit3D
 {
     [DefaultExecutionOrder(100)]
@@ -24,7 +23,7 @@ namespace Gamekit3D
 
         public EnemyController controller { get { return m_Controller; } }
 
-        public PlayerController target { get { return m_Target; } }
+        public ICreatureBehavior target { get { return controller.target; } }
         public TargetDistributor.TargetFollower followerData { get { return m_FollowerInstance; } }
 
         public Vector3 originalPosition { get; protected set; }
@@ -47,7 +46,7 @@ namespace Gamekit3D
 
         protected float m_TimerSinceLostTarget = 0.0f;
 
-        protected PlayerController m_Target = null;
+        protected NetworkEntity m_Target = null;
         protected EnemyController m_Controller;
         protected TargetDistributor.TargetFollower m_FollowerInstance = null;
 
@@ -166,24 +165,24 @@ namespace Gamekit3D
 
         public void StartPursuit()
         {
-            m_Animator.SetBool(hashNearBase, false);
-            m_Animator.SetBool(hashInPursuit, true);
             if (m_FollowerInstance != null)
             {
                 m_FollowerInstance.requireSlot = true;
                 RequestTargetPosition();
             }
-
+            m_Controller.animator.SetBool(hashNearBase, false);
+            m_Controller.animator.SetBool(hashInPursuit, true);
 
         }
 
         public void StopPursuit()
         {
-            m_Animator.SetBool(hashInPursuit, false);
             if (m_FollowerInstance != null)
             {
                 m_FollowerInstance.requireSlot = false;
             }
+
+            m_Controller.animator.SetBool(hashInPursuit, false);
         }
 
         public void RequestTargetPosition()
@@ -208,7 +207,7 @@ namespace Gamekit3D
 
         public void TriggerAttack()
         {
-            m_Animator.SetBool(hashAttack, true);
+            m_Controller.animator.SetTrigger(hashAttack);
         }
 
         public void AttackBegin()
@@ -262,10 +261,10 @@ namespace Gamekit3D
             pushForce.y = 0;
 
             transform.forward = -pushForce.normalized;
-            //controller.AddForce(pushForce.normalized * 7.0f - Physics.gravity * 0.6f);
+            controller.AddForce(pushForce.normalized * 7.0f - Physics.gravity * 0.6f);
 
-            m_Animator.SetTrigger(hashHit);
-            m_Animator.SetTrigger(hashThrown);
+            controller.animator.SetTrigger(hashHit);
+            controller.animator.SetTrigger(hashThrown);
 
             //We unparent the hit source, as it would destroy it with the gameobject when it get replaced by the ragdol otherwise
             deathAudio.transform.SetParent(null, true);
@@ -287,34 +286,12 @@ namespace Gamekit3D
             pushForce.y = 0;
 
             transform.forward = -pushForce.normalized;
-            //controller.AddForce(pushForce.normalized * 5.5f, false);
+            controller.AddForce(pushForce.normalized * 5.5f, false);
 
-            m_Animator.SetFloat(hashVerticalDot, verticalDot);
-            m_Animator.SetFloat(hashHorizontalDot, horizontalDot);
+            controller.animator.SetFloat(hashVerticalDot, verticalDot);
+            controller.animator.SetFloat(hashHorizontalDot, horizontalDot);
 
-            m_Animator.SetTrigger(hashHit);
-
-            hitAudio.PlayRandomClip();
-        }
-
-        public void ReHited(int HP, ICreatureBehavior source)
-        {
-
-            Vector3 direction = source.GetPosition() - transform.position;
-            float verticalDot = Vector3.Dot(Vector3.up, direction);
-            float horizontalDot = Vector3.Dot(transform.right, direction);
-
-            Vector3 pushForce = transform.position - source.GetPosition();
-
-            pushForce.y = 0;
-
-            transform.forward = -pushForce.normalized;
-            //controller.AddForce(pushForce.normalized * 5.5f, false);
-
-            m_Animator.SetFloat(hashVerticalDot, verticalDot);
-            m_Animator.SetFloat(hashHorizontalDot, horizontalDot);
-
-            m_Animator.SetTrigger(hashHit);
+            controller.animator.SetTrigger(hashHit);
 
             hitAudio.PlayRandomClip();
         }

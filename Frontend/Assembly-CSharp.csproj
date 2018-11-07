@@ -350,10 +350,10 @@
     <Compile Include="Assets\3DGamekit\Scripts\Network\Incoming\OnRecvJump.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\Incoming\OnRecvPlayerEnter.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\Incoming\OnRecvPlayerMove.cs" />
-    <Compile Include="Assets\3DGamekit\Scripts\Network\Incoming\OnRecvTipInfo.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\Incoming\OnRecvSpawn.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\Incoming\OnRecvSpriteMove.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\Incoming\OnRecvTakeItem.cs" />
+    <Compile Include="Assets\3DGamekit\Scripts\Network\Incoming\OnRecvTipInfo.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\IPlayerBehavior.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\ISpriteBehavior.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Network\MyNetwork.cs" />

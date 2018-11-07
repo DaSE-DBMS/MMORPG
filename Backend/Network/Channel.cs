@@ -11,17 +11,16 @@ namespace Backend.Network
     // State object for reading client data asynchronously
     public class Channel : IChannel
     {
-        private BlockingCollection<CompleteEvent> msgQueue;
+        private BlockingCollection<CompleteEvent> m_queue;
 
         public BlockingCollection<CompleteEvent> CompleteQueue
         {
-            get { return msgQueue; }
-            set { msgQueue = value; }
+            get { return m_queue; }
+            set { m_queue = value; }
         }
         // Client  socket.
-        public Socket workSocket = null;
 
-        public Socket Socket { get { return workSocket; } set { workSocket = value; } }
+        public Socket Socket { get { return m_socket; } set { m_socket = value; } }
 
         private int message;
 
@@ -38,31 +37,33 @@ namespace Backend.Network
 
         private BinaryFormatter formatter = new BinaryFormatter();
 
-        private MemoryStream recvStream = new MemoryStream();
+        private MemoryStream m_recvStream = new MemoryStream();
 
-        private MemoryStream sendStream = new MemoryStream();
+        private MemoryStream m_sendStream = new MemoryStream();
 
         private Dictionary<Command, MessageDelegate> onMessageRecv;
 
-        private List<ChannelDelegate> onClose;
+        private List<ChannelDelegate> m_onClose;
 
         private const int MsgHeaderSize = 4;
 
-        private Object player;
+        private Object m_player;
+
+        private Socket m_socket;
 
         public Channel(Socket socket)
         {
-            workSocket = socket;
+            m_socket = socket;
         }
 
         public void SetContent(Object content)
         {
-            player = content;
+            m_player = content;
         }
 
         public Object GetContent()
         {
-            return player;
+            return m_player;
         }
 
         public void Send(Message msg)
@@ -72,21 +73,23 @@ namespace Backend.Network
 
         public void Close()
         {
-            if (onClose != null)
+            if (m_onClose == null)
             {
-                foreach (ChannelDelegate @d in onClose)
-                {
-                    CompleteEvent e = new CompleteEvent();
-                    e.@delegate = @d;
-                    e.channel = this;
-                    e.message = null;
-                    msgQueue.Add(e);
-                }
+                return;
+            }
+
+            foreach (ChannelDelegate @d in m_onClose)
+            {
+                CompleteEvent e = new CompleteEvent();
+                e.@delegate = @d;
+                e.channel = this;
+                e.message = null;
+                m_queue.Add(e);
             }
         }
         public void BeginRecv()
         {
-            workSocket.BeginReceive(buffer, 0, MsgHeaderSize, 0,
+            m_socket.BeginReceive(buffer, 0, MsgHeaderSize, 0,
                 new AsyncCallback(ReadCallback), this);
         }
 
@@ -97,12 +100,12 @@ namespace Backend.Network
 
         public void RegisterOnClose(List<ChannelDelegate> onClose)
         {
-            this.onClose = onClose;
+            this.m_onClose = onClose;
         }
 
         public void SetQueue(BlockingCollection<CompleteEvent> queue)
         {
-            msgQueue = queue;
+            m_queue = queue;
         }
 
         static private void ReadCallback(IAsyncResult ar)
@@ -112,7 +115,7 @@ namespace Backend.Network
             // Retrieve the state object and the handler socket
             // from the asynchronous state object.
             Channel channel = (Channel)ar.AsyncState;
-            Socket handler = channel.workSocket;
+            Socket handler = channel.m_socket;
             try
             {
                 int bytesRead = handler.EndReceive(ar);
@@ -123,7 +126,7 @@ namespace Backend.Network
                 }
                 if (channel.headerFin)
                 {
-                    channel.recvStream.Write(channel.buffer, 0, bytesRead);
+                    channel.m_recvStream.Write(channel.buffer, 0, bytesRead);
                     if (bytesRead < channel.unreadSize)
                     {
                         channel.unreadSize -= bytesRead;
@@ -133,8 +136,8 @@ namespace Backend.Network
                     }
                     else if (bytesRead == channel.unreadSize)
                     {
-                        channel.recvStream.Seek(0, SeekOrigin.Begin);
-                        Message message = (Message)channel.formatter.Deserialize(channel.recvStream);
+                        channel.m_recvStream.Seek(0, SeekOrigin.Begin);
+                        Message message = (Message)channel.formatter.Deserialize(channel.m_recvStream);
 
                         MessageDelegate @delegate;
                         bool exists = channel.onMessageRecv.TryGetValue(message.command, out @delegate);
@@ -145,7 +148,7 @@ namespace Backend.Network
                             e.@delegate = @delegate;
                             e.channel = channel;
                             e.message = message;
-                            channel.msgQueue.Add(e);
+                            channel.m_queue.Add(e);
                         }
                         else
                         {
@@ -163,8 +166,8 @@ namespace Backend.Network
                     channel.message = BitConverter.ToUInt16(channel.buffer, 0); ;
                     channel.unreadSize = channel.bodySize = BitConverter.ToUInt16(channel.buffer, 2) - MsgHeaderSize;
                     channel.headerFin = true;
-                    channel.recvStream.Seek(0, SeekOrigin.Begin);
-                    channel.recvStream.SetLength(0);
+                    channel.m_recvStream.Seek(0, SeekOrigin.Begin);
+                    channel.m_recvStream.SetLength(0);
                     int size = Math.Min(channel.unreadSize, Channel.BufferSize);
                     handler.BeginReceive(channel.buffer, 0, size, 0,
                               new AsyncCallback(ReadCallback), channel);
@@ -190,7 +193,7 @@ namespace Backend.Network
                 stream.Write(BitConverter.GetBytes(length), 0, 2);
                 stream.Seek(0, SeekOrigin.Begin);
                 // Begin sending the data to the remote device.
-                channel.workSocket.BeginSend(stream.GetBuffer(), 0, (int)stream.Length, 0,
+                channel.m_socket.BeginSend(stream.GetBuffer(), 0, (int)stream.Length, 0,
                     new AsyncCallback(SendCallback), channel);
             }
             catch (SystemException)
@@ -202,7 +205,7 @@ namespace Backend.Network
         private static void SendCallback(IAsyncResult ar)
         {
             Channel channel = (Channel)ar.AsyncState;
-            Socket handler = channel.workSocket;
+            Socket handler = channel.m_socket;
             try
             {
                 // Retrieve the socket from the state object.

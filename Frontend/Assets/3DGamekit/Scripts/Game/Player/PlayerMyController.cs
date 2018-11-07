@@ -116,7 +116,17 @@ namespace Gamekit3D
 
                 m_AttackWaitCoroutine = StartCoroutine(AttackWait());
             }
-
+            if (Input.GetButtonDown("Fix"))
+            {
+                if (m_controller.cameraSettings.IsCameraFixed)
+                {
+                    m_controller.cameraSettings.UnfixCamera();
+                }
+                else
+                {
+                    m_controller.cameraSettings.FixCamera();
+                }
+            }
             m_Pause = Input.GetButtonDown("Pause");
 
             m_lastPosition = transform.position;

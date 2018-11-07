@@ -35,7 +35,12 @@ namespace Gamekit3D
             get { return inputChoice == InputChoice.KeyboardAndMouse ? keyboardAndMouseCamera : controllerCamera; }
         }
 
-        public bool fixCamera = false;
+        public bool IsCameraFixed
+        {
+            get { return m_cameraFixed; }
+        }
+
+        private bool m_cameraFixed = false;
         private string m_inputXAxisName;
         private string m_inputYAxisName;
         //bool m_updateFix = false;
@@ -78,31 +83,35 @@ namespace Gamekit3D
 
         public void FixCamera()
         {
-            if (fixCamera)
+            if (m_cameraFixed)
                 return;
 
             keyboardAndMouseCamera.m_XAxis.m_InputAxisName = "";
             keyboardAndMouseCamera.m_YAxis.m_InputAxisName = "";
             controllerCamera.m_XAxis.m_InputAxisName = "";
             controllerCamera.m_YAxis.m_InputAxisName = "";
-            fixCamera = true;
+            m_cameraFixed = true;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
 
-        public void UnFixCamera()
+        public void UnfixCamera()
         {
-            if (!fixCamera)
+            if (!m_cameraFixed)
                 return;
 
             keyboardAndMouseCamera.m_XAxis.m_InputAxisName = m_inputXAxisName;
             keyboardAndMouseCamera.m_YAxis.m_InputAxisName = m_inputYAxisName;
             controllerCamera.m_XAxis.m_InputAxisName = m_inputXAxisName;
             controllerCamera.m_YAxis.m_InputAxisName = m_inputYAxisName;
-            fixCamera = false;
+            m_cameraFixed = false;
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         void UpdateCameraSettings()
         {
-            if (fixCamera)
+            if (m_cameraFixed)
             {
                 return;
             }

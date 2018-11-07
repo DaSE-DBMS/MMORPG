@@ -18,6 +18,7 @@ Also Remember to place that object in a layer that collide with what you want to
 
         private void OnTriggerStay(Collider other)
         {
+            /*
             if ((damagedLayers.value & 1 << other.gameObject.layer) == 0)
                 return;
 
@@ -34,8 +35,9 @@ Also Remember to place that object in a layer that collide with what you want to
                     throwing = false
                 };
 
-                //d.ApplyDamage(message);
+                d.ApplyDamage(message);
             }
+            */
         }
     }
 
