@@ -95,7 +95,7 @@ namespace Gamekit3D
             if (Vector3.Angle(forward, positionToDamager) > hitAngle * 0.5f)
                 return;
 
-            isInvulnerable = true;
+            //isInvulnerable = true;
             currentHitPoints -= data.amount;
 
             if (currentHitPoints <= 0)
