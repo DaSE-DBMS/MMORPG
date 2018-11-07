@@ -5,7 +5,7 @@ namespace Gamekit3D.Network
 {
     public interface ICreatureBehavior
     {
-        void UnderAttack(int HP, ICreatureBehavior source);
+        void BeHit(int HP, ICreatureBehavior source);
 
         void Jump();
 

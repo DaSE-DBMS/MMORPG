@@ -11,6 +11,7 @@ namespace Backend.Network
         {
             // TODO ...
             // write to database
+            ClientTipInfo(channel, "TODO: write register info to database");
         }
     }
 }

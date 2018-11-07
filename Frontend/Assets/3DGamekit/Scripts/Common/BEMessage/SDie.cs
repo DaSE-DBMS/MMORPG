@@ -7,6 +7,6 @@ namespace Common
     {
         public SDie() : base(Command.S_DIE)
         { }
-        public int ID;
+        public int entityId;
     }
 }

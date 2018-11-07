@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 public class GameStart : MonoBehaviour
 {
     MyNetwork m_network;
-    AsyncOperation m_asyncOp;
+    AsyncOperation m_asyncOperation;
 
 
     const string USERNAME = "username";
@@ -24,7 +24,9 @@ public class GameStart : MonoBehaviour
     public InputField m_registerPasswordRepeatInput;
     public InputField m_hostInput;
     public InputField m_portInput;
-
+    public GameObject m_progressBar;
+    public Text m_progressText;
+    public Slider m_progressSlider;
     void Awake()
     {
         UpdateHostPortInputField();
@@ -32,18 +34,19 @@ public class GameStart : MonoBehaviour
     }
     void Update()
     {
-        if (m_asyncOp == null)
+        if (m_asyncOperation == null)
         {
             return;
         }
-        if (m_asyncOp.isDone)
+        float progress = m_asyncOperation.progress;
+        if (Mathf.Abs(progress - 0.9f) < float.Epsilon || progress > 0.9)
         {
-            ;
+            progress = 1.0f;
+            m_asyncOperation.allowSceneActivation = true;
         }
-        else
-        {
-
-        }
+        progress = Mathf.Lerp(m_progressSlider.value, progress, Time.deltaTime);
+        m_progressSlider.value = progress;
+        m_progressText.text = ((int)(progress * 100)).ToString() + "%";
     }
 
     public void UpdateHostPortInputField()
@@ -124,14 +127,16 @@ public class GameStart : MonoBehaviour
     {
         Application.backgroundLoadingPriority = ThreadPriority.Low;
         m_menuBackground.SetActive(false);
+        m_progressBar.SetActive(true);
         StartCoroutine(AsyncLoading(scene));
     }
 
     IEnumerator AsyncLoading(string scene)
     {
         yield return new WaitForEndOfFrame();
-        m_asyncOp = SceneManager.LoadSceneAsync(scene);
-        yield return m_asyncOp;
+        m_asyncOperation = SceneManager.LoadSceneAsync(scene);
+        m_asyncOperation.allowSceneActivation = false;
+        yield return m_asyncOperation;
     }
 
     static bool CheckNameAndPassword(string username, string password, string repeatPw)

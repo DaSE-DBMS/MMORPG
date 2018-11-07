@@ -9,7 +9,7 @@ namespace Gamekit3D.Network
         {
             SPlayerMove msg = (SPlayerMove)message;
             NetworkEntity self = networkEntities[msg.ID];
-            IPlayerBehavior behavior = (IPlayerBehavior)(self.creatureBehavior);
+            IPlayerBehavior behavior = (IPlayerBehavior)(self.behavior);
             Vector2 move = new Vector2(msg.move.x, msg.move.y);
             Vector3 position = new Vector3(msg.pos.x, msg.pos.y, msg.pos.z);
             Quaternion rotation = new Quaternion(msg.rot.x, msg.rot.y, msg.rot.z, msg.rot.w);

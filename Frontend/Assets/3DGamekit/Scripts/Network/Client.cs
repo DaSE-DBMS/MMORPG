@@ -196,7 +196,10 @@ namespace Gamekit3D.Network
 
                 // Complete sending the data to the remote device.
                 int bytesSent = handler.EndSend(ar);
-                //Console.WriteLine("Sent {0} bytes.", bytesSent);
+                if (bytesSent <= 0)
+                {
+                    // TODO.... error
+                }
             }
             catch (Exception e)
             {

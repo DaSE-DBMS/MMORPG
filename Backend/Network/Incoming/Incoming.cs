@@ -28,7 +28,12 @@ namespace Backend.Network
         }
 
 
-
+        static void ClientTipInfo(IChannel channel, string info)
+        {
+            STipInfo tipInfo = new STipInfo();
+            tipInfo.info = info;
+            channel.Send(tipInfo);
+        }
 
 
 

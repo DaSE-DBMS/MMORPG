@@ -33,6 +33,7 @@ namespace Gamekit3D
         private NetworkEntity m_entity;
         private float m_desiredSpeed;
         private float m_currentSpeed;
+        private Damageable m_damageable;
         struct MoveMessage
         {
             public MsgType message;
@@ -45,7 +46,8 @@ namespace Gamekit3D
         void Awake()
         {
             m_entity = GetComponent<NetworkEntity>();
-            m_entity.creatureBehavior = this;
+            m_damageable = GetComponent<Damageable>();
+            m_entity.behavior = this;
             m_desiredSpeed = 0;
         }
 
@@ -246,9 +248,17 @@ namespace Gamekit3D
             return transform.position;
         }
 
-        public void UnderAttack(int HP, ICreatureBehavior source)
+        public void BeHit(int decHP, ICreatureBehavior source)
         {
+            var msg = new Damageable.DamageMessage()
+            {
+                amount = decHP,
+                damager = this,
+                direction = Vector3.up,
+                stopCamera = false
+            };
 
+            m_damageable.ApplyDamage(msg);
         }
 
         public void Die()

@@ -16,7 +16,7 @@ namespace Backend.Network
                 {
                     Sprite sprite = (Sprite)target;
                     // player  attack the sprite
-                    sprite.UnderAttack(player);
+                    sprite.BeHit(player);
                     player.Attack(sprite);
                 }
             }

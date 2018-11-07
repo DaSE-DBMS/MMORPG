@@ -1,18 +1,31 @@
-﻿
+﻿using System;
 using System.Collections.Generic;
 using GeometRi;
 using Common;
 
 namespace Backend.Game
 {
+
     public class Entity : MyObject
     {
+        public delegate void OnTimer();
         private static int sequence = 1;
         public EntityType entityType;
         public int entityId;
+        public bool forClone;
+        public string name;
+        private bool m_update = false;
+        private int m_parentID = 0;
+        private Point3d m_position = new Point3d();
+        private Quaternion m_rotation = new Quaternion();
+        private Dictionary<int, Entity> m_children = new Dictionary<int, Entity>();
 
-        private DEntity m_initData; // for reset ...
+        private DEntity m_entityData; // for reset ...
+        private Queue<KeyValuePair<DateTime, OnTimer>> m_timers = new Queue<KeyValuePair<DateTime, OnTimer>>();
 
+
+        public Dictionary<int, Entity> Children { get { return m_children; } }
+        public Entity Parent { get { return World.Instance().GetEntity(m_parentID); } }
 
         public Point3d Position
         {
@@ -42,20 +55,6 @@ namespace Backend.Game
                 m_rotation.W = value.W;
             }
         }
-        //public V3 pos;
-        //public V4 rot;
-        public bool forClone;
-        public string name;
-
-        private bool m_update = false;
-
-        private int m_parentID = 0;
-        private Point3d m_position = new Point3d();
-        private Quaternion m_rotation = new Quaternion();
-        private Dictionary<int, Entity> m_children = new Dictionary<int, Entity>();
-
-        public Dictionary<int, Entity> Children { get { return m_children; } }
-        public Entity Parent { get { return World.Instance().GetEntity(m_parentID); } }
 
         public bool UpdateActive
         {
@@ -123,6 +122,26 @@ namespace Backend.Game
             }
 
         }
+        public void Tick()
+        {
+            while (m_timers.Count != 0)
+            {
+                var kv = m_timers.Peek();
+                if (kv.Key <= DateTime.Now)
+                {
+                    kv.Value.Invoke();
+                    m_timers.Dequeue();
+                }
+            }
+        }
+
+        public void DelayInvoke(int seconds, OnTimer onTimer)
+        {
+            var ts = DateTime.Now.Add(TimeSpan.FromSeconds(seconds));
+            var kv = new KeyValuePair<DateTime, OnTimer>(ts, onTimer);
+            m_timers.Enqueue(kv);
+        }
+
         virtual public void Update()
         {
 
@@ -140,20 +159,6 @@ namespace Backend.Game
 
         virtual public void ReSpawn()
         {
-            Reset();
-            SSpawn spawn = new SSpawn();
-            spawn.entity = ToDEntity();
-            spawn.isMine = false;
-            if (entityType != EntityType.PLAYER)
-            {
-                Broadcast(spawn);
-            }
-            else
-            {
-                Broadcast(spawn, true);
-                Player player = (Player)this;
-                player.connection.Send(spawn);
-            }
         }
 
         virtual public DEntity ToDEntity()
@@ -179,8 +184,8 @@ namespace Backend.Game
 
         virtual public void FromDEntity(DEntity entity)
         {
-            if (m_initData == null)
-                m_initData = entity;
+            if (m_entityData == null)
+                m_entityData = entity;
 
             name = entity.name;
 
@@ -241,7 +246,7 @@ namespace Backend.Game
 
         public void Reset()
         {
-            FromDEntity(m_initData);
+            FromDEntity(m_entityData);
             foreach (KeyValuePair<int, Entity> kv in m_children)
             {
                 kv.Value.Reset();

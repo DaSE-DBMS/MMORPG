@@ -11,11 +11,11 @@ namespace Gamekit3D.Network
             if (msg.targetID != 0)
             {
                 NetworkEntity target = networkEntities[msg.targetID];
-                source.creatureBehavior.Attack(target.creatureBehavior);
+                source.behavior.Attack(target.behavior);
             }
             else
             {
-                source.creatureBehavior.Attack(null);
+                source.behavior.Attack(null);
             }
         }
     }

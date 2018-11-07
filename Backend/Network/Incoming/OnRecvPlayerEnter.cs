@@ -8,7 +8,6 @@ namespace Backend.Network
         private void OnRecvPlayerEnter(IChannel channel, Message message)
         {
             CPlayerEnter request = (CPlayerEnter)message;
-            SSpawn response = new SSpawn();
             Player player = (Player)channel.GetContent();
             Scene scene = World.Instance().GetScene(player.scene);
             // add the player to the scene

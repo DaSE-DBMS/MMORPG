@@ -11,13 +11,18 @@ namespace Backend.Game
         public int maxHP;
         public int level;
         public int speed;
-        public float invTime;
+        public float invulnerableTime;
         public float hitAngle;
         public bool dead = false;
         public bool aggressive = false;
         public string scene;
 
         private DateTime m_lastHitTimestamp = DateTime.UnixEpoch;
+
+        public bool IsInvulnerable()
+        {
+            return invulnerableTime * 1000 > (DateTime.Now - m_lastHitTimestamp).TotalMilliseconds;
+        }
 
         public void FindPath(Entity target, LinkedList<Point3d> steps)
         {
@@ -41,28 +46,10 @@ namespace Backend.Game
             Broadcast(attack);
         }
 
+
         // the enemy is null if not exists one
-        virtual public void UnderAttack(Creature enemy)
+        virtual public void BeHit(Creature enemy)
         {
-            if (currentHP == 0)
-                return;
-
-            if (invTime * 1000 > (DateTime.Now - m_lastHitTimestamp).TotalMilliseconds)
-                return;
-
-            // TODO calculate hit point decrease by creature's attribute
-            int dec = 0;
-            currentHP = currentHP - dec < 0 ? 0 : currentHP - dec;
-            if (currentHP == 0)
-            {
-                Die();
-            }
-
-            SUnderAttack hit = new SUnderAttack();
-            hit.HP = currentHP;
-            hit.sourceID = enemy != null ? enemy.entityId : 0;
-            hit.ID = this.entityId;
-            Broadcast(hit);
         }
 
         virtual public void Die()
@@ -70,7 +57,7 @@ namespace Backend.Game
             currentHP = 0;
             UpdateActive = false;
             SDie die = new SDie();
-            die.ID = this.entityId;
+            die.entityId = this.entityId;
             Broadcast(die);
         }
 
@@ -92,7 +79,7 @@ namespace Backend.Game
             level = entity.level;
             speed = entity.speed;
             aggressive = entity.aggressive;
-            invTime = entity.invTime;
+            invulnerableTime = entity.invTime;
             hitAngle = entity.hitAngle;
             base.FromDEntity(entity);
         }

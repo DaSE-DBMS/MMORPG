@@ -10,7 +10,7 @@ namespace Gamekit3D.Network
     public class NetworkEntity : MonoBehaviour
     {
 
-        public ICreatureBehavior creatureBehavior;
+        public ICreatureBehavior behavior;
 
         public NetworkEntity parent;
         public List<NetworkEntity> children = new List<NetworkEntity>();

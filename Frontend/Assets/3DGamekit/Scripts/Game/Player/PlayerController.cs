@@ -226,7 +226,7 @@ namespace Gamekit3D
             m_CharCtrl = GetComponent<CharacterController>();
             m_entity = GetComponent<NetworkEntity>();
             //meleeWeapon.SetOwner(gameObject);
-            m_entity.creatureBehavior = this;
+            m_entity.behavior = this;
         }
 
         // Called automatically by Unity after Awake whenever the script is enabled.
@@ -838,7 +838,7 @@ namespace Gamekit3D
             m_jumping = true;
         }
 
-        public void UnderAttack(int HP, ICreatureBehavior source)
+        public void BeHit(int HP, ICreatureBehavior source)
         {
             m_Animator.SetTrigger(m_HashHurt);
 

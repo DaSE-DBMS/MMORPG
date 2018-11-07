@@ -27,9 +27,10 @@ namespace Gamekit3D.Network
             register.Register(Command.S_SPRITE_MOVE, OnRecvSpriteMove);
             register.Register(Command.S_ENTITY_DESTROY, OnRecvEntityDestory);
             register.Register(Command.S_EQUIP_WEAPON, OnRecvEquipWeapon);
-            register.Register(Command.S_PLAYER_TAKE, OnRecvTakeItem);
-            register.Register(Command.S_UNDER_ATTACK, OnRecvUnderAttack);
+            register.Register(Command.S_TAKE_ITEM, OnRecvTakeItem);
+            register.Register(Command.S_HIT, OnRecvHit);
             register.Register(Command.S_DIE, OnRecvDie);
+            register.Register(Command.S_TIP_INFO, OnRecvTipInfo);
             // DEBUG ...
             register.Register(Command.S_FIND_PATH, OnRecvFindPath);
         }

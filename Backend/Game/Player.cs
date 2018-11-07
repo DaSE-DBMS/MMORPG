@@ -15,9 +15,9 @@ namespace Backend.Game
             connection = channel;
             channel.SetContent(this);
         }
-        override public void UnderAttack(Creature creature)
+        override public void BeHit(Creature creature)
         {
-            base.UnderAttack(creature);
+            base.BeHit(creature);
         }
 
         override public DEntity ToDEntity()

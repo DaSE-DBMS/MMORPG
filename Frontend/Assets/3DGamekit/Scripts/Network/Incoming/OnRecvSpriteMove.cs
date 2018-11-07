@@ -9,7 +9,7 @@ namespace Gamekit3D.Network
         {
             SSpriteMove msg = (SSpriteMove)message;
             NetworkEntity sprite = networkEntities[msg.ID];
-            ISpriteBehavior behavior = (ISpriteBehavior)(sprite.creatureBehavior);
+            ISpriteBehavior behavior = (ISpriteBehavior)(sprite.behavior);
             Vector3 position = new Vector3(msg.pos.x, msg.pos.y, msg.pos.z);
             switch (msg.state)
             {

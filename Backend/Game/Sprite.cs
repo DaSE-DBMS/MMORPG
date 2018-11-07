@@ -37,19 +37,33 @@ namespace Backend.Game
             m_targetID = creature.entityId;
             m_chaseState = ChaseState.CHASING_ENEMY;
         }
-
-        override public void UnderAttack(Creature creature)
+        // the enemy is null if not exists one
+        public override void BeHit(Creature enemy)
         {
-            if (currentHP <= 0)
-            {
-                return;
-            }
-            UpdateActive = true;
-            base.UnderAttack(creature);
-            EnemyNear(creature);
             if (currentHP == 0)
-            {// DEAD
+                return;
 
+            if (IsInvulnerable())
+                return;
+
+            UpdateActive = true;
+
+            // TODO calculate hit point decrease by creature's attribute
+            int dec = 0;
+            SHit hit = new SHit();
+            hit.decHP = dec;
+            hit.sourceId = enemy != null ? enemy.entityId : 0;
+            hit.targetId = this.entityId;
+            Broadcast(hit);
+            currentHP = currentHP - dec < 0 ? 0 : currentHP - dec;
+            if (currentHP == 0)
+            {
+                Die();
+                DelayInvoke(10, ReSpawn);
+            }
+            else
+            {
+                EnemyNear(enemy);
             }
         }
 
@@ -163,9 +177,12 @@ namespace Backend.Game
             SendMove(MoveState.BEGIN, Position);
         }
 
-        public override void Spawn()
+        public override void ReSpawn()
         {
-            m_spawnPoint = Position;
+            SSpawn spawn = new SSpawn();
+            Reset();
+            spawn.isMine = false;
+            spawn.entity = ToDEntity();
         }
 
         private void SendMove(MoveState state, Point3d position, int targetId = 0)

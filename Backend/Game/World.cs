@@ -20,6 +20,7 @@ namespace Backend.Game
         {
             foreach (KeyValuePair<string, Scene> kv in scenes)
             {
+                kv.Value.Tick();
                 kv.Value.Update();
             }
         }

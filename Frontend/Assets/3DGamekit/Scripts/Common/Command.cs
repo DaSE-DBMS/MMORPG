@@ -19,11 +19,11 @@ namespace Common
         S_JUMP,
         S_ATTACK,
         S_EQUIP_WEAPON,
-        S_UNDER_ATTACK,
-        S_PLAYER_TAKE,
+        S_HIT,
+        S_TAKE_ITEM,
         S_EXIT,
         S_DIE,
-
+        S_TIP_INFO,
         SEND,
 
         CBEGIN,

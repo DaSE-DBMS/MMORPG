@@ -9,10 +9,10 @@ namespace Gamekit3D.Network
         {
             SJump msg = (SJump)message;
             NetworkEntity self = networkEntities[msg.ID];
-            if (self.creatureBehavior == null)
+            if (self.behavior == null)
                 return;
 
-            self.creatureBehavior.Jump();
+            self.behavior.Jump();
         }
 
     }
