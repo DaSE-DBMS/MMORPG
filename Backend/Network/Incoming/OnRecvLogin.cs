@@ -7,7 +7,7 @@ namespace Backend.Network
     {
         private void OnRecvLogin(IChannel channel, Message message)
         {
-            CLogin request = (CLogin)message;
+            CLogin request = message as CLogin;
             SPlayerEnter response = new SPlayerEnter();
             string scene = "Level1";
             response.user = request.user;

@@ -45,6 +45,7 @@ public class CartGridHandler : MonoBehaviour
                 return;
             }
             item.transform.SetParent(transform, false);
+            item.SetActive(true);
             items.Add(name, item);
         }
         CartItemHandler handler = item.GetComponent<CartItemHandler>();

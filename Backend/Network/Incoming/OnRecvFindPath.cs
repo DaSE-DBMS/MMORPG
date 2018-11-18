@@ -9,7 +9,7 @@ namespace Backend.Network
     {
         private void RecvFindPath(IChannel channel, Message message)
         {
-            CFindPath request = (CFindPath)message;
+            CFindPath request = message as CFindPath;
             Player player = (Player)channel.GetContent();
             V3 start = player.GetPosition();
             Point3d end = new Point3d((float)request.pos.x,

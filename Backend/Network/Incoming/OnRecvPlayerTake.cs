@@ -8,7 +8,7 @@ namespace Backend.Network
     {
         private void RecvPlayerTake(IChannel channel, Message message)
         {
-            CPlayerTake request = (CPlayerTake)message;
+            CPlayerTake request = message as CPlayerTake;
             Player player = (Player)channel.GetContent();
 
             Entity target = World.Instance().GetEntity(request.targetId);

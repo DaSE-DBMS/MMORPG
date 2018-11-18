@@ -7,7 +7,7 @@ namespace Backend.Network
     {
         private void RecvPlayerMove(IChannel channel, Message message)
         {
-            CPlayerMove request = (CPlayerMove)message;
+            CPlayerMove request = message as CPlayerMove;
             Player player = (Player)World.Instance().GetEntity(request.player);
             player.Position = Entity.V3ToPoint3d(request.pos);
             SPlayerMove response = new SPlayerMove();

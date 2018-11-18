@@ -7,7 +7,7 @@ namespace Backend.Network
     {
         private void RecvPositionRevise(IChannel channel, Message message)
         {
-            CPositionRevise request = (CPositionRevise)message;
+            CPositionRevise request = message as CPositionRevise;
             Entity entity = World.Instance().GetEntity(request.entityId);
             entity.Position = Entity.V3ToPoint3d(request.pos);
         }

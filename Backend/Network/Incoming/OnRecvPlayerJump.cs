@@ -7,7 +7,7 @@ namespace Backend.Network
     {
         private void RecvPlayerJump(IChannel channel, Message message)
         {
-            CPlayerJump request = (CPlayerJump)message;
+            CPlayerJump request = message as CPlayerJump;
             Player player = (Player)World.Instance().GetEntity(request.player);
             SJump response = new SJump();
             response.ID = request.player;

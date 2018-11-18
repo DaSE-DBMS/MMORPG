@@ -7,7 +7,7 @@ namespace Backend.Network
     {
         private void RecvPlayerAttack(IChannel channel, Message message)
         {
-            CPlayerAttack request = (CPlayerAttack)message;
+            CPlayerAttack request = message as CPlayerAttack;
             Player player = (Player)World.Instance().GetEntity(request.player);
             if (request.target != 0)
             {
