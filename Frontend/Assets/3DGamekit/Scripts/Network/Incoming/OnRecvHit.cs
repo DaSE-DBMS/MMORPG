@@ -6,7 +6,7 @@ namespace Gamekit3D.Network
     {
         private void OnRecvHit(IChannel channel, Message message)
         {
-            SHit msg = (SHit)message;
+            SHit msg = message as SHit;
 
             NetworkEntity target = networkEntities[msg.targetId];
             NetworkEntity source = null;

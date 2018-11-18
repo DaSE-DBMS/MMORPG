@@ -8,7 +8,7 @@ namespace Gamekit3D.Network
     {
         private void OnRecvEquipWeapon(IChannel channel, Message message)
         {
-            SEquipWeapon msg = (SEquipWeapon)message;
+            SEquipWeapon msg = message as SEquipWeapon;
             NetworkEntity player = networkEntities[msg.playerID];
             PlayerController controller = player.gameObject.GetComponent<PlayerController>();
             if (controller == null)

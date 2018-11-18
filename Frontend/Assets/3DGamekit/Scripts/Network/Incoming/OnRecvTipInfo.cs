@@ -6,7 +6,7 @@ namespace Gamekit3D.Network
     {
         private void OnRecvTipInfo(IChannel channel, Message message)
         {
-            STipInfo msg = (STipInfo)message;
+            STipInfo msg = message as STipInfo;
             MessageBox.Show(msg.info);
         }
     }

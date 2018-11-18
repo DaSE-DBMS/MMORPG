@@ -7,7 +7,7 @@ namespace Gamekit3D.Network
     {
         private void OnRecvEntityDestory(IChannel channel, Message message)
         {
-            SEntityDestroy msg = (SEntityDestroy)message;
+            SEntityDestroy msg = message as SEntityDestroy;
             GameObject go = gameObjects[msg.entityID];
             GameObject.Destroy(go);
         }

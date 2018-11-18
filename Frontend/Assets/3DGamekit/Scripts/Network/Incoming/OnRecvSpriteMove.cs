@@ -7,7 +7,7 @@ namespace Gamekit3D.Network
     {
         private void OnRecvSpriteMove(IChannel channel, Message message)
         {
-            SSpriteMove msg = (SSpriteMove)message;
+            SSpriteMove msg = message as SSpriteMove;
             NetworkEntity sprite = networkEntities[msg.ID];
             NetworkEntity target = null;
             if (msg.targetId != 0)

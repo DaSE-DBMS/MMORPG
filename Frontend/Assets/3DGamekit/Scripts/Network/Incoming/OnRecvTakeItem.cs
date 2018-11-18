@@ -7,7 +7,7 @@ namespace Gamekit3D.Network
     {
         private void OnRecvTakeItem(IChannel channel, Message message)
         {
-            SPlayerTake msg = (SPlayerTake)message;
+            SPlayerTake msg = message as SPlayerTake;
             NetworkEntity item;
             if (msg.clone)
             {

@@ -7,7 +7,7 @@ namespace Gamekit3D.Network
     {
         private void OnRecvPlayerMove(IChannel channel, Message message)
         {
-            SPlayerMove msg = (SPlayerMove)message;
+            SPlayerMove msg = message as SPlayerMove;
             NetworkEntity self = networkEntities[msg.ID];
             IPlayerBehavior behavior = (IPlayerBehavior)(self.behavior);
             Vector2 move = new Vector2(msg.move.x, msg.move.y);

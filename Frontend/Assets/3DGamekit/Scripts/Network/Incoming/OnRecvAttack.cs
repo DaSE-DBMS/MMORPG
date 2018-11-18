@@ -6,7 +6,7 @@ namespace Gamekit3D.Network
     {
         private void OnRecvAttack(IChannel channel, Message message)
         {
-            SAttack msg = (SAttack)message;
+            SAttack msg = message as SAttack;
             NetworkEntity source = networkEntities[msg.ID];
             if (msg.targetID != 0)
             {

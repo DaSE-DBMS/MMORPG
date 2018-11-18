@@ -7,7 +7,7 @@ namespace Gamekit3D.Network
     {
         private void OnRecvSpawn(IChannel channel, Message message)
         {
-            SSpawn msg = (SSpawn)message;
+            SSpawn msg = message as SSpawn;
             GameObject go = null;
             if (msg.entity.type == (int)EntityType.PLAYER)
             {

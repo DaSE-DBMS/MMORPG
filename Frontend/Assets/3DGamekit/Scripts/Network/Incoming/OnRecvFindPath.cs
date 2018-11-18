@@ -7,7 +7,7 @@ namespace Gamekit3D.Network
     {
         private void OnRecvFindPath(IChannel channel, Message message)
         {
-            SFindPath msg = (SFindPath)message;
+            SFindPath msg = message as SFindPath;
             foreach (V3 p in msg.path)
             {
                 Vector3 v = new Vector3(p.x, p.y, p.z);
