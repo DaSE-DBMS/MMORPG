@@ -48,7 +48,7 @@ namespace Backend.Game
             }
             else
             {
-                Trace.WriteLine(string.Format("cannot find entity {0}", entity.entityId));
+                //Trace.WriteLine(string.Format("cannot find entity {0}", entity.entityId));
             }
             return ret;
         }

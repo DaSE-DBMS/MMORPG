@@ -16,6 +16,7 @@ public class GetAllIcons : MonoBehaviour
             SpriteRenderer sr = (SpriteRenderer)component;
             icons.Add(sr.gameObject.name, sr.sprite);
         }
+        gameObject.SetActive(false);
     }
 
     void Start()
