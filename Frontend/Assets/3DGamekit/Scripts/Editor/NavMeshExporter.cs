@@ -13,25 +13,29 @@ using Gamekit3D.Network;
 public class NavMeshExporter : MonoBehaviour
 {
     private GameObject _testMap;
+    static string DataPath;
+
     [MenuItem("Tools/Export Assets")]
     private static void Export()
     {
+        DataPath = Application.dataPath + "/BEAssets/";
         DSceneAsset asset = new DSceneAsset();
         NavMeshToAsset(asset);
         EntitiesToAsset(asset);
-        using (StreamWriter sw = new StreamWriter(Application.dataPath + "/assets/" + asset.scene + ".asset"))
+        string filename = asset.scene + ".asset";
+        using (StreamWriter sw = new StreamWriter(DataPath + filename))
         {
             XmlSerializer serializer = new XmlSerializer(typeof(DSceneAsset));
             serializer.Serialize(sw, asset);
             Debug.Log("Export：" + asset.scene + ".asset");
         }
 
-        using (StreamWriter sw = new StreamWriter(Application.dataPath + "/assets/backend.conf"))
+        using (StreamWriter sw = new StreamWriter(DataPath + "backend.conf"))
         {
             BackendConf conf = new BackendConf();
             conf.host = "0.0.0.0";
             conf.port = 7777;
-            conf.assestPath = Application.dataPath + "/assets/";
+            conf.asset_path = DataPath;
             conf.scenes = new List<string>();
             conf.scenes.Add("Level1.asset");
             XmlSerializer serializer = new XmlSerializer(typeof(BackendConf));
@@ -97,7 +101,7 @@ public class NavMeshExporter : MonoBehaviour
         mesh.triangles = triangulatedNavMesh.indices;
 
         string baseName = "navmesh_" + SceneManager.GetActiveScene().name;
-        string fileName = Application.dataPath + "/navmesh/" + baseName + ".obj";
+        string fileName = DataPath + baseName + ".obj";
         ExportNavmesh(mesh, fileName);
 
         AssetDatabase.Refresh();
@@ -109,7 +113,6 @@ public class NavMeshExporter : MonoBehaviour
         return navMesh;
     }
 
-    [MenuItem("Tools/NavMesh Data Test")]
     private static void Test()
     {
         GameObject obj = GameObject.Find("_NavMesh");
@@ -206,7 +209,7 @@ public class NavMeshExporter : MonoBehaviour
         }
         sb.Append("}\n");
         sb.Append("return nav");
-        using (StreamWriter sw = new StreamWriter(Application.dataPath + "/navmesh/" + obj.name + ".lua"))
+        using (StreamWriter sw = new StreamWriter(DataPath + obj.name + ".lua"))
         {
             sw.Write(sb.ToString());
         }

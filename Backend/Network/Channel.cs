@@ -77,6 +77,10 @@ namespace Backend.Network
             {
                 return;
             }
+            if (m_socket == null)
+            {
+                return;
+            }
 
             foreach (ChannelDelegate @d in m_onClose)
             {

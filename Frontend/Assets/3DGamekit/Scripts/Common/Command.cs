@@ -12,6 +12,7 @@ namespace Common
         S_PLAYER_ENTER,
         S_ITEM_SPAWN,
         S_SPAWN,
+        S_PLAYER_RESPAWN,
         S_PLAYER_ACTION,
         S_ENTITY_DESTROY,
         S_PLAYER_MOVE,
@@ -22,7 +23,8 @@ namespace Common
         S_HIT,
         S_TAKE_ITEM,
         S_EXIT,
-        S_DIE,
+        S_SPRITE_DIE,
+        S_PLAYER_DIE,
         S_TIP_INFO,
         SEND,
 
@@ -35,6 +37,8 @@ namespace Common
         C_PLAYER_MOVE,
         C_PLAYER_TAKE,
         C_POSITION_REVISE,
+        C_ENEMY_CLOSING,
+        C_DAMAGE,
         CEND,
 
         DEBUGGING, // THE FOLLOWING MESSEGES ARE FOR DEBUGGING

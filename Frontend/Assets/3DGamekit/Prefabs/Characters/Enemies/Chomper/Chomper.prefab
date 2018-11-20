@@ -4075,6 +4075,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interpolateTurning: 0
   applyAnimationRotation: 0
+  ColliderLayer:
+    serializedVersion: 2
+    m_Bits: 512
   maxSpeed: 5
   acceleration: 20
 --- !u!114 &114643955118306876

@@ -105,7 +105,7 @@ public class GameStart : MonoBehaviour
             PlayerPrefs.SetString(USERNAME, username);
             PlayerPrefs.SetString(PASSWORD, password);
         }
-        Client.Instance().Send(login);
+        Client.Instance.Send(login);
     }
 
     public void OnRegisterClicked()
@@ -120,7 +120,7 @@ public class GameStart : MonoBehaviour
         CRegister register = new CRegister();
         register.user = username;
         register.password = password;
-        Client.Instance().Send(register);
+        Client.Instance.Send(register);
     }
 
     public void PlayerEnter(string scene)

@@ -17,11 +17,11 @@ namespace Backend.Game
         public bool aggressive = false;
         public string scene;
 
-        private DateTime m_lastHitTimestamp = DateTime.UnixEpoch;
+        protected DateTime m_lastHitTS = DateTime.UnixEpoch;
 
         public bool IsInvulnerable()
         {
-            return invulnerableTime * 1000 > (DateTime.Now - m_lastHitTimestamp).TotalMilliseconds;
+            return invulnerableTime * 1000 > (DateTime.Now - m_lastHitTS).TotalMilliseconds;
         }
 
         public void FindPath(Entity target, LinkedList<Point3d> steps)
@@ -35,9 +35,14 @@ namespace Backend.Game
         }
 
         // the enemy is null if not exists one
-        virtual public void Attack(Creature enemy)
+        virtual public void OnAttack(Creature enemy = null)
         {
-            if (currentHP == 0)
+            if (enemy == null)
+                return;
+
+            if (currentHP == 0 || enemy.currentHP == 0)
+                return;
+            if (enemy.IsInvulnerable())
                 return;
 
             SAttack attack = new SAttack();
@@ -48,17 +53,18 @@ namespace Backend.Game
 
 
         // the enemy is null if not exists one
-        virtual public void BeHit(Creature enemy)
+        virtual public void OnHit(Creature enemy, int hpDec)
         {
         }
 
-        virtual public void Die()
+        virtual public void OnDie()
         {
-            currentHP = 0;
-            UpdateActive = false;
-            SDie die = new SDie();
-            die.entityId = this.entityId;
-            Broadcast(die);
+
+        }
+
+        virtual public void OnReSpawn()
+        {
+
         }
 
         override public DEntity ToDEntity()

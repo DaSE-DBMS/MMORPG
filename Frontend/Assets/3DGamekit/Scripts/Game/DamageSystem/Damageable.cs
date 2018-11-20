@@ -47,22 +47,12 @@ namespace Gamekit3D
 
         void Update()
         {
-            if (isInvulnerable)
-            {
-                m_timeSinceLastHit += Time.deltaTime;
-                if (m_timeSinceLastHit > invulnerabiltyTime)
-                {
-                    m_timeSinceLastHit = 0.0f;
-                    isInvulnerable = false;
-                    OnBecomeVulnerable.Invoke();
-                }
-            }
+
         }
 
         public void ResetDamage()
         {
             currentHitPoints = maxHitPoints;
-            isInvulnerable = false;
             m_timeSinceLastHit = 0.0f;
             OnResetDamage.Invoke();
         }
@@ -76,12 +66,6 @@ namespace Gamekit3D
         {
             if (currentHitPoints <= 0)
             {//ignore damage if already dead. TODO : may have to change that if we want to detect hit on death...
-                return;
-            }
-
-            if (isInvulnerable)
-            {
-                OnHitWhileInvulnerable.Invoke();
                 return;
             }
 

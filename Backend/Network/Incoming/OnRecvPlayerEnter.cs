@@ -9,7 +9,7 @@ namespace Backend.Network
         {
             CPlayerEnter request = message as CPlayerEnter;
             Player player = (Player)channel.GetContent();
-            Scene scene = World.Instance().GetScene(player.scene);
+            Scene scene = World.Instance.GetScene(player.scene);
             // add the player to the scene
             player.Spawn();
             scene.AddEntity(player);

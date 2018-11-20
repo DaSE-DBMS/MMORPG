@@ -16,7 +16,7 @@ namespace Gamekit3D.Network
                 return;
             }
             //Console.WriteLine("Receive Enter...");
-            SPlayerEnter msg = (SPlayerEnter)message;
+            SPlayerEnter msg = message as SPlayerEnter;
             startup.PlayerEnter(msg.scene);
         }
     }

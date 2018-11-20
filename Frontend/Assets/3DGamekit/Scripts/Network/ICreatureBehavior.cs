@@ -13,6 +13,8 @@ namespace Gamekit3D.Network
 
         void Die();
 
+        void ReSpawn(int hp, Vector3 position, Quaternion rotation);
+
         Transform GetTransform();
     }
 }

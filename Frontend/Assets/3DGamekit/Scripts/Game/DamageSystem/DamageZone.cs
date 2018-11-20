@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Common;
+using Gamekit3D.Network;
 
 namespace Gamekit3D
 {
@@ -19,19 +21,14 @@ namespace Gamekit3D
 
         private void OnTriggerStay(Collider other)
         {
-            var d = other.GetComponent<Damageable>();
-            if (d == null)
-                return;
-
-            var msg = new Damageable.DamageMessage()
+            var pc = other.GetComponent<PlayerController>();
+            if (pc != null && pc.isMine)
             {
-                amount = damageAmount,
-                damager = this,
-                direction = Vector3.up,
-                stopCamera = stopCamera
-            };
-
-            d.ApplyDamage(msg);
+                CDamage msg = new CDamage();
+                msg.entityId = pc.Entity.entityId;
+                msg.decHP = damageAmount;
+                MyNetwork.Send(msg);
+            }
         }
     }
 }

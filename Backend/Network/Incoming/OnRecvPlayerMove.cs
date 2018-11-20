@@ -5,10 +5,10 @@ namespace Backend.Network
 {
     public partial class Incoming
     {
-        private void RecvPlayerMove(IChannel channel, Message message)
+        private void OnRecvPlayerMove(IChannel channel, Message message)
         {
             CPlayerMove request = message as CPlayerMove;
-            Player player = (Player)World.Instance().GetEntity(request.player);
+            Player player = (Player)World.Instance.GetEntity(request.player);
             player.Position = Entity.V3ToPoint3d(request.pos);
             SPlayerMove response = new SPlayerMove();
             response.ID = request.player;
@@ -17,7 +17,7 @@ namespace Backend.Network
             response.rot = request.rot;
             response.move = request.move;
             response.state = request.state;
-            player.Broadcast(response);
+            player.Broadcast(response, true);
         }
     }
 }

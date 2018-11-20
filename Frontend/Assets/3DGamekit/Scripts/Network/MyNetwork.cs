@@ -9,7 +9,7 @@ namespace Gamekit3D.Network
         public const string PORT = "port";
         public const string HOST = "host";
 
-        static private Incoming incomming = new Incoming(Client.Instance());
+        static private Incoming incomming = new Incoming(Client.Instance);
 
         static public MyNetwork Instance { get { return m_instance; } }
 
@@ -69,7 +69,7 @@ namespace Gamekit3D.Network
         // Update is called once per frame
         void Update()
         {
-            Client.Instance().RecvMessage();
+            Client.Instance.RecvMessage();
         }
 
         // Use this for initialization
@@ -77,35 +77,35 @@ namespace Gamekit3D.Network
         {
             if (!connected)
             { // exactly connect once
-                connected = Client.Instance().Connect(address, port);
+                connected = Client.Instance.Connect(address, port);
             }
             return connected;
         }
 
         static public bool Connect(string host, int port)
         {
-            return Client.Instance().Connect(host, (short)port);
+            return Client.Instance.Connect(host, (short)port);
         }
 
         static public void Send(Message message)
         {
-            Client.Instance().Send(message);
+            Client.Instance.Send(message);
         }
         static public void Register(Command command, MessageDelegate @delegate)
         {
-            Client.Instance().Register(command, @delegate);
+            Client.Instance.Register(command, @delegate);
         }
 
         static public void Close()
         {
-            Client.Instance().Close();
+            Client.Instance.Close();
         }
 
         static private void RecvSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             incomming.InitNetworkEntity();
             CPlayerEnter message = new CPlayerEnter();
-            Client.Instance().Send(message);
+            Client.Instance.Send(message);
         }
     }
 }

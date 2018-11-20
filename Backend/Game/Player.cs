@@ -1,4 +1,5 @@
 ﻿using Common;
+using System;
 
 namespace Backend.Game
 {
@@ -15,9 +16,43 @@ namespace Backend.Game
             connection = channel;
             channel.SetContent(this);
         }
-        override public void BeHit(Creature creature)
+        override public void OnHit(Creature enemy, int hpDec)
         {
-            base.BeHit(creature);
+            if (currentHP == 0)
+                return;
+
+            if (IsInvulnerable())
+                return;
+
+            m_lastHitTS = DateTime.Now;
+            hpDec = currentHP - hpDec < 0 ? currentHP : hpDec;
+
+            SHit hit = new SHit();
+            hit.decHP = hpDec;
+            hit.sourceId = enemy != null ? enemy.entityId : 0;
+            hit.targetId = this.entityId;
+            Broadcast(hit);
+
+            currentHP = currentHP - hpDec;
+            if (currentHP == 0)
+            {
+                OnDie();
+                World.Instance.DelayInvoke(5, OnReSpawn);
+            }
+        }
+
+        public override void OnReSpawn()
+        {
+            // TODO read from last savepoint
+            // read from database
+            V3 pos = DefaultData.pos;
+            Position = V3ToPoint3d(pos);
+
+            SPlayerReSpawn msg = new SPlayerReSpawn();
+            msg.entityId = entityId;
+            msg.HP = maxHP;
+            msg.position = pos;
+            Broadcast(msg);
         }
 
         override public DEntity ToDEntity()
@@ -53,9 +88,17 @@ namespace Backend.Game
 
         }
 
-        virtual public void OnDie()
+        override public void OnDie()
         {
+            SPlayerDie msg = new SPlayerDie();
+            msg.entityId = entityId;
+            msg.isMine = false;
+            Broadcast(msg, true);
 
+            SPlayerDie msg1 = new SPlayerDie();
+            msg1.entityId = entityId;
+            msg1.isMine = true;
+            connection.Send(msg1);
         }
 
         virtual public void OnBirth()

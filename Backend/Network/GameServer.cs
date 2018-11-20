@@ -46,11 +46,10 @@ namespace Backend.Network
             if (channel.GetContent() != null)
             {
                 Entity entity = (Entity)channel.GetContent();
-                World.Instance().RemoveEntity(entity.entityId);
+                World.Instance.RemoveEntity(entity.entityId);
             }
-            channel.Close();
             ((Channel)channel).Socket.Shutdown(SocketShutdown.Both);
-
+            ((Channel)channel).Socket = null;
         }
 
         private void LoadAssets()
@@ -58,9 +57,9 @@ namespace Backend.Network
             foreach (string sceneName in conf.scenes)
             {// foreach scene assets, TODO
                 XmlSerializer serializer = new XmlSerializer(typeof(DSceneAsset));
-                StreamReader reader = new StreamReader(conf.assestPath + "/" + sceneName);
+                StreamReader reader = new StreamReader(conf.asset_path + "/" + sceneName);
                 DSceneAsset asset = (DSceneAsset)serializer.Deserialize(reader);
-                World.Instance().LoadScene(asset);
+                World.Instance.LoadScene(asset);
             }
         }
     }

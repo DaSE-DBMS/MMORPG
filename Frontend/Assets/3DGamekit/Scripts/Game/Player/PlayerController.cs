@@ -14,7 +14,8 @@ namespace Gamekit3D
 
         protected static PlayerController s_Instance;
         public static PlayerController instance { get { return s_Instance; } }
-
+        public NetworkEntity Entity { get { return m_entity; } }
+        public Damageable Damageable { get { return m_Damageable; } }
         public bool IsReadyToJump { get { return m_ReadyToJump; } }
         public bool CanAttack { get { return canAttack && isMine; } }
 
@@ -63,7 +64,7 @@ namespace Gamekit3D
         protected bool m_InCombo;                      // Whether Ellen is currently in the middle of her melee combo.
         protected Damageable m_Damageable;             // Reference used to set invulnerablity and health based on respawning.
         protected Renderer[] m_Renderers;              // References used to make sure Renderers are reset properly.
-        //protected Checkpoint m_CurrentCheckpoint;      // Reference used to reset Ellen to the correct position on respawn.
+                                                       //protected Checkpoint m_CurrentCheckpoint;      // Reference used to reset Ellen to the correct position on respawn.
         protected bool m_Respawning;                   // Whether Ellen is currently respawning.
         protected float m_IdleTimer;                   // Used to count up to Ellen considering a random idle.
         protected int m_sendJumping = 0;
@@ -115,7 +116,8 @@ namespace Gamekit3D
         int m_moveStep = 0;
         Vector2 m_movement = new Vector2();
         NetworkEntity m_entity;
-
+        HealthUI m_healthUI;
+        Vector3 m_lastPosition = Vector3.zero;
         protected bool IsMoveInput
         {
             get { return !Mathf.Approximately(m_myController.MoveInput.sqrMagnitude, 0f); }
@@ -225,7 +227,7 @@ namespace Gamekit3D
             m_Animator = GetComponent<Animator>();
             m_CharCtrl = GetComponent<CharacterController>();
             m_entity = GetComponent<NetworkEntity>();
-            //meleeWeapon.SetOwner(gameObject);
+            m_healthUI = GameObject.FindObjectOfType<HealthUI>();
             m_entity.behavior = this;
         }
 
@@ -237,11 +239,15 @@ namespace Gamekit3D
             m_Damageable = GetComponent<Damageable>();
             m_Damageable.onDamageMessageReceivers.Add(this);
 
-            m_Damageable.isInvulnerable = true;
-
             EquipMeleeWeapon(false);
 
             m_Renderers = GetComponentsInChildren<Renderer>();
+
+            m_lastPosition = transform.position;
+            if (isMine)
+            {
+                m_healthUI.ChangeHitPointUI(m_Damageable);
+            }
         }
 
         // Called automatically by Unity whenever the script is disabled.
@@ -261,7 +267,7 @@ namespace Gamekit3D
             if (isMine)
             {
                 m_attacking = m_myController.IsAttacking;
-                m_moving = m_myController.IsMoving;
+                m_moving = m_myController.IsMoving || (m_lastPosition - transform.position).sqrMagnitude < 0.1;
                 m_jumping = m_myController.IsJumping;
                 m_movement.Set(m_myController.MoveInput.x, m_myController.MoveInput.y);
                 UpdateInputBlocking();
@@ -765,7 +771,6 @@ namespace Gamekit3D
         public void RespawnFinished()
         {
             m_Respawning = false;
-            m_Damageable.isInvulnerable = false;
         }
 
         // Called by Ellen's Damageable when she is hurt.
@@ -838,7 +843,7 @@ namespace Gamekit3D
             m_jumping = true;
         }
 
-        public void BeHit(int HP, ICreatureBehavior source)
+        public void BeHit(int decHP, ICreatureBehavior source)
         {
             m_Animator.SetTrigger(m_HashHurt);
 
@@ -852,14 +857,40 @@ namespace Gamekit3D
             m_Animator.SetFloat(m_HashHurtFromX, localHurt.x);
             m_Animator.SetFloat(m_HashHurtFromY, localHurt.z);
 
-            // Shake the camera.
-            CameraShake.Shake(CameraShake.k_PlayerHitShakeAmount, CameraShake.k_PlayerHitShakeTime);
-
-            // Play an audio clip of being hurt.
-            if (hurtAudioPlayer != null)
+            var msg = new Damageable.DamageMessage()
             {
-                hurtAudioPlayer.PlayRandomClip();
+                amount = decHP,
+                damager = this,
+                direction = Vector3.up,
+                stopCamera = false
+            };
+
+            m_Damageable.ApplyDamage(msg);
+
+            if (isMine)
+            {
+                // Shake the camera.
+                CameraShake.Shake(CameraShake.k_PlayerHitShakeAmount, CameraShake.k_PlayerHitShakeTime);
+
+                // Play an audio clip of being hurt.
+                if (hurtAudioPlayer != null)
+                {
+                    hurtAudioPlayer.PlayRandomClip();
+                }
+                if (m_healthUI != null)
+                {
+                    m_healthUI.ChangeHitPointUI(m_Damageable);
+                }
             }
+        }
+
+        public void ReSpawn(int hp, Vector3 postion, Quaternion rotation)
+        {
+            m_Damageable.currentHitPoints = hp;
+            transform.position = postion;
+            transform.rotation = rotation;
+            gameObject.SetActive(true);
+            StartCoroutine(RespawnRoutine());
         }
 
         public Transform GetTransform()
@@ -869,7 +900,7 @@ namespace Gamekit3D
 
         public void Die()
         {
-
+            StartCoroutine(DelayedPlayerDie());
         }
         // Called by OnReceiveMessage.
         void Damaged(Damageable.DamageMessage damageMessage)
@@ -905,6 +936,7 @@ namespace Gamekit3D
             m_VerticalSpeed = 0f;
             m_Respawning = true;
             m_Damageable.isInvulnerable = true;
+            Die();
         }
 
         public void EquipWeapon(NetworkEntity weapon)
@@ -928,6 +960,22 @@ namespace Gamekit3D
         public void TakeItem(NetworkEntity item)
         {
             item.gameObject.transform.SetParent(this.gameObject.transform);
+        }
+
+        IEnumerator DelayedPlayerDie()
+        {
+            yield return new WaitForSeconds(3);
+            if (isMine)
+                ScreenFader.FadeSceneOut();
+            gameObject.SetActive(false);
+        }
+
+        IEnumerator FadeSceneIn()
+        {
+            yield return new WaitForSeconds(3);
+            yield return StartCoroutine(ScreenFader.FadeSceneIn());
+
+            ScreenFader.FadeSceneIn();
         }
     }
 }

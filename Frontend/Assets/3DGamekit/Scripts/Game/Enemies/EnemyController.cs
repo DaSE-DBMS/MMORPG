@@ -14,7 +14,7 @@ namespace Gamekit3D
     {
         public bool interpolateTurning = false;
         public bool applyAnimationRotation = false;
-
+        public LayerMask ColliderLayer;
 
         struct MoveMessage
         {
@@ -84,7 +84,7 @@ namespace Gamekit3D
 
             //animator.speed = PlayerInput.Instance != null && PlayerInput.Instance.HaveControl() ? 1.0f : 0.0f;
 
-            //CheckGrounded();
+            CheckGrounded();
 
             if (m_UnderExternalForce)
                 ForceMovement();
@@ -271,6 +271,13 @@ namespace Gamekit3D
             //can't jump
         }
 
+        public void ReSpawn(int hp, Vector3 postion, Quaternion rotation)
+        {
+            m_damageable.currentHitPoints = hp;
+            transform.position = postion;
+            transform.rotation = rotation;
+        }
+
         public void Attack(ICreatureBehavior target)
         {
             m_receiver.OnReceiveMessage(MsgType.ATTACK, this, target);
@@ -343,6 +350,31 @@ namespace Gamekit3D
         public void Die()
         {
 
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if ((ColliderLayer.value & 1 << other.gameObject.layer) == 0)
+                return;
+
+            PlayerController player = other.gameObject.GetComponent<PlayerController>();
+            if (player == null || !player.isMine)
+                return;
+
+            CEnemyClosing msg = new CEnemyClosing();
+            msg.entityId = m_entity.entityId;
+            msg.enemyId = player.Entity.entityId;
+            MyNetwork.Send(msg);
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if ((ColliderLayer.value & 1 << other.gameObject.layer) == 0)
+                return;
+
+            NetworkEntity enemy = other.gameObject.GetComponent<NetworkEntity>();
+            if (enemy == null)
+                return;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Backend.Network
 {
     public partial class Incoming
     {
-        private void RecvFindPath(IChannel channel, Message message)
+        private void OnRecvFindPath(IChannel channel, Message message)
         {
             CFindPath request = message as CFindPath;
             Player player = (Player)channel.GetContent();

@@ -6,7 +6,7 @@ namespace Gamekit3D.Network
     {
         private void OnRecvDie(IChannel channel, Message message)
         {
-            SDie msg = message as SDie;
+            SSpriteDie msg = message as SSpriteDie;
             NetworkEntity target = networkEntities[msg.entityId];
             target.behavior.Die();
         }

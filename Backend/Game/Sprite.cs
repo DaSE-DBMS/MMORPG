@@ -26,7 +26,7 @@ namespace Backend.Game
         const float LongDistance = 100.0f;
 
 
-        public void EnemyNear(Creature creature)
+        public void EnemyClosing(Creature creature)
         {
             if (Position.DistanceTo(creature.Position) > 3.0)
             {
@@ -35,9 +35,10 @@ namespace Backend.Game
             m_targetPos = creature.Position;
             m_targetID = creature.entityId;
             m_chaseState = ChaseState.CHASING_ENEMY;
+            UpdateActive = true;
         }
         // the enemy is null if not exists one
-        public override void BeHit(Creature enemy)
+        public override void OnHit(Creature enemy, int hpDec)
         {
             if (currentHP == 0)
                 return;
@@ -45,24 +46,22 @@ namespace Backend.Game
             if (IsInvulnerable())
                 return;
 
-            UpdateActive = true;
-
             // TODO calculate hit point decrease by creature's attribute
-            int dec = 0;
+            hpDec = currentHP - hpDec < 0 ? currentHP : hpDec;
             SHit hit = new SHit();
-            hit.decHP = dec;
+            hit.decHP = hpDec;
             hit.sourceId = enemy != null ? enemy.entityId : 0;
             hit.targetId = this.entityId;
             Broadcast(hit);
-            currentHP = currentHP - dec < 0 ? 0 : currentHP - dec;
+            currentHP = currentHP - hpDec;
             if (currentHP == 0)
             {
-                Die();
-                DelayInvoke(10, ReSpawn);
+                OnDie();
+                World.Instance.DelayInvoke(10, OnReSpawn);
             }
             else
             {
-                EnemyNear(enemy);
+                EnemyClosing(enemy);
             }
         }
 
@@ -70,9 +69,9 @@ namespace Backend.Game
         {
             ChaseEnemy();
         }
+
         private void ChaseEnemy()
         {
-            Creature target = m_targetID == 0 ? null : (Creature)World.Instance().GetEntity(m_targetID);
             switch (m_chaseState)
             {
                 case ChaseState.IDLE:
@@ -82,20 +81,31 @@ namespace Backend.Game
                     }
                 case ChaseState.CHASING_ENEMY:
                     {
-                        Point3d targetPos = target.Position;
-                        float distance = (float)Position.DistanceTo(targetPos);
-                        if (distance > LongDistance)
+                        Creature target = m_targetID == 0 ? null : (Creature)World.Instance.GetEntity(m_targetID);
+                        if (target == null)
                         {
-                            // too far away, I cannot catch up my enemy, so I give up
                             StartBackToHome();
                             return;
                         }
-                        if (targetPos.DistanceTo(m_targetPos) > DistanceEpsilon)
+                        // the distance to target
+                        float distance = (float)Position.DistanceTo(target.Position);
+                        if (distance > LongDistance)
+                        {
+                            // too far away, I cannot catch up my target, so I give up
+                            StartBackToHome();
+                            return;
+                        }
+
+                        if (m_targetPos.DistanceTo(target.Position) > DistanceEpsilon)
                         {
                             // the target is moving
-                            //the route I found last time was behind the time...
-                            FindPath(m_chaseState, targetPos);
-                            m_targetPos = targetPos;
+                            // target deviate path which I calculate last time, so I must re-calculate
+                            if (!FindPath(target.Position, m_routeSteps))
+                            {
+                                StartBackToHome();
+                                return;
+                            }
+                            m_targetPos = target.Position;
                             SendMove(MoveState.BEGIN, Position, m_targetID);
                             return;
                         }
@@ -111,7 +121,7 @@ namespace Backend.Game
                             this.Position = target.Position;
                             SendMove(MoveState.END, target.Position, m_targetID);
                             m_chaseState = ChaseState.ATTACKING;
-                            Attack(target);
+                            OnAttack(target);
                         }
                         else
                         {
@@ -139,15 +149,27 @@ namespace Backend.Game
                     return;
                 case ChaseState.ATTACKING:
                     {
+                        Creature target = m_targetID == 0 ? null : (Creature)World.Instance.GetEntity(m_targetID);
+                        if (target == null)
+                        {
+                            StartBackToHome();
+                            return;
+                        }
 
                         if (Position.DistanceTo(target.Position) < DistanceEpsilon)
                         {
-                            Attack(target);
+                            OnAttack(target);
+                            target.OnHit(this, 1);
                         }
                         else
                         {
                             m_chaseState = ChaseState.CHASING_ENEMY;
-                            FindPath(ChaseState.CHASING_ENEMY, target.Position);
+                            if (!FindPath(target.Position, m_routeSteps))
+                            {
+                                StartBackToHome();
+                                return;
+                            }
+
                             m_targetPos = target.Position;
                             SendMove(MoveState.BEGIN, Position, m_targetID);
                         }
@@ -156,41 +178,32 @@ namespace Backend.Game
             }
         }
 
-        private void FindPath(ChaseState state, Point3d target)
-        {
-            if (!FindPath(target, m_routeSteps))
-            {
-                // cannot find a way , something was wrong ???
-                // fly to spawn point
-                if (state == ChaseState.BACK_TO_HOME)
-                {
-                    // cannot find a way , something was wrong ???
-                    // fly to spawn point
-                }
-                else
-                {
-                    StartBackToHome();
-                }
-            }
-        }
-
         private void StartBackToHome()
         {
             Point3d spawnPoint = V3ToPoint3d(DefaultData.pos);
             m_chaseState = ChaseState.BACK_TO_HOME;
             m_targetID = 0;
-            FindPath(ChaseState.BACK_TO_HOME, spawnPoint);
+            if (!FindPath(spawnPoint, m_routeSteps))
+            {
+                // cannot find a way , something was wrong ???
+                // fly to spawn point
+            }
             SendMove(MoveState.BEGIN, Position);
         }
 
-        public override void ReSpawn()
+        public override void OnReSpawn()
         {
             SSpawn spawn = new SSpawn();
             Reset();
             spawn.isMine = false;
             spawn.entity = ToDEntity();
+            Broadcast(spawn);
         }
 
+        public override void OnDie()
+        {
+
+        }
         private void SendMove(MoveState state, Point3d position, int targetId = 0)
         {
             m_lastMoveTS = DateTime.Now;

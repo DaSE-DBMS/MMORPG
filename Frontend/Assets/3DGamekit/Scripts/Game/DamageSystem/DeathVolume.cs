@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Gamekit3D.Network;
+using Common;
 
 namespace Gamekit3D
 {
@@ -13,9 +15,12 @@ namespace Gamekit3D
         void OnTriggerEnter(Collider other)
         {
             var pc = other.GetComponent<PlayerController>();
-            if (pc != null)
+            if (pc != null && pc.isMine)
             {
-                pc.Die(new Damageable.DamageMessage());
+                CDamage msg = new CDamage();
+                msg.entityId = pc.Entity.entityId;
+                msg.decHP = int.MaxValue;
+                MyNetwork.Send(msg);
             }
             if (audio != null)
             {

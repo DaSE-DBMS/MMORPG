@@ -123,7 +123,7 @@ namespace Common
     {
         public string host;
         public short port;
-        public string assestPath;
+        public string asset_path;
         public List<string> scenes;
     }
 }

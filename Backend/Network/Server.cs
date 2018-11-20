@@ -63,7 +63,7 @@ namespace Backend.Network
                     m_millisecondsElapsed -= (int)interval.TotalMilliseconds;
                     if (m_millisecondsElapsed <= 0)
                     {
-                        World.Instance().Tick();
+                        World.Instance.Tick();
                         m_millisecondsElapsed = (int)(World.DeltaTime * 1000);
                     }
                 }

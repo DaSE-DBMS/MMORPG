@@ -8,7 +8,6 @@ namespace Backend.Game
 
     public class Entity : MyObject
     {
-        public delegate void OnTimer();
         private static int sequence = 1;
         public EntityType entityType;
         public int entityId;
@@ -25,7 +24,7 @@ namespace Backend.Game
 
 
         public Dictionary<int, Entity> Children { get { return m_children; } }
-        public Entity Parent { get { return World.Instance().GetEntity(m_parentID); } }
+        public Entity Parent { get { return World.Instance.GetEntity(m_parentID); } }
         public DEntity DefaultData { get { return m_entityData; } }
         public Point3d Position
         {
@@ -65,7 +64,7 @@ namespace Backend.Game
         public Entity()
         {
             entityId = sequence++;
-            World.Instance().AddEntity(entityId, this);
+            World.Instance.AddEntity(entityId, this);
         }
 
         virtual public void AddEntity(Entity entity)
@@ -99,7 +98,7 @@ namespace Backend.Game
 
         virtual public void Broadcast(Message message, bool exclude = false)
         {
-            World.Instance().Broadcast(message, GetScene(), this, 100, exclude ? entityId : 0);
+            World.Instance.Broadcast(message, GetScene(), this, 100, exclude ? entityId : 0);
         }
 
         public Scene GetScene()
@@ -121,25 +120,6 @@ namespace Backend.Game
                 return null;
             }
 
-        }
-        public void Tick()
-        {
-            while (m_timers.Count != 0)
-            {
-                var kv = m_timers.Peek();
-                if (kv.Key <= DateTime.Now)
-                {
-                    kv.Value.Invoke();
-                    m_timers.Dequeue();
-                }
-            }
-        }
-
-        public void DelayInvoke(int seconds, OnTimer onTimer)
-        {
-            var ts = DateTime.Now.Add(TimeSpan.FromSeconds(seconds));
-            var kv = new KeyValuePair<DateTime, OnTimer>(ts, onTimer);
-            m_timers.Enqueue(kv);
         }
 
         virtual public void Update()

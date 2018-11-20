@@ -102,6 +102,10 @@ namespace Gamekit3D
                 m_FollowerInstance.distributor.UnregisterFollower(m_FollowerInstance);
         }
 
+        private void FixedUpdate()
+        {
+            m_Controller.animator.SetBool(hashGrounded, controller.grounded);
+        }
 
         public void FindTarget()
         {/*
@@ -265,7 +269,7 @@ namespace Gamekit3D
 
             controller.animator.SetTrigger(hashHit);
             controller.animator.SetTrigger(hashThrown);
-
+            controller.animator.SetBool(hashGrounded, false);
             //We unparent the hit source, as it would destroy it with the gameobject when it get replaced by the ragdol otherwise
             deathAudio.transform.SetParent(null, true);
             deathAudio.PlayRandomClip();
@@ -275,8 +279,8 @@ namespace Gamekit3D
         public void ApplyDamage(Damageable.DamageMessage msg)
         {
             //TODO : make that more generic, (e.g. move it to the MeleeWeapon code with a boolean to enable shaking of camera on hit?)
-            if (msg.damager.name == "Staff")
-                CameraShake.Shake(0.06f, 0.1f);
+            //if (msg.damager.name == "Staff")
+            //    CameraShake.Shake(0.06f, 0.1f);
 
             float verticalDot = Vector3.Dot(Vector3.up, msg.direction);
             float horizontalDot = Vector3.Dot(transform.right, msg.direction);
