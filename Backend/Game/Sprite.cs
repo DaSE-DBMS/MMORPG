@@ -121,7 +121,6 @@ namespace Backend.Game
                             this.Position = target.Position;
                             SendMove(MoveState.END, target.Position, m_targetID);
                             m_chaseState = ChaseState.ATTACKING;
-                            OnAttack(target);
                         }
                         else
                         {
