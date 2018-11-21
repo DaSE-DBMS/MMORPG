@@ -889,8 +889,24 @@ namespace Gamekit3D
             m_Damageable.currentHitPoints = hp;
             transform.position = postion;
             transform.rotation = rotation;
-            gameObject.SetActive(true);
-            StartCoroutine(RespawnRoutine());
+            if (isMine)
+            {
+                EllenSpawn spawn = GetComponentInChildren<EllenSpawn>();
+                spawn.enabled = true;
+
+                // Get Ellen's health back.
+                m_Damageable.ResetDamage();
+
+                // Set the Respawn parameter of the animator.
+                m_Animator.SetTrigger(m_HashRespawn);
+
+                // Start the respawn graphic effects.
+                spawn.StartEffect();
+
+                // Wait for the screen to fade in.
+                // Currently it is not important to yield here but should some changes occur that require waiting until a respawn has finished this will be required.
+                StartCoroutine(ScreenFader.FadeSceneIn());
+            }
         }
 
         public Transform GetTransform()
@@ -900,8 +916,12 @@ namespace Gamekit3D
 
         public void Die()
         {
-            StartCoroutine(DelayedPlayerDie());
+            if (isMine)
+                StartCoroutine(ScreenFader.FadeSceneOut(ScreenFader.FadeType.GameOver));
+            else
+                gameObject.SetActive(false);
         }
+
         // Called by OnReceiveMessage.
         void Damaged(Damageable.DamageMessage damageMessage)
         {
@@ -960,22 +980,6 @@ namespace Gamekit3D
         public void TakeItem(NetworkEntity item)
         {
             item.gameObject.transform.SetParent(this.gameObject.transform);
-        }
-
-        IEnumerator DelayedPlayerDie()
-        {
-            yield return new WaitForSeconds(3);
-            if (isMine)
-                ScreenFader.FadeSceneOut();
-            gameObject.SetActive(false);
-        }
-
-        IEnumerator FadeSceneIn()
-        {
-            yield return new WaitForSeconds(3);
-            yield return StartCoroutine(ScreenFader.FadeSceneIn());
-
-            ScreenFader.FadeSceneIn();
         }
     }
 }

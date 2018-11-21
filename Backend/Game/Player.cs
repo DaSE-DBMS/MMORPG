@@ -47,6 +47,7 @@ namespace Backend.Game
             // read from database
             V3 pos = DefaultData.pos;
             Position = V3ToPoint3d(pos);
+            currentHP = maxHP;
 
             SPlayerReSpawn msg = new SPlayerReSpawn();
             msg.entityId = entityId;

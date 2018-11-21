@@ -18,6 +18,7 @@ namespace Gamekit3D.Network
             rotation.y = msg.rotation.y;
             rotation.z = msg.rotation.z;
             rotation.w = msg.rotation.w;
+            target.gameObject.SetActive(true);
             target.behavior.ReSpawn(msg.HP, position, rotation);
         }
     }

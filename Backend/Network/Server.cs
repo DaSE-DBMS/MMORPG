@@ -56,7 +56,7 @@ namespace Backend.Network
 
                     DateTime start = DateTime.Now;
 
-                    // Wait until a connection is made before continuing.
+                    // Wait until timeout
                     InvokeCompletion(m_millisecondsElapsed);
                     DateTime end = DateTime.Now;
                     TimeSpan interval = end - start;

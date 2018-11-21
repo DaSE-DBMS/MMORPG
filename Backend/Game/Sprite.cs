@@ -57,7 +57,7 @@ namespace Backend.Game
             if (currentHP == 0)
             {
                 OnDie();
-                World.Instance.DelayInvoke(10, OnReSpawn);
+                World.Instance.DelayInvoke(20, OnReSpawn);
             }
             else
             {
@@ -149,7 +149,7 @@ namespace Backend.Game
                 case ChaseState.ATTACKING:
                     {
                         Creature target = m_targetID == 0 ? null : (Creature)World.Instance.GetEntity(m_targetID);
-                        if (target == null)
+                        if (target == null || target.currentHP == 0)
                         {
                             StartBackToHome();
                             return;

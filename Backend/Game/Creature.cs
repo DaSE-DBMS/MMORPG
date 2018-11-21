@@ -37,17 +37,21 @@ namespace Backend.Game
         // the enemy is null if not exists one
         virtual public void OnAttack(Creature enemy = null)
         {
-            if (enemy == null)
+            if (currentHP == 0)
                 return;
 
-            if (currentHP == 0 || enemy.currentHP == 0)
-                return;
-            if (enemy.IsInvulnerable())
-                return;
-
+            int targetId = 0;
+            if (enemy != null)
+            {
+                if (enemy.currentHP == 0)
+                    return;
+                if (enemy.IsInvulnerable())
+                    return;
+                targetId = enemy.entityId;
+            }
             SAttack attack = new SAttack();
             attack.ID = this.entityId;
-            attack.targetID = enemy != null ? enemy.entityId : 0;
+            attack.targetID = targetId;
             Broadcast(attack);
         }
 
