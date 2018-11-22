@@ -318,7 +318,6 @@
     <Compile Include="Assets\3DGamekit\Scripts\Game\UI\GameStart.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\UI\GetAllIcons.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\UI\HealthUI.cs" />
-    <Compile Include="Assets\3DGamekit\Scripts\Game\UI\InventoryCellUI.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\UI\InventoryUI.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\UI\KeyUI.cs" />
     <Compile Include="Assets\3DGamekit\Scripts\Game\UI\MenuActivityController.cs" />
