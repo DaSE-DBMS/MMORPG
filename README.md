@@ -80,7 +80,10 @@ backend.exe运行大致如下：
 - 选择场景：打开scene-level1/...
 - 点击上方小三角，进入调试
 
-#### 人物可以wsad 移动，左键点击进行攻击
+#### 输入
+WASD移动  
+左键点击进行攻击  
+右键锁定视角  
 
 # Architecture
 <img src="Doc/architecture.png" height=114></img>
