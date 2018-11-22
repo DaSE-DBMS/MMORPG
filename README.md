@@ -82,6 +82,8 @@ backend.exe运行大致如下：
 
 #### 人物可以wsad 移动，左键点击进行攻击
 
+# Architecture
+<img src="Doc/architecture.png" height=114></img>
 
 # __Roadmap__
 
