@@ -1967,6 +1967,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4035643436854338}
   - component: {fileID: 135006063673293136}
+  - component: {fileID: 54357535886987714}
   - component: {fileID: 95065152071237234}
   - component: {fileID: 143281348168218644}
   - component: {fileID: 114011089888769184}
@@ -2059,7 +2060,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1991219941496362}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 23.95, y: 1.578, z: 64.29}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3893,6 +3894,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1837302402230958}
   m_Mesh: {fileID: 4300000, guid: d9951ecbd04e28f4db3eb8ddb3775842, type: 3}
+--- !u!54 &54357535886987714
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1991219941496362}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 18.65
+  m_AngularDrag: 17.25
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!82 &82161260754581032
 AudioSource:
   m_ObjectHideFlags: 1
@@ -4675,45 +4691,12 @@ MonoBehaviour:
   hitForwardRotation: 360
   OnDeath:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: ChangeHitPointUI
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 114011089888769184}
-          m_ObjectArgumentAssemblyTypeName: Gamekit3D.Damageable, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnReceiveDamage:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: ChangeHitPointUI
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 114011089888769184}
-          m_ObjectArgumentAssemblyTypeName: Gamekit3D.Damageable, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1076943315163266}
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnHitWhileInvulnerable:
@@ -4723,45 +4706,12 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   OnBecomeVulnerable:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1076943315163266}
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnResetDamage:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: ChangeHitPointUI
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 114011089888769184}
-          m_ObjectArgumentAssemblyTypeName: Gamekit3D.Damageable, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1076943315163266}
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   onDamageMessageReceivers: []
@@ -5154,7 +5104,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damagedLayers:
     serializedVersion: 2
-    m_Bits: 8388608
+    m_Bits: 8389120
   playerControllerInputBlocked: 0
 --- !u!114 &114482031319434234
 MonoBehaviour:
@@ -5212,15 +5162,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faa8b67e83b73fb4ba6b6a9b2482a664, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isMine: 0
   maxForwardSpeed: 8
   gravity: 20
   jumpSpeed: 10
   minTurnSpeed: 400
   maxTurnSpeed: 1200
   idleTimeout: 5
-  canAttack: 0
-  leftHandAttach: {fileID: 0}
+  leftHandAttach: {fileID: 1169563733144674}
+  rightHandAttach: {fileID: 1116306217432428}
   cameraSettings: {fileID: 0}
   meleeWeapon: {fileID: 0}
   footstepPlayer: {fileID: 114094828976615078}
@@ -5347,7 +5296,7 @@ MonoBehaviour:
   children: []
   entityType: 0
   entityId: 0
-  canClone: 0
+  canClone: 1
 --- !u!114 &114941003919540504
 MonoBehaviour:
   m_ObjectHideFlags: 1

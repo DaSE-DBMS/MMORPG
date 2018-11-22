@@ -167,6 +167,11 @@ namespace Gamekit3D.Network
 
         public bool Connect(string ip, short port)
         {
+            if (socket != null && socket.Connected)
+            {
+                return true;
+            }
+
             IPAddress ipAddress = IPAddress.Parse(ip);
             IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
             try

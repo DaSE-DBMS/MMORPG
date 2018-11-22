@@ -170,7 +170,7 @@ namespace Gamekit3D
             if (m_target != null && m_target is PlayerController)
             {
                 PlayerController controller = (PlayerController)(m_target);
-                if (controller.isMine)
+                if (controller.IsMine)
                 {
                     CPositionRevise msg = new CPositionRevise();
                     msg.entityId = m_entity.EntityId;
@@ -358,7 +358,7 @@ namespace Gamekit3D
                 return;
 
             PlayerController player = other.gameObject.GetComponent<PlayerController>();
-            if (player == null || !player.isMine)
+            if (player == null || !player.IsMine)
                 return;
 
             CEnemyClosing msg = new CEnemyClosing();

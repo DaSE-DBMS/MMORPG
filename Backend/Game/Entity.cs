@@ -73,6 +73,11 @@ namespace Backend.Game
             Children.Add(entity.entityId, entity);
         }
 
+        virtual public bool RemoveEntity(int id)
+        {
+            return Children.Remove(id);
+        }
+
         virtual public bool RemoveEntity(int id, out Entity entity)
         {
             bool ret = Children.Remove(id, out entity);

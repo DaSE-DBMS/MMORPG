@@ -25,11 +25,15 @@ namespace Gamekit3D.Network
                 weapon = go.GetComponent<NetworkEntity>();
                 if (weapon == null)
                     return;
-
+                go.SetActive(false);
                 controller.TakeItem(weapon);
             }
-
-            controller.EquipWeapon(weapon);
+            weapon.gameObject.SetActive(false);
+            if (!controller.CanAttack)
+            {
+                weapon.gameObject.SetActive(true);
+                controller.EquipWeapon(weapon);
+            }
         }
     }
 }

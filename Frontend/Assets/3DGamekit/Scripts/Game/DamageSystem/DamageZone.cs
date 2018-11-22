@@ -22,7 +22,7 @@ namespace Gamekit3D
         private void OnTriggerStay(Collider other)
         {
             var pc = other.GetComponent<PlayerController>();
-            if (pc != null && pc.isMine)
+            if (pc != null && pc.IsMine)
             {
                 CDamage msg = new CDamage();
                 msg.entityId = pc.Entity.entityId;

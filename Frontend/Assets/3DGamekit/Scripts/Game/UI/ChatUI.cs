@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Gamekit3D;
 
 public class ChatUI : MonoBehaviour
 {
@@ -25,6 +26,16 @@ public class ChatUI : MonoBehaviour
     void Start()
     {
         Test();
+    }
+
+    private void OnEnable()
+    {
+        PlayerMyController.Instance.EnabledWindowCount++;
+    }
+
+    private void OnDisable()
+    {
+        PlayerMyController.Instance.EnabledWindowCount--;
     }
 
     // Update is called once per frame

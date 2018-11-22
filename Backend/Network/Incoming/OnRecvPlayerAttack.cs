@@ -11,13 +11,12 @@ namespace Backend.Network
             Player player = (Player)World.Instance.GetEntity(request.player);
             if (request.target != 0)
             {
-                Entity target = World.Instance.GetEntity(request.target);
-                if (target is Sprite)
+                Creature target = World.Instance.GetEntity(request.target) as Creature;
+                if (target != null)
                 {
-                    Sprite sprite = (Sprite)target;
-                    // player  attack the sprite
-                    sprite.OnHit(player, 1);
-                    player.OnAttack(sprite);
+                    // player attack other creature
+                    target.OnHit(player, 1);
+                    player.OnAttack(target);
                 }
             }
             else

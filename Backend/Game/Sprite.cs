@@ -18,7 +18,7 @@ namespace Backend.Game
         private ChaseState m_chaseState = ChaseState.IDLE;
         private int m_targetID;
         private LinkedList<Point3d> m_routeSteps = new LinkedList<Point3d>();
-        // target position when I find my path to it last time
+        // target position when I call FindPath last time
         private Point3d m_targetPos = new Point3d();
         DateTime m_lastMoveTS = DateTime.UnixEpoch;
 

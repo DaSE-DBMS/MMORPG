@@ -1,5 +1,6 @@
 ﻿using Common;
 using System;
+using System.Collections;
 
 namespace Backend.Game
 {
@@ -40,6 +41,17 @@ namespace Backend.Game
                 World.Instance.DelayInvoke(5, OnReSpawn);
             }
         }
+
+        public override void AddEntity(Entity entity)
+        {
+            base.AddEntity(entity);
+        }
+
+        public override bool RemoveEntity(int id, out Entity entity)
+        {
+            return base.RemoveEntity(id, out entity);
+        }
+
 
         public override void OnReSpawn()
         {
@@ -153,7 +165,7 @@ namespace Backend.Game
             //msgTake.itemId;
             AddEntity(target);
             connection.Send(msgTake);
-            if (target is Weapon)
+            if (target is Weapon && m_weapon == null)
             {
                 EquipWeapon((Weapon)target);
             }

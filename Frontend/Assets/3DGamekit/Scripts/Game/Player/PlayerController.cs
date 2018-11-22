@@ -13,14 +13,15 @@ namespace Gamekit3D
     {
 
         protected static PlayerController s_Instance;
-        public static PlayerController instance { get { return s_Instance; } }
+        public static PlayerController Mine { get { return s_Instance; } }
         public NetworkEntity Entity { get { return m_entity; } }
         public Damageable Damageable { get { return m_Damageable; } }
         public bool IsReadyToJump { get { return m_ReadyToJump; } }
-        public bool CanAttack { get { return canAttack && isMine; } }
+        public bool CanAttack { get { return canAttack && IsMine; } }
 
         public bool respawning { get { return m_Respawning; } }
-        public bool isMine = false;
+        public bool IsMine { get { return m_mine; } }
+
         public float maxForwardSpeed = 8f;        // How fast Ellen can run.
         public float gravity = 20f;               // How fast Ellen accelerates downwards when airborne.
         public float jumpSpeed = 10f;             // How fast Ellen takes off when jumping.
@@ -118,6 +119,8 @@ namespace Gamekit3D
         NetworkEntity m_entity;
         HealthUI m_healthUI;
         Vector3 m_lastPosition = Vector3.zero;
+        bool m_mine;
+
         protected bool IsMoveInput
         {
             get { return !Mathf.Approximately(m_myController.MoveInput.sqrMagnitude, 0f); }
@@ -167,9 +170,9 @@ namespace Gamekit3D
             }
         }
 
-        public void InitLocalPlayer()
+        public void InitMine()
         {
-            isMine = true;
+            m_mine = true;
 
             cameraSettings = FindObjectOfType<CameraSettings>();
 
@@ -244,7 +247,7 @@ namespace Gamekit3D
             m_Renderers = GetComponentsInChildren<Renderer>();
 
             m_lastPosition = transform.position;
-            if (isMine)
+            if (IsMine)
             {
                 m_healthUI.ChangeHitPointUI(m_Damageable);
             }
@@ -264,7 +267,7 @@ namespace Gamekit3D
         // Called automatically by Unity once every Physics step.
         void FixedUpdate()
         {
-            if (isMine)
+            if (IsMine)
             {
                 m_attacking = m_myController.IsAttacking;
                 m_moving = m_myController.IsMoving || (m_lastPosition - transform.position).sqrMagnitude < 0.1;
@@ -283,7 +286,7 @@ namespace Gamekit3D
             if (m_attacking && canAttack)
             {
                 m_Animator.SetTrigger(m_HashMeleeAttack);
-                if (isMine)
+                if (IsMine)
                 {
                     m_myController.SendAttackingAction();
                 }
@@ -298,7 +301,7 @@ namespace Gamekit3D
                 UpdateOrientation();
 
 
-            if (!isMine)
+            if (!IsMine)
             {
 
                 /*
@@ -343,7 +346,7 @@ namespace Gamekit3D
         {
             bool inputBlocked = m_CurrentStateInfo.tagHash == m_HashBlockInput && !m_IsAnimatorTransitioning;
             inputBlocked |= m_NextStateInfo.tagHash == m_HashBlockInput;
-            m_myController.playerControllerInputBlocked = inputBlocked;
+            m_myController.InputBlocked = inputBlocked;
         }
 
         // Called after the animator state has been cached to determine whether or not the staff should be active or not.
@@ -414,7 +417,7 @@ namespace Gamekit3D
                 if (m_jumping && m_ReadyToJump)
                 {
                     // ... then override the previously set vertical speed and make sure she cannot jump again.
-                    if (isMine)
+                    if (IsMine)
                     {
                         m_myController.SendJumpingAction();
                     }
@@ -551,7 +554,7 @@ namespace Gamekit3D
         // Called each physics step to check if audio should be played and if so instruct the relevant random audio player to do so.
         void PlayAudio()
         {
-            if (!isMine)
+            if (!IsMine)
                 return;
 
             float footfallCurve = m_Animator.GetFloat(m_HashFootFall);
@@ -628,7 +631,7 @@ namespace Gamekit3D
         void OnAnimatorMove()
         {
 
-            if (isMine)
+            if (IsMine)
             {
                 if (m_moving)
                 {
@@ -798,7 +801,7 @@ namespace Gamekit3D
             Vector3 position,
             Quaternion rotation)
         {
-            m_moving = isMine ? m_moving : true;
+            m_moving = IsMine ? m_moving : true;
             m_movement.Set(0f, 0f);
             transform.position = position;
             transform.rotation = rotation;
@@ -809,7 +812,7 @@ namespace Gamekit3D
             Vector3 position,
             Quaternion rotation)
         {
-            m_moving = isMine ? m_moving : true;
+            m_moving = IsMine ? m_moving : true;
             m_movement.Set(move.x, move.y);
             transform.position = position;
             transform.rotation = rotation;
@@ -823,7 +826,7 @@ namespace Gamekit3D
             transform.position = position;
             transform.rotation = rotation;
             m_movement.Set(0f, 0f);
-            m_moving = isMine ? m_moving : false;
+            m_moving = IsMine ? m_moving : false;
             /*
             if (isMine)
             {
@@ -867,7 +870,7 @@ namespace Gamekit3D
 
             m_Damageable.ApplyDamage(msg);
 
-            if (isMine)
+            if (IsMine)
             {
                 // Shake the camera.
                 CameraShake.Shake(CameraShake.k_PlayerHitShakeAmount, CameraShake.k_PlayerHitShakeTime);
@@ -889,7 +892,7 @@ namespace Gamekit3D
             m_Damageable.currentHitPoints = hp;
             transform.position = postion;
             transform.rotation = rotation;
-            if (isMine)
+            if (IsMine)
             {
                 EllenSpawn spawn = GetComponentInChildren<EllenSpawn>();
                 spawn.enabled = true;
@@ -916,7 +919,7 @@ namespace Gamekit3D
 
         public void Die()
         {
-            if (isMine)
+            if (IsMine)
                 StartCoroutine(ScreenFader.FadeSceneOut(ScreenFader.FadeType.GameOver));
             else
                 gameObject.SetActive(false);
@@ -961,6 +964,7 @@ namespace Gamekit3D
 
         public void EquipWeapon(NetworkEntity weapon)
         {
+            Debug.Log(string.Format("Player {0} equip weapon {1}", this.Entity.EntityId, weapon.EntityId));
             canAttack = true;
             FixedUpdateFollow follow = weapon.gameObject.GetComponent<FixedUpdateFollow>();
             if (follow != null && leftHandAttach != null)
@@ -979,7 +983,8 @@ namespace Gamekit3D
 
         public void TakeItem(NetworkEntity item)
         {
-            item.gameObject.transform.SetParent(this.gameObject.transform);
+            Debug.Log(string.Format("Player {0} take item {1}", this.Entity.EntityId, item.EntityId));
+            m_myController.TakeItem(item);
         }
     }
 }

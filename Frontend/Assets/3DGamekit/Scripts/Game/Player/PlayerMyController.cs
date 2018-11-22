@@ -10,20 +10,12 @@ namespace Gamekit3D
 {
     public class PlayerMyController : MonoBehaviour
     {
-        public PlayerController Controller { get { return m_controller; } }
-        public NetworkEntity Entity { get { return m_entity; } }
-
-        public LayerMask damagedLayers;
-        public static PlayerMyController Instance
-        {
-            get { return s_Instance; }
-        }
-
         [HideInInspector]
-        public bool playerControllerInputBlocked;
+        public bool InputBlocked;
         NetworkEntity m_entity;
         PlayerController m_controller;
         int m_attackTarget;
+        static int m_enabledWindowCount;
 
         protected static PlayerMyController s_Instance;
         protected Vector2 m_Movement;
@@ -32,12 +24,18 @@ namespace Gamekit3D
         protected bool m_Attack;
         protected bool m_Pause;
         protected bool m_ExternalInputBlocked;
+        private IDictionary<int, NetworkEntity> m_inventory = new Dictionary<int, NetworkEntity>();
+        private int m_inventorySize = 40;
 
+        WaitForSeconds m_AttackInputWait;
+        Coroutine m_AttackWaitCoroutine;
+        const float k_AttackInputDuration = 0.03f;
+        Vector3 m_lastPosition = Vector3.zero;
         public Vector2 MoveInput
         {
             get
             {
-                if (playerControllerInputBlocked || m_ExternalInputBlocked)
+                if (InputBlocked || m_ExternalInputBlocked)
                     return Vector2.zero;
                 return m_Movement;
             }
@@ -47,7 +45,7 @@ namespace Gamekit3D
         {
             get
             {
-                if (playerControllerInputBlocked || m_ExternalInputBlocked)
+                if (InputBlocked || m_ExternalInputBlocked)
                     return Vector2.zero;
                 return m_Camera;
             }
@@ -55,12 +53,12 @@ namespace Gamekit3D
 
         public bool IsJumping
         {
-            get { return m_Jump && !playerControllerInputBlocked && !m_ExternalInputBlocked; }
+            get { return m_Jump && !InputBlocked && !m_ExternalInputBlocked; }
         }
 
         public bool IsAttacking
         {
-            get { return m_Attack && !playerControllerInputBlocked && !m_ExternalInputBlocked; }
+            get { return m_Attack && !InputBlocked && !m_ExternalInputBlocked; }
         }
 
         public bool IsMoving
@@ -88,12 +86,42 @@ namespace Gamekit3D
             get { return !Mathf.Approximately(MoveInput.sqrMagnitude, 0f); }
         }
 
-        WaitForSeconds m_AttackInputWait;
-        Coroutine m_AttackWaitCoroutine;
+        public PlayerController Controller { get { return m_controller; } }
+        public NetworkEntity Entity { get { return m_entity; } }
 
-        const float k_AttackInputDuration = 0.03f;
+        public LayerMask damagedLayers;
+        static public PlayerMyController Instance
+        {
+            get { return s_Instance; }
+        }
 
-        Vector3 m_lastPosition = Vector3.zero;
+        public int EnabledWindowCount
+        {
+            get { return m_enabledWindowCount; }
+            set
+            {
+                m_enabledWindowCount = value;
+                if (m_enabledWindowCount != 0)
+                {
+                    ReleaseControl();
+                }
+                else
+                {
+                    GainControl();
+                }
+            }
+        }
+
+        public int InventoryCapacity
+        {
+            get { return m_inventorySize; }
+        }
+
+        public IDictionary<int, NetworkEntity> Inventory
+        {
+            get { return m_inventory; }
+        }
+
         void Awake()
         {
             m_AttackInputWait = new WaitForSeconds(k_AttackInputDuration);
@@ -156,9 +184,9 @@ namespace Gamekit3D
             m_ExternalInputBlocked = false;
         }
 
-        public void PlayerWantTakeWeapon(GameObject weapon)
+        public void PlayerTakeWeapon(GameObject weapon)
         {
-            if (m_controller.canAttack)
+            if (m_controller.CanAttack)
                 return;
 
             NetworkEntity weaponEntity = weapon.GetComponent<NetworkEntity>();
@@ -234,8 +262,8 @@ namespace Gamekit3D
             NetworkEntity damager = other.gameObject.GetComponent<NetworkEntity>();
             if (damager == null)
                 return;
-
-            m_attackTarget = damager.entityId;
+            Debug.Log(string.Format("Player {0} collide {1}", this.Entity.EntityId, damager.EntityId));
+            m_attackTarget = damager.EntityId;
         }
 
         private void OnTriggerExit(Collider other)
@@ -252,6 +280,16 @@ namespace Gamekit3D
         }
         void OnTriggerStay(Collider other)
         {
+        }
+
+        public void TakeItem(NetworkEntity item)
+        {
+            if (m_inventory.Count == m_inventorySize)
+            {
+                MessageBox.Show("Inventory is full!");
+                return;
+            }
+            m_inventory.Add(item.EntityId, item);
         }
     }
 }

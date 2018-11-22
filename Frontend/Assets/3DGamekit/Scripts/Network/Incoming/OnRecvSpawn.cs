@@ -58,7 +58,7 @@ namespace Gamekit3D.Network
                     {
                         thisPlayer = controller;
                         channel.SetContent(go);
-                        controller.InitLocalPlayer();
+                        controller.InitMine();
                         HealthUI healthUI = GameObject.FindObjectOfType<HealthUI>();
                         healthUI.InitUI(damageable);
                     }

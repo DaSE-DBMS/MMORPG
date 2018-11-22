@@ -28,7 +28,7 @@ namespace Gamekit3D
             {
                 return;
             }
-            sender.PlayerWantTakeWeapon(weapon);
+            sender.PlayerTakeWeapon(weapon);
             OnEnter.Invoke();
         }
 
